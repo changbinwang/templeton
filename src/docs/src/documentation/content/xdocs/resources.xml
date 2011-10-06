@@ -19,18 +19,18 @@
 
 <document>
   <header>
-    <title>Templeton Function List </title>
+    <title>Templeton Resources </title>
   </header>
   <body>
      <table>
-     <tr><th>Function</th><th>Description</th></tr>
+     <tr><th>Resource</th><th>Description</th></tr>
 
      <tr><td><a href="status.html">status</a></td>
          <td>Templeton server status for heartbeat monitoring.</td></tr>
 
      <tr><td><a href="ddl.html">ddl</a></td>
          <td>The data definition language resource allows developers to perform the same
-             functions accessable via the HCatalog command line interface.</td></tr>
+             actions accessable via the HCatalog command line interface.</td></tr>
 
      <tr><td><a href="pig.html">pig</a></td>
          <td>Templeton interface to run pig programs.</td></tr>
@@ -45,7 +45,7 @@
      <tr><td><a href="hive.html">hive</a></td>
          <td>Templeton interface to run hive commands and programs.</td></tr>
 
-     <tr><td><a href="queue.html">queue/:jobid</a></td>
+     <tr><td><a href="queue.html">queue/:id</a></td>
          <td>Provides access to Templeton jobs by job ID.</td></tr>
 
      </table>     

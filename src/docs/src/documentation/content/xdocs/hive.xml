@@ -19,7 +19,7 @@
 
 <document>
   <header>
-    <title>hcatalog/hive </title>
+    <title>templeton/hive </title>
   </header>
 
   <body>
@@ -30,7 +30,7 @@
 
   <section>
    <title>Usage</title>
-    <p><code>POST /v1/hcatalog/hive.json?src="</code>program.hql<code>"</code></p>
+    <p><code>POST /v1/templeton/hive.json?src="</code>program.hql<code>"</code></p>
   </section>
 
   <section>
@@ -39,7 +39,7 @@
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
     
     <tr><td><strong>exec</strong></td>
-        <td>String containing a single hive command to run.</td>
+        <td>String containing an entire, short hive program to run.</td>
         <td>One of either "exec" or "src" is required</td>
         <td>None</td>
     </tr>

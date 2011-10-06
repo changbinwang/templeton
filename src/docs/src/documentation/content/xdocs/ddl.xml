@@ -19,18 +19,19 @@
 
 <document>
   <header>
-    <title>hcatalog/ddl </title>
+    <title>templeton/ddl </title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Performs the same functions available on the HCatalog command line interface</p>
+    <p>Performs the same functions available when using the HCatalog 
+       command line interface</p>
   </section>
 
   <section>
    <title>Usage</title>
-    <p><code>POST /v1/hcatalog/ddl.json</code></p>
+    <p><code>POST /v1/templeton/ddl.json</code></p>
   </section>
 
   <section>
@@ -52,7 +53,7 @@
 
     <tr><td><strong>permissions</strong></td>
         <td>The permissions string to use when creating a table.  The format is 
-          "<code>rwxr-wr-x</code>".</td>
+          "<code>rwxrw-r-x</code>".</td>
         <td>Optional</td>
         <td><code>rw-rw-rw-</code></td>
     </tr>   
@@ -61,7 +62,7 @@
 
   <section>
    <title>Results</title>
-     <p>Returns the json object:</p>
+     <p>Returns the JSON object:</p>
      <p><code> {"result": MESSAGE} </code></p>
      <p>Where MESSAGE is a possibly empty result string from the hcat driver.</p>    
  </section> 

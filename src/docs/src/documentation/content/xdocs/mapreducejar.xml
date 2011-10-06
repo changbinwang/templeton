@@ -19,7 +19,7 @@
 
 <document>
   <header>
-    <title>hcatalog/mapreduce/jar </title>
+    <title>templeton/mapreduce/jar </title>
   </header>
 
   <body>
@@ -31,7 +31,7 @@
 
   <section>
    <title>Usage</title>
-    <p><code>POST /v1/hcatalog/mapreduce/jar.json?input="inputfile"&amp;output="outputfile"&amp;mapper="mapper"&amp;reducer="reducer"</code></p>
+    <p><code>POST /v1/templeton/mapreduce/jar.json?input="infile"&amp;output="outfile"&amp;mapper="map"&amp;reducer="reduce"</code></p>
   </section>
 
   <section>
@@ -67,8 +67,8 @@
 
   <section>
    <title>Results</title>
-     <p>The mapreduce/jar function queues your MapReduce job and returns 
-       the json object:</p>
+     <p>The mapreduce/jar resource queues your MapReduce job and returns 
+       the JSON object:</p>
      <p><code> {"result": MESSAGE, "jobid": JOBID} </code></p>
      <p>Where MESSAGE is a string similar to "ok", 
         and JOBID is a string containing the ID of your 

@@ -19,43 +19,35 @@
 
 <document>
   <header>
-    <title>hcatalog/queue/:id </title>
+    <title>templeton/queue/:id </title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Check the status of or kill jobs created by Templeton.  Substitute ":id" with
+    <p>Check the status of or kill jobs given their job ID.  Substitute ":id" with
      the job ID you received when the job was created.</p>
   </section>
 
   <section>
    <title>Usage</title>
-    <p><code>POST /v1/hcatalog/queue/:id.json</code></p>
-    <p><code>POST /v1/hcatalog/queue/:id.json?op="kill"</code></p>
+    <p><code>GET /v1/templeton/queue/</code><em>:id</em><code>.json</code></p>
+    <p><code>DELETE /v1/templeton/queue/</code><em>:id</em><code>.json</code></p>
   </section>
 
   <section>
    <title>Parameters</title>
-    <table>
-    <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
-    <tr><td><strong>op</strong></td>
-        <td>Either "status" to get the current job status or "kill" to 
-           kill the job.</td>
-        <td>Optional</td>
-        <td>status</td>
-    </tr>
-    </table>
+    <p>Only the <a href="index.html#Standard+Parameters">standard parameters</a>
+       are accepted.</p>
   </section>
 
   <section>
    <title>Results</title>
-     <p>Returns the json object:</p>
+     <p>Returns the JSON object:</p>
      <p><code> {"result": MESSAGE, "status": STATUS} </code></p>
      <p>Where MESSAGE is a string similar to "ok", and STATUS is a string 
         containg the current job status, for example 
-        "completed", "error", or "running".</p>    
+        "completed", "error", "aborted", or "running".</p>    
  </section> 
  </body>
 </document>

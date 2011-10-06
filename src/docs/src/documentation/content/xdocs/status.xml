@@ -19,18 +19,19 @@
 
 <document>
   <header>
-    <title>hcatalog/status </title>
+    <title>templeton/status </title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Returns the status of the Templeton server.  Useful for heartbeat monitoring.</p>
+    <p>Returns the current status of the Templeton server.  
+       Useful for heartbeat monitoring.</p>
   </section>
 
   <section>
    <title>Usage</title>
-    <p><code>GET /v1/hcatalog/status.json</code></p>
+    <p><code>GET /v1/templeton/status.json</code></p>
   </section>
 
   <section>
@@ -41,7 +42,7 @@
 
   <section>
    <title>Results</title>
-    <p>Returns the json object:</p>
+    <p>Returns the JSON object:</p>
     <p><code> {"status": MESSAGE} </code></p>
     <p>Where MESSAGE is a string similar to "ok".</p>
   </section>

@@ -41,8 +41,8 @@ See http://forrest.apache.org/docs/linking.html for more info
    <docs label="Templeton"> 
     <index label="Overview" href="index.html" />
     <index label="Example" href="example.html" />
-    <index label="API Reference">
-     <index label="Function List" href="resources.html" />
+    <index label="Reference">
+     <index label="Resource List" href="resources.html" />
      <index label="status" href="status.html" />
      <index label="ddl" href="ddl.html" />
      <index label="pig" href="pig.html" />

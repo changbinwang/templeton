@@ -19,19 +19,18 @@
 
 <document>
   <header>
-    <title>hcatalog/pig </title>
+    <title>templeton/pig </title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Provides a Web API for running Pig programs. Note that all programs are run
-      in mapreduce mode.</p>
+    <p>Provides a Web API for running Pig programs.</p>
   </section>
 
   <section>
    <title>Usage</title>
-    <p><code>POST /v1/hcatalog/pig.json?src="</code>program.pig<code>"</code></p>
+    <p><code>POST /v1/templeton/pig.json?src="</code>program.pig<code>"</code></p>
   </section>
 
   <section>
@@ -40,13 +39,13 @@
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
     
     <tr><td><strong>exec</strong></td>
-        <td>String containing a single pig command to run.</td>
+        <td>String containing an entire, short pig program to run.</td>
         <td>One of either "exec" or "src" is required</td>
         <td>None</td>
     </tr>
         
     <tr><td><strong>src</strong></td>
-        <td>HDFS file name of the pig program script to run.</td>
+        <td>HDFS file name of a pig program to run.</td>
         <td>One of either "exec" or "src" is required</td>
         <td>None</td>
     </tr>  
@@ -55,7 +54,7 @@
 
   <section>
    <title>Results</title>
-     <p>The pig function queues your pig job and returns the JSON object:</p>
+     <p>The pig resource queues your pig job and returns the JSON object:</p>
      <p><code> {"result": MESSAGE, "jobid": JOBID} </code></p>
      <p>Where MESSAGE is a string similar to "ok", 
         and JOBID is a string containing the ID of your 
