@@ -45,5 +45,33 @@
                 name="commons-cli"
                 rev="${commons-cli.version}"
                 conf="common->master"/>
+
+    <dependency org="com.sun.jersey"
+                name="jersey-core"
+                rev="1.9.1"
+                conf="common->master"/>
+    <dependency org="com.sun.jersey"
+                name="jersey-server"
+                rev="1.9.1"
+                conf="common->master"/>
+    <dependency org="com.sun.jersey"
+                name="jersey-json"
+                rev="1.9.1"
+                conf="common->master"/>
+    <dependency org="com.sun.jersey"
+                name="jersey-json"
+                rev="1.9.1"
+                conf="common->master"/>
+
+    <dependency org="com.sun.jersey"
+                name="jersey-json"
+                rev="1.9.1"
+                conf="common->master"/>
+
+    <dependency org="asm"
+                name="asm"
+                rev="3.2"
+                conf="common->master"/>
+
   </dependencies>
 </ivy-module>

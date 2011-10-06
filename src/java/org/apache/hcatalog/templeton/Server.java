@@ -17,10 +17,27 @@
  */
 package org.apache.hcatalog.templeton;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 /**
  * Stub for the Templeton Web API server.
  */
+@Path("/v1")
 public class Server {
+    public final String statusMsg = "{\"status\": \"ok\"}\n";
+
+    /**
+     * Check the status of this server
+     */
+    @GET
+    @Path("status.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String status() {
+        return statusMsg;
+    }
 
     /**
      * Start the server.

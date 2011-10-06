@@ -33,6 +33,7 @@
   <property name="package.release" value="1"/>
 
   <!-- build properties -->
+  <property environment="env"/>
   <property name="lib.dir" value="${basedir}/lib/" />
   <property name="src.dir"  location="${basedir}/src/java"/>
   <property name="package.dir"  location="${basedir}/src/packages"/>
@@ -43,6 +44,8 @@
   <property name="build.docs" value="${build.dir}/docs" />
   <property name="build.javadoc" value="${build.docs}/api" />
   <property name="dist.dir" value="${build.dir}/${final.name}" />
+  <property name="webapp.dir" value="${basedir}/src/webapp"/>
+  <property name="build.webapp" value="${build.dir}/webapp"/>
 
   <!-- javac properties -->
   <property name="build.encoding" value="UTF8" />
@@ -205,6 +208,7 @@
            source="${javac.version}" deprecation="${javac.deprecation}"
            includeantruntime="false">
       <compilerarg line="${javac.args}"/>
+      <classpath refid="classpath" />
     </javac>
   </target>
 
@@ -303,175 +307,32 @@
 
   <target name="javadoc" depends="jar" description="Create documentation">
     <mkdir dir="${build.javadoc}" />
-    <javadoc overview="${src.dir}/../docs/overview.html" packagenames="org.apache.templeton.*" destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="Templeton ${templeton.version} API" doctitle="Templeton ${templeton.version} API">
+    <javadoc packagenames="org.apache.hcatalog.templeton.*" destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="Templeton ${templeton.version} API" doctitle="Templeton ${templeton.version} API">
       <packageset dir="${src.dir}" />
       <classpath>
         <path refid="classpath" />
       </classpath>
-      <group title="templeton" packages="org.apache.templeton.*" />
+      <group title="templeton" packages="org.apache.hcatalog.templeton.*" />
     </javadoc>
   </target>
 
 
-  <!--
-    ===============================================================================
-    Distribution Section
-    ===============================================================================
-  -->
-  <target name="package" depends="jar, docs" description="Create an Templeton release">
-    <mkdir dir="${dist.dir}" />
-    <mkdir dir="${dist.dir}/share/${ant.project.name}/lib" />
-    <mkdir dir="${dist.dir}/etc/templeton" />
-    <mkdir dir="${dist.dir}/bin" />
-    <mkdir dir="${dist.dir}/bin/ext" />
-    <mkdir dir="${dist.dir}/bin/ext/util" />
-    <mkdir dir="${dist.dir}/sbin" />
-    <mkdir dir="${dist.dir}/share/${ant.project.name}/scripts" />
-    <mkdir dir="${dist.dir}/share/${ant.project.name}/templates/conf" />
-    <mkdir dir="${dist.dir}/share/doc/${ant.project.name}" />
-    <mkdir dir="${dist.dir}/share/doc/${ant.project.name}/api" />
-    <mkdir dir="${dist.dir}/share/doc/${ant.project.name}/jdiff"/>
-    <mkdir dir="${dist.dir}/share/doc/${ant.project.name}/license" />
-
-    <copy todir="${dist.dir}/share/${ant.project.name}" includeEmptyDirs="false">
-      <fileset dir="${build.dir}/${ant.project.name}/">
-        <include name="templeton-*.jar"/>
-      </fileset>
-    </copy>
-
-    <copy todir="${dist.dir}/share/${ant.project.name}/lib" includeEmptyDirs="false">
-      <fileset dir="${lib.dir}"/>
-    </copy>
-
-    <copy todir="${dist.dir}/libexec">
-      <fileset dir="bin">
-        <include name="templeton-config.sh"/>
-      </fileset>
-    </copy>
-
-    <copy todir="${dist.dir}/sbin">
-      <fileset dir="${package.dir}">
-  	<include name="*.sh"/>
-      </fileset>
-      <fileset dir="bin">
-        <include name="templeton_server.sh"/>
-      </fileset>
-    </copy>
-
-    <copy todir="${dist.dir}/share/doc/${ant.project.name}">
-      <fileset dir="${build.docs}" />
-    </copy>
-
-    <copy todir="${dist.dir}/etc/${ant.project.name}">
-      <fileset dir="conf" />
-    </copy>
-
-    <copy todir="${dist.dir}/share/${ant.project.name}/templates/conf">
-      <fileset dir="src/packages/templates/conf">
-        <include name="*"/>
-      </fileset>
-    </copy>
-
-    <!-- Copy source files for reference -->
-    <copy todir="${dist.dir}/src/java" includeEmptyDirs="true">
-      <fileset dir="${src.dir}" />
-    </copy>
-
-    <copy todir="${dist.dir}/src/test" includeEmptyDirs="true">
-      <fileset dir="${test.src.dir}" />
-    </copy>
-
-    <copy todir="${dist.dir}/src/docs" includeEmptyDirs="true">
-      <fileset dir="${docs.src}" />
-    </copy>
-
-    <copy todir="${dist.dir}/src/packages" includeEmptyDirs="true">
-      <fileset dir="${package.dir}" />
-    </copy>
-
-    <!-- Copy the licenses and such -->
-    <copy todir="${dist.dir}/share/doc/${ant.project.name}">
-      <fileset dir=".">
-        <include name="*.txt" />
-      </fileset>
-    </copy>
-
-    <copy todir="${dist.dir}/share/doc/${ant.project.name}/license">
-      <fileset dir="license" />
-    </copy>
-
-    <chmod perm="ugo+x" type="file">
-      <fileset dir="${dist.dir}/bin" />
-      <fileset dir="${dist.dir}/sbin" />
-    </chmod>
-  </target>
-
-  <target name="releaseaudit" depends="ivy-releaseaudit, package" description="Release Audit activities">
-    <java classname="${rat.reporting.classname}" fork="true">
-      <classpath refid="releaseaudit.classpath"/>
-      <arg value="${build.dir}/${final.name}"/>
-    </java>
-  </target>
-
-  <target name="build-artifacts" depends="jar,docs" description="Build templeton artifacts and copy them">
-    <mkdir dir="${artifacts.dir}"/>
-    <copy todir="${artifacts.dir}">
-      <fileset dir="build/templeton">
-        <include name="*.jar"/>
-      </fileset>
-    </copy>
-    <mkdir dir="${artifacts.dir}/docs"/>
-    <copy todir="${artifacts.dir}/docs">
-      <fileset dir="build/docs" />
-    </copy>
-  </target>
-
-  <target name="build-artifacts-and-clean" depends="build-artifacts,clean-builds" description="First build artifacts, then clean up"/>
-
-
   <!-- ================================================================== -->
-  <!-- Make release tarball                                               -->
+  <!-- Make war file                                                      -->
   <!-- ================================================================== -->
-  <target name="src-release" depends="build-artifacts-and-clean" description="Source distribution">
-    <mkdir dir="${build.dir}"/>
-    <tar compression="gzip" longfile="gnu" destfile="${build.dir}/${ant.project.name}-src-${templeton.version}.tar.gz">
-      <tarfileset dir="${basedir}" mode="644" prefix="${ant.project.name}-src-${templeton.version}">
-        <include name="conf/**"/>
-        <include name="ivy/**"/>
-        <exclude name="ivy/*.jar"/>
-        <include name="lib/**"/>
-        <include name="license/**"/>
-        <include name="src/**"/>
-        <include name="*.txt"/>
-        <include name="*.xml"/>
-        <include name="KEYS"/>
-      </tarfileset>
-      <tarfileset dir="" mode="755" prefix="${ant.project.name}-src-${templeton.version}">
-        <include name="scripts/**"/>
-        <include name="bin/**"/>
-      </tarfileset>
-      <tarfileset dir="" mode="644" prefix="${ant.project.name}-src-${templeton.version}">
-        <include name="artifacts/**"/>
-      </tarfileset>
-    </tar>
+  <target name="war" depends="compile-src">
+    <war destfile="${build.dir}/${ant.project.name}.war"
+         webxml="${webapp.dir}/WEB-INF/web.xml">
+         <lib dir="${ivy.lib.dir}"/>
+         <classes dir="${build.classes}"/>
+    </war>
   </target>
 
   <!-- ================================================================== -->
-  <!-- Make release binary packages                                       -->
+  <!-- Install war file for testing                                       -->
   <!-- ================================================================== -->
-  <target name="tar" depends="package" description="Create release tarball">
-    <tar compression="gzip" longfile="gnu" destfile="${build.dir}/${final.name}.tar.gz">
-      <tarfileset dir="${build.dir}" mode="664">
-        <include name="${final.name}/**" />
-        <exclude name="${final.name}/bin/*" />
-        <exclude name="${final.name}/sbin/*" />
-        <exclude name="${final.name}/share/templeton/scripts/*" />
-      </tarfileset>
-      <tarfileset dir="${build.dir}" mode="755">
-        <include name="${final.name}/bin/*" />
-        <include name="${final.name}/sbin/*" />
-        <include name="${final.name}/share/templeton/scripts/*" />
-      </tarfileset>
-    </tar>
+  <target name="install-war" depends="war">
+    <copy file="${build.dir}/${ant.project.name}.war"
+          todir="${env.CATALINA_HOME}/webapps/" />
   </target>
 </project>
