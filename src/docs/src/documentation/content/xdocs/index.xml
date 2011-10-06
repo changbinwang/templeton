@@ -25,12 +25,21 @@
 
    <section>
       <title>Introduction </title> 
-       <p>Templeton provides a RESTful web API for HCatalog and related Hadoop components.
+       <p>Templeton provides a RESTful web API for
+        <a href="http://incubator.apache.org/hcatalog/">HCatalog</a> 
+        and related Hadoop components.
         As shown in the figure below, developers can use the Templeton server to access
-        Hadoop MapReduce, Pig, Hive, and HCatalog DDL from within applications. 
-        Data and code used by Templeton is maintained in HDFS.  Developers specify a location
-        in HDFS into which Templeton should place job results. Jobs are queued by 
-        Templeton and can be monitored for progress or stopped as required.</p>
+        <a href="http://hadoop.apache.org/mapreduce/">Hadoop MapReduce</a>, 
+        <a href="http://pig.apache.org/">Pig</a>, 
+        <a href="http://hive.apache.org/">Hive</a>, and 
+        <a href="http://incubator.apache.org/hcatalog/docs/r0.2.0/cli.html">
+        HCatalog DDL</a> from within applications. 
+        Data and code used by Templeton is maintained in 
+        <a href="http://hadoop.apache.org/hdfs/">HDFS</a>.  Developers specify a location
+        in HDFS into which Templeton should place Pig, Hive, and MapReduce results. 
+        MapReduce and Pig jobs are placed in queue by 
+        Templeton and can be monitored for progress, deleted or stopped as required.  
+        Hive queries are simply run, with results limited to 1MB.</p>
        <figure src="images/TempletonArchV2.jpg" align="left" alt="Templeton Architecture"/>
    </section>
 
@@ -52,7 +61,8 @@
        <p>The current version of Templeton supports two types of security:</p>
        <ul>
        <li>Default security (without additional authentification)</li>
-       <li>Authentification via Kerberos</li>
+       <li>Authentification via 
+           <a href="http://web.mit.edu/kerberos/">Kerberos</a></li>
        </ul>
      <section>
        <title>Standard Parameters </title>
@@ -68,8 +78,8 @@
  
    <section>
       <title>WebHDFS and Code Push</title>
-      <p>Data and code that are used by Templeton resources must be placed in 
-         Hadoop.  The current version of Templeton does not attemp to integrate or replace
+      <p>Data and code that are used by Templeton resources must first be placed in 
+         Hadoop.  The current version of Templeton does not attempt to integrate or replace
          existing web interfaces which can perform this task, like Web HDFS.  (Integration 
          of these functions in some way, perhaps forwarding, is planned for a future
          release.) This guide will sometimes refer to using Web HDFS to push code or data
@@ -102,7 +112,8 @@
    <section>
     <title>Project Name</title>
     <p>The Templeton project is named after the a character in the award-winning 
-       children's novel Charlotte's Web.  The novel's protagonist is a pig named 
+       children's novel Charlotte's Web, by E. B. White.
+       The novel's protagonist is a pig named 
        Wilber.  Templeton is a rat who helps Wilber by running errands 
        and making deliveries.</p>
    </section>

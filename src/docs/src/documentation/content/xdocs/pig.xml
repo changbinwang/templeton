@@ -25,7 +25,7 @@
   <body>
   <section>
    <title>Description</title>
-    <p>Provides a Web API for running Pig programs.</p>
+    <p>Create and queue a Pig job.</p>
   </section>
 
   <section>
@@ -49,6 +49,12 @@
         <td>One of either "exec" or "src" is required</td>
         <td>None</td>
     </tr>  
+
+    <tr><td><strong>...</strong></td>
+        <td>Some options for configuration, TBD.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
     </table>
   </section>
 

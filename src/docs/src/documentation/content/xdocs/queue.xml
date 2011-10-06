@@ -25,8 +25,8 @@
   <body>
   <section>
    <title>Description</title>
-    <p>Check the status of or kill jobs given their job ID.  Substitute ":id" with
-     the job ID you received when the job was created.</p>
+    <p>Check the status of or kill a job given its job ID.  Substitute ":id" with
+     the job ID received when the job was created.</p>
   </section>
 
   <section>

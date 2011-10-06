@@ -26,27 +26,25 @@
      <tr><th>Resource</th><th>Description</th></tr>
 
      <tr><td><a href="status.html">status</a></td>
-         <td>Templeton server status for heartbeat monitoring.</td></tr>
+         <td>Returns the Templeton server status.</td></tr>
 
      <tr><td><a href="ddl.html">ddl</a></td>
-         <td>The data definition language resource allows developers to perform the same
-             actions accessable via the HCatalog command line interface.</td></tr>
+         <td>Performs the actions accessable via the HCatalog command line interface.</td></tr>
 
      <tr><td><a href="pig.html">pig</a></td>
-         <td>Templeton interface to run pig programs.</td></tr>
+         <td>Creates and queues Pig jobs.</td></tr>
 
      <tr><td><a href="mapreducestreaming.html">mapreduce/streaming</a></td>
-         <td>Templeton interface for running Hadoop MapReduce programs
-             using streaming.</td></tr>
+         <td>Creates and queues Hadoop streaming MapReduce jobs.</td></tr>
 
      <tr><td><a href="mapreducejar.html">mapreduce/jar</a></td>
-         <td>Templeton interface for running Hadoop MapReduce programs.</td></tr>
+         <td>Creates and queues standard Hadoop MapReduce jobs.</td></tr>
 
      <tr><td><a href="hive.html">hive</a></td>
-         <td>Templeton interface to run hive commands and programs.</td></tr>
+         <td>Runs Hive queries and commands.</td></tr>
 
      <tr><td><a href="queue.html">queue/:id</a></td>
-         <td>Provides access to Templeton jobs by job ID.</td></tr>
+         <td>Returns the status of a job, or kills a job, given it's ID.</td></tr>
 
      </table>     
   </body>

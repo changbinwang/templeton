@@ -26,7 +26,7 @@
 
   <section>
    <title>Description</title>
-    <p>Provides a Web API for running Hadoop MapReduce programs using streaming.</p>
+    <p>Create and queue an Hadoop streaming MapReduce job.</p>
   </section>
 
   <section>
@@ -60,6 +60,12 @@
     <tr><td><strong>reducer</strong></td>
         <td>Location of the reducer program in Hadoop.</td>
         <td>Required</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>...</strong></td>
+        <td>Some options for configuration, TBD.</td>
+        <td>Optional</td>
         <td>None</td>
     </tr>
     </table>

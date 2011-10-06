@@ -25,7 +25,7 @@
   <body>
   <section>
    <title>Description</title>
-    <p>Provides a Web API for running Hive programs.</p>
+    <p>Runs a Hive query or set of commands.</p>
   </section>
 
   <section>
