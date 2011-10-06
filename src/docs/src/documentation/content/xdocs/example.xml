@@ -65,6 +65,7 @@ group by adverstiser_id;
  and simply push them into HDFS to be accessed when required by Templeton. </p>
 
 <source>
+??Still need to add web hdfs push!
 
 >POST /v1/templeton/ddl.json?exec="alter table rawevents add partition 20100819 hdfs://data/rawevents/20100819/data" 
 >{"result":"ok"}
@@ -77,7 +78,8 @@ group by adverstiser_id;
 >{"result": "ok", "status" "completed"}
 >
 >POST /v1/templeton/hive.json?src="hdfs://scripts/analyze.hive"
-
+>{"result": "ok", "jobid": "456"}
+>
 </source>
 
   </body>
