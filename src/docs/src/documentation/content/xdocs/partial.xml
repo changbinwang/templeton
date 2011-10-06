@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+
+<document>
+  <header>
+    <title>Partial Web API Specification </title>
+  </header>
+  <body>
+   <section>
+      <title>Overview </title> 
+       <p>This is the absolutely minimum spec to the hcat DDL possible.
+This will let us all agree on the format and will make it easy to get a
+very very small server working as a quick milestone.</p>
+
+<p>The rest of the Templeton specification would then use the same formats generally agreed to in this "mini spec".</p>
+
+<p>As instructed, this does not decompose the ddl language but rather uses
+that same hive ddl that the hcat command line supports.</p>
+
+<p>The security model is "pseudo security" and Kerberos.  In pseudo
+security we have absolute trust in the client.</p>
+
+<p>Unless noted, all calls take the standard parameters (see below).  On
+success, each call return HTTP code 200.  On failure, HTTP code 503
+(Service Unavailable) is returned with a formatted error message. </p>
+   </section>
+
+   <section>
+      <title>Check Status </title> 
+       <p>GET /v1/hcatalog/status.json</p>
+
+       <p>Returns the status of server.  Useful for heartbeat monitoring.</p>
+
+<p>Parameters -- Standard parameters (see below).</p>
+<p>Result -- The json object:</p>
+
+      <source> {"status": MESSAGE} </source>
+
+ <p>Where MESSAGE is a string similar to "ok".</p>
+
+   </section>
+
+   <section>
+      <title>Data Definition Manipulation </title> 
+       <p>POST /v1/hcatalog/ddl.json</p>
+
+<p>Parameters --</p>
+<ul>
+<li>exec : The hcat ddl string to execute [required]</li>
+<li>group : The user group to use when creating a table. [optional]</li>
+<li>permissions : The permissions string to use when creating a table. The format is "rwxr-wr-x".  [optional]</li>
+</ul>
+
+<p>Result --The json object:</p>
+
+     <source> {"result": MESSAGE} </source>
+
+<p> Where MESSAGE is a possibly empty result string from the hcat driver.</p>
+
+   </section>      
+   <section>
+      <title>Standard Parameters </title>
+      <p>Every api call can take these paramters to aid in authentication: </p>
+        <ul>
+        <li>user.name: The user name as a string.  Only valid when using pseudo security. </li>
+        <li>SPNEGO credentials: When running with Kerberos security on. </li>
+        </ul>
+   </section>
+  </body>
+</document>

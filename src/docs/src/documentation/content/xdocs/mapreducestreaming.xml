@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+
+<document>
+  <header>
+    <title>hcatalog/mapreduce/streaming </title>
+  </header>
+
+  <body>
+
+  <section>
+   <title>Description</title>
+    <p>Provides a Web API for running Hadoop MapReduce programs using streaming.</p>
+  </section>
+
+  <section>
+   <title>Usage</title>
+    <p><code>POST /v1/hcatalog/mapreduce/streaming.json?input="inputfile"&amp;output="outputfile"&amp;mapper="mapper"&amp;reducer="reducer"</code></p>
+  </section>
+
+  <section>
+   <title>Parameters</title>
+    <table>
+    <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
+    
+    <tr><td><strong>input</strong></td>
+        <td>Location of the input data in Hadoop.</td>
+        <td>Required</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>output</strong></td>
+        <td>Location in which to store the output data in Hadoop.</td>
+        <td>Required</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>mapper</strong></td>
+        <td>Location of the mapper program in Hadoop.</td>
+        <td>Required</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>reducer</strong></td>
+        <td>Location of the reducer program in Hadoop.</td>
+        <td>Required</td>
+        <td>None</td>
+    </tr>
+    </table>
+  </section>
+
+  <section>
+   <title>Results</title>
+     <p>The mapreduce/streaming function queues your MapReduce job and returns 
+       the json object:</p>
+     <p><code> {"result": MESSAGE, "jobid": JOBID} </code></p>
+     <p>Where MESSAGE is a string similar to "ok", 
+        and JOBID is a string containing the ID of your 
+        job in the queue.</p>    
+  </section> 
+  </body>
+</document>

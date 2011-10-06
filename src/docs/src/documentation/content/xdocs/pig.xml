@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+
+<document>
+  <header>
+    <title>hcatalog/pig </title>
+  </header>
+
+  <body>
+  <section>
+   <title>Description</title>
+    <p>Provides a Web API for running Pig programs. Note that all programs are run
+      in mapreduce mode.</p>
+  </section>
+
+  <section>
+   <title>Usage</title>
+    <p><code>POST /v1/hcatalog/pig.json?src="</code>program.pig<code>"</code></p>
+  </section>
+
+  <section>
+   <title>Parameters</title>
+    <table>
+    <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
+    
+    <tr><td><strong>exec</strong></td>
+        <td>String containing a single pig command to run.</td>
+        <td>One of either "exec" or "src" is required</td>
+        <td>None</td>
+    </tr>
+        
+    <tr><td><strong>src</strong></td>
+        <td>HDFS file name of the pig program script to run.</td>
+        <td>One of either "exec" or "src" is required</td>
+        <td>None</td>
+    </tr>  
+    </table>
+  </section>
+
+  <section>
+   <title>Results</title>
+     <p>The pig function queues your pig job and returns the JSON object:</p>
+     <p><code> {"result": MESSAGE, "jobid": JOBID} </code></p>
+     <p>Where MESSAGE is a string similar to "ok", 
+        and JOBID is a string containing the ID of your 
+        job in the queue.</p>    
+  </section> 
+  </body>
+</document>

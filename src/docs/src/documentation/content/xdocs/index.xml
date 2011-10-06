@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+
+<document>
+  <header>
+    <title>Templeton </title>
+  </header>
+  <body>
+
+   <section>
+      <title>Introduction </title> 
+       <p>Templeton provides a RESTful web API for HCatalog and related Hadoop components.
+        As shown in the figure below, developers can use the Templeton server to access
+        Hadoop MapReduce, Pig, Hive, and HCatalog DDL from within applications. 
+        Data and code used by Templeton is maintained in HDFS.  Developers specify a location
+        in HDFS into which Templeton should place job results. Jobs are queued by 
+        Templeton and can be monitored for progress or stopped as required.</p>
+       <figure src="images/TempletonArchV2.jpg" align="left" alt="Templeton Architecture"/>
+   </section>
+
+    <section>
+       <title>URL format </title>
+       <p>Templeton resources are accessed using the following URL format:</p>
+       <p><code>http://</code><em>yourserver</em><code>/v1/templeton/</code><em>resource.format</em></p>
+       <p>where "<em>yourserver</em>" is replaced with your server name, and 
+          "<em>resource.format</em>" is replaced by the Templeton 
+          resource name and output response format.  Note that in Templeton 
+          version 0.1.0, JSON is the only supported response format.</p>
+       <p>For example, to check if the Templeton server is running you could 
+          access the following URL:</p>
+       <p><code>http://www.myserver.com/v1/templeton/status.json </code></p>
+    </section>
+
+   <section>
+      <title>Security </title> 
+       <p>The current version of Templeton supports two types of security:</p>
+       <ul>
+       <li>Default security (without additional authentification)</li>
+       <li>Authentification via Kerberos</li>
+       </ul>
+     <section>
+       <title>Standard Parameters </title>
+       <p>Every Templeton resource can accept the following parameters to 
+         aid in authentication: </p>
+         <ul>
+         <li>user.name: The user name as a string.  
+             Only valid when using default security. </li>
+         <li>SPNEGO credentials: When running with Kerberos authentification. </li>
+         </ul>
+     </section>
+   </section>
+ 
+   <section>
+      <title>WebHDFS and Code Push</title>
+      <p>Data and code that are used by Templeton resources must be placed in 
+         Hadoop.  The current version of Templeton does not attemp to integrate or replace
+         existing web interfaces which can perform this task, like Web HDFS.  (Integration 
+         of these functions in some way, perhaps forwarding, is planned for a future
+         release.) This guide will sometimes refer to using Web HDFS to push code or data
+         into Hadoop, but in all cases 
+         you can do this in whatever manner is most convienient for you.</p>
+   </section>
+
+   <section>
+        <title>Error Codes and Responses</title>
+        <p>The Templeton server returns the following HTTP status codes.  These are returned
+        currently in JSON.</p>
+        <ul>
+        <li><strong>200 OK:</strong> Success!</li>
+        <li><strong>400 Bad Request:</strong> The request was invalid.</li>
+        <li><strong>401 Unauthorized:</strong> Credentials were missing or incorrect.</li>
+        <li><strong>404 Not Found:</strong> The URI requested is invalid or the 
+                    resource requested does not exist.</li>
+        <li><strong>500 Internal Server Error:</strong> We received an unexpected result.</li>
+        </ul>
+   </section>
+
+   <section>
+      <title>Unsupported items </title>
+      <p>Interfaces to the following items are currently unsupported: </p>
+        <ul>
+        <li>Notifications</li>
+        </ul>
+   </section>
+
+   <section>
+    <title>Project Name</title>
+    <p>The Templeton project is named after the a character in the award-winning 
+       children's novel Charlotte's Web.  The novel's protagonist is a pig named 
+       Wilber.  Templeton is a rat who helps Wilber by running errands 
+       and making deliveries.</p>
+   </section>
+  </body>
+</document>
