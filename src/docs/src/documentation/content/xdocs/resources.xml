@@ -29,7 +29,7 @@
          <td>Returns the Templeton server status.</td></tr>
 
      <tr><td><a href="ddl.html">ddl</a></td>
-         <td>Performs the actions accessable via the HCatalog command line interface.</td></tr>
+         <td>Performs an HCatalog DDL command.</td></tr>
 
      <tr><td><a href="pig.html">pig</a></td>
          <td>Creates and queues Pig jobs.</td></tr>
@@ -44,7 +44,7 @@
          <td>Runs Hive queries and commands.</td></tr>
 
      <tr><td><a href="queue.html">queue/:id</a></td>
-         <td>Returns the status of a job, or kills a job, given it's ID.</td></tr>
+         <td>Returns the status of a job, or kills a job, given its ID.</td></tr>
 
      </table>     
   </body>
