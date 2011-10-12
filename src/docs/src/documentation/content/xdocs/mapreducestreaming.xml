@@ -19,19 +19,21 @@
 
 <document>
   <header>
-    <title>templeton/mapreduce/streaming </title>
+    <title>POST templeton/mapreduce/streaming </title>
   </header>
 
   <body>
 
   <section>
    <title>Description</title>
-    <p>Create and queue an Hadoop streaming MapReduce job.</p>
+    <p>Create and queue an 
+     <a href="http://hadoop.apache.org/common/docs/current/streaming.html">Hadoop 
+      streaming MapReduce</a> job.</p>
   </section>
 
   <section>
-   <title>Usage</title>
-    <p><code>POST /v1/templeton/mapreduce/streaming.json?input="infile"&amp;output="outfile"&amp;mapper="map"&amp;reducer="reduce"</code></p>
+   <title>URL</title>
+    <p><code>http://</code>www.myserver.com<code>/v1/templeton/mapreduce/streaming.json</code></p>
   </section>
 
   <section>
@@ -46,9 +48,11 @@
     </tr>
 
     <tr><td><strong>output</strong></td>
-        <td>Location in which to store the output data in Hadoop.</td>
-        <td>Required</td>
-        <td>None</td>
+        <td>Location in which to store the output data.  If not specified, 
+            Templeton will store the output in a location that can be discovered 
+            using the <a href="queue.html">queue</a> resource.</td>
+        <td>Optional</td>
+        <td>See description</td>
     </tr>
 
     <tr><td><strong>mapper</strong></td>
@@ -80,5 +84,16 @@
         and JOBID is a string containing the ID of your 
         job in the queue.</p>    
   </section> 
+
+  <section>
+   <title>Example</title>
+<source>
+>
+>curl --data "input=hdfs://data/input&amp;mapper=hdfs://scripts/mapper&amp;reducer=hdfs://scripts/reducer" \
+ 'http://www.myserver.com/v1/templeton/mapreduce/streaming.json'
+>{"result": "ok", "jobid": "37275"}
+></source>
+  </section>
+
   </body>
 </document>

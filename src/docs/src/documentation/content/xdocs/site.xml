@@ -41,6 +41,7 @@ See http://forrest.apache.org/docs/linking.html for more info
    <docs label="Templeton"> 
     <index label="Overview" href="index.html" />
     <index label="Example" href="example.html" />
+    <index label="Installation" href="installation.html" />
     <index label="Reference">
      <index label="Resource List" href="resources.html" />
      <index label="status" href="status.html" />
@@ -49,7 +50,8 @@ See http://forrest.apache.org/docs/linking.html for more info
      <index label="mapreduce/streaming" href="mapreducestreaming.html" />
      <index label="mapreduce/jar" href="mapreducejar.html" />
      <index label="hive" href="hive.html" />
-     <index label="queue/:id" href="queue.html" />
+     <index label="GET queue/:id" href="queue.html" />
+     <index label="DELETE queue/:id" href="queuedelete.html" />
     </index>
     <about tab="home" label="About" href="">
      <all_sitePDF label="Full PDF" href="wholesite.pdf" />

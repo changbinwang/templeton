@@ -19,18 +19,18 @@
 
 <document>
   <header>
-    <title>templeton/hive </title>
+    <title>POST templeton/hive </title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Runs a Hive query or set of commands.</p>
+    <p>Runs a <a href="http://hive.apache.org/">Hive</a> query or set of commands.</p>
   </section>
 
   <section>
-   <title>Usage</title>
-    <p><code>POST /v1/templeton/hive.json?src="</code>program.hql<code>"</code></p>
+   <title>URL</title>
+    <p><code>http://</code>www.myserver.com<code>/v1/templeton/hive.json</code></p>
   </section>
 
   <section>
@@ -45,24 +45,49 @@
     </tr>
         
     <tr><td><strong>src</strong></td>
-        <td>HDFS file name of the HQL program script to run.</td>
+        <td>HDFS file name of the Hive program script to run.</td>
         <td>One of either "exec" or "src" is required</td>
         <td>None</td>
     </tr>  
+
+    <tr><td><strong>output</strong></td>
+        <td>Location in which to store the output data.  If not specified, 
+            Templeton will store the output in a location that can be discovered 
+            using the <a href="queue.html">queue</a> resource.</td>
+        <td>Optional</td>
+        <td>See description</td>
+    </tr>
+
+    <tr><td><strong>output_type</strong></td>
+        <td>Either "file" or "table" depending on how the output is to be stored</td>
+        <td>Optional</td>
+        <td>"file"</td>
+    </tr>
+
+    <tr><td><strong>...</strong></td>
+        <td>Some options for configuration, TBD.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
     </table>
   </section>
 
   <section>
    <title>Results</title>
-     <p>The Hive function runs your hive job and returns the JSON object:</p>
-     <p><code> {"result": MESSAGE, "jobid": JOBID, "status": STATUS} </code></p>
+     <p>The Hive function queues your hive job and returns the JSON object:</p>
+     <p><code> {"result": MESSAGE, "jobid": JOBID} </code></p>
      <p>Where MESSAGE is a string similar to "ok", JOBID is a 
-        string containing the ID of your 
-        job, and STATUS is a string containg the current job status, for example 
-        "completed" or "running".</p>   
-     <p><strong>Note:</strong> Your results are limited to 1MB.  In addition, your 
-        Hive statement or program must store the results somewhere in HDFS for you
-        to retrieve them.</p> 
+        string containing the ID of your job.</p>   
   </section> 
+
+  <section>
+   <title>Example</title>
+<source>
+>
+>curl --data "src=hdfs://src/main.hql" 'http://www.myserver.com/v1/templeton/hive.json'
+>{"result": "ok", "jobid": "37275"}
+></source>
+  </section>
+
   </body>
 </document>

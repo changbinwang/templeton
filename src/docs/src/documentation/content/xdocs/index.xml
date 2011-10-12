@@ -28,17 +28,19 @@
        <p>Templeton provides a REST-like web API for
         <a href="http://incubator.apache.org/hcatalog/">HCatalog</a> 
         and related Hadoop components.
-        As shown in the figure below, developers make HTTP requests to Templeton to access
+        As shown in the figure below, developers make HTTP requests to access
         <a href="http://hadoop.apache.org/mapreduce/">Hadoop MapReduce</a>, 
         <a href="http://pig.apache.org/">Pig</a>, 
         <a href="http://hive.apache.org/">Hive</a>, and 
         <a href="http://incubator.apache.org/hcatalog/docs/r0.2.0/cli.html">
         HCatalog DDL</a> from within applications. 
         Data and code used by Templeton is maintained in 
-        <a href="http://hadoop.apache.org/hdfs/">HDFS</a>.  Developers specify a location
-        in HDFS into which Templeton should place Pig, Hive, and MapReduce results. 
+        <a href="http://hadoop.apache.org/hdfs/">HDFS</a>.  HCatalog DDL commands 
+        are executed directly when requested.     
         MapReduce, Pig, and Hive jobs are placed in queue by 
-        Templeton and can be monitored for progress or stopped as required.</p>
+        Templeton and can be monitored for progress or stopped as required.  
+        Developers specify a location
+        in HDFS into which Templeton should place Pig, Hive, and MapReduce results.</p>
        <figure src="images/TempletonArchV2.jpg" align="left" alt="Templeton Architecture"/>
    </section>
 
@@ -99,7 +101,9 @@
         </ul>
         <p>Other data returned directly by Templeton is currently returned in JSON format.
          JSON responses are limited to 1MB in size.  Responses over this limit must be
-         stored into HDFS using provided options instead of being directly returned.</p>
+         stored into HDFS using provided options instead of being directly returned.
+         If an HCatalog DDL command might return results greater than 1MB, it's
+         suggested that a corresponding Hive request be executed instead.</p>
    </section>
 
    <section>

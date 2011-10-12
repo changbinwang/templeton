@@ -19,35 +19,76 @@
 
 <document>
   <header>
-    <title>templeton/queue/:id </title>
+    <title>GET templeton/queue/:id </title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Check the status of or kill a job given its job ID.  Substitute ":id" with
-     the job ID received when the job was created.</p>
+    <p>Check the status of a job and get related job information given its job ID.  
+     Substitute ":id" with the job ID received when the job was created.</p>
   </section>
 
   <section>
-   <title>Usage</title>
-    <p><code>GET /v1/templeton/queue/</code><em>:id</em><code>.json</code></p>
-    <p><code>DELETE /v1/templeton/queue/</code><em>:id</em><code>.json</code></p>
+   <title>URL</title>
+    <p><code>http://</code>www.myserver.com<code>/v1/templeton/queue/</code>:id<code>.json</code></p>
   </section>
 
   <section>
    <title>Parameters</title>
-    <p>Only the <a href="index.html#Standard+Parameters">standard parameters</a>
-       are accepted.</p>
+    <table>
+    <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
+    
+    <tr><td><strong>:id</strong></td>
+        <td>String containing the job ID to check. This is the ID received when then job
+         job was created.</td>
+        <td>Required</td>
+        <td>None</td>
+    </tr>
+    </table>
   </section>
 
   <section>
    <title>Results</title>
      <p>Returns the JSON object:</p>
-     <p><code> {"result": MESSAGE, "status": STATUS} </code></p>
-     <p>Where MESSAGE is a string similar to "ok", and STATUS is a string 
-        containg the current job status, for example 
-        "completed", "error", "aborted", or "running".</p>    
+     <p><code> {"result": MESSAGE, "status": STATUS, "stdout":OUTLOCATION, "stderr":ERRLOCATION} </code></p>
+
+    <table>
+    <tr><th>Name</th><th>Description</th></tr>   
+    <tr><td><strong>result</strong></td>
+        <td>String similar to "ok" if the request was successfully completed.</td>
+    </tr>
+
+    <tr><td><strong>status</strong></td>
+        <td>String containing the status of the Job ID.  Possible values include: 
+        <ul>
+        <li>"queued": not yet begun</li>
+        <li>"not found": Job ID not found</li>
+        <li>"completed": successful</li> 
+        <li>"error": stopped unsuccessfully</li>
+        <li>"cancelled": killed before it began</li>
+        <li>"aborted": killed after it began but before completion</li>
+        </ul>
+        </td>
+    </tr>
+
+    <tr><td><strong>stdout</strong></td>
+        <td>Location to which stdout from the operation was stored.</td>
+    </tr>
+
+    <tr><td><strong>stderr</strong></td>
+        <td>Location to which stderr form the operation was stored.</td>
+    </tr>
+    </table>
  </section> 
+
+  <section>
+   <title>Example</title>
+<source>
+>
+>curl 'http://www.myserver.com/v1/templeton/queue/37275.json'
+>{"result": "ok", "status": "completed", "stdout": "hdfs://stdout/37275", "stderr": "hdfs://stderr/37275"}
+></source>
+  </section>
  </body>
 </document>

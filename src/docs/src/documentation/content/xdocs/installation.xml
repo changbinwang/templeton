@@ -19,41 +19,15 @@
 
 <document>
   <header>
-    <title>GET templeton/status </title>
+    <title>Installation </title>
   </header>
-
   <body>
-  <section>
-   <title>Description</title>
-    <p>Returns the current status of the Templeton server.  
-       Useful for heartbeat monitoring.</p>
-  </section>
 
-  <section>
-   <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/v1/templeton/status.json</code></p>
-  </section>
+   <section>
+      <title>Introduction </title> 
+       <p>In the future this page will contain instructions for the installation of
+        Templeton.</p>
+   </section>
 
-  <section>
-   <title>Parameters</title>
-    <p>Only the <a href="index.html#Standard+Parameters">standard parameters</a>
-       are accepted.</p>
-  </section>
-
-  <section>
-   <title>Results</title>
-    <p>Returns the JSON object:</p>
-    <p><code> {"status": MESSAGE} </code></p>
-    <p>Where MESSAGE is a string similar to "ok".</p>
-  </section>
-
-  <section>
-   <title>Example</title>
-<source>
->
->curl 'http://www.myserver.com/v1/templeton/status.json'
->{"status": "ok"}
-></source>
-  </section>
- </body>
+  </body>
 </document>

@@ -43,8 +43,11 @@
      <tr><td><a href="hive.html">hive</a></td>
          <td>Runs Hive queries and commands.</td></tr>
 
-     <tr><td><a href="queue.html">queue/:id</a></td>
-         <td>Returns the status of a job, or kills a job, given its ID.</td></tr>
+     <tr><td><a href="queue.html">GET queue/:id</a></td>
+         <td>Returns the status of a job given its ID.</td></tr>
+
+     <tr><td><a href="queuedelete.html">DELETE queue/:id</a></td>
+         <td>Kill a job given its ID.</td></tr>
 
      </table>     
   </body>

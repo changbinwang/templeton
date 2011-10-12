@@ -19,19 +19,21 @@
 
 <document>
   <header>
-    <title>templeton/ddl </title>
+    <title>POST templeton/ddl </title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Performs the same functions available when using the HCatalog 
-       command line interface</p>
+    <p>Performs an <a href="http://incubator.apache.org/hcatalog/docs/r0.2.0/cli.html">
+        HCatalog DDL</a> command.  The command is executed "immediately" upon request.
+        Responses are limited to 1MB.  For requests which may return longer results
+        consider using the <a href="hive.html">Hive resoure</a> as an alternative.</p>
   </section>
 
   <section>
-   <title>Usage</title>
-    <p><code>POST /v1/templeton/ddl.json</code></p>
+   <title>URL</title>
+    <p><code>http://</code>www.myserver.com<code>/v1/templeton/ddl.json</code></p>
   </section>
 
   <section>
@@ -55,7 +57,7 @@
         <td>The permissions string to use when creating a table.  The format is 
           "<code>rwxrw-r-x</code>".</td>
         <td>Optional</td>
-        <td><code>rw-rw-rw-</code></td>
+        <td>None</td>
     </tr>   
     </table>
   </section>
@@ -63,8 +65,20 @@
   <section>
    <title>Results</title>
      <p>Returns the JSON object:</p>
-     <p><code> {"result": MESSAGE} </code></p>
-     <p>Where MESSAGE is a possibly empty result string from the hcat driver.</p>    
+     <p><code> {"result": MESSAGE, "response": HCATRESPONSE} </code></p>
+     <p>Where MESSAGE is a string similar to "ok"
+      and HCATRESPONSE is a possibly empty response string from 
+      the HCatalog driver.</p>    
  </section> 
+
+ <section>
+   <title>Example</title>
+<source>
+>
+>curl --data "exec=alter%20table%20raw%20add%20partition%20new%20hdfs://data/raw/new/data" \
+ 'http://www.myserver.com/v1/templeton/ddl.json'
+>{"result": "ok", "response": ""}
+></source>
+ </section>
  </body>
 </document>

@@ -19,18 +19,18 @@
 
 <document>
   <header>
-    <title>templeton/pig </title>
+    <title>POST templeton/pig </title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Create and queue a Pig job.</p>
+    <p>Create and queue a <a href="http://pig.apache.org/">Pig</a> job.</p>
   </section>
 
   <section>
-   <title>Usage</title>
-    <p><code>POST /v1/templeton/pig.json?src="</code>program.pig<code>"</code></p>
+   <title>URL</title>
+    <p><code>http://</code>www.myserver.com<code>/v1/templeton/pig.json</code></p>
   </section>
 
   <section>
@@ -50,6 +50,14 @@
         <td>None</td>
     </tr>  
 
+    <tr><td><strong>output</strong></td>
+        <td>Location in which to store the output data.  If not specified, 
+            Templeton will store the output in a location that can be discovered 
+            using the <a href="queue.html">queue</a> resource.</td>
+        <td>Optional</td>
+        <td>See description</td>
+    </tr>
+
     <tr><td><strong>...</strong></td>
         <td>Some options for configuration, TBD.</td>
         <td>Optional</td>
@@ -66,5 +74,14 @@
         and JOBID is a string containing the ID of your 
         job in the queue.</p>    
   </section> 
+
+  <section>
+   <title>Example</title>
+<source>
+>
+>curl --data "src=hdfs://src/main.pig" 'http://www.myserver.com/v1/templeton/pig.json'
+>{"result": "ok", "jobid": "37275"}
+></source>
+  </section>
   </body>
 </document>
