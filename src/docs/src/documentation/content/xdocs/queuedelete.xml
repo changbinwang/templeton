@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+
+<document>
+  <header>
+    <title>DELETE templeton/queue/:id </title>
+  </header>
+
+  <body>
+  <section>
+   <title>Description</title>
+    <p>Kill a job given its job ID.  
+     Substitute ":id" with the job ID received when the job was created.</p>
+  </section>
+
+  <section>
+   <title>URL</title>
+    <p><code>http://</code>www.myserver.com<code>/v1/templeton/queue/</code>:id<code>.json</code></p>
+  </section>
+
+  <section>
+   <title>Parameters</title>
+    <table>
+    <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
+    
+    <tr><td><strong>:id</strong></td>
+        <td>String containing the job ID to check. This is the ID received when then job
+         job was created.</td>
+        <td>Required</td>
+        <td>None</td>
+    </tr>
+    </table>
+  </section>
+
+  <section>
+   <title>Results</title>
+     <p>Returns the JSON object:</p>
+     <p><code> {"result": MESSAGE, "status": STATUS}</code></p>
+  
+    <table>
+    <tr><th>Name</th><th>Description</th></tr>   
+    <tr><td><strong>result</strong></td>
+        <td>String similar to "ok" if the request was successfully completed.</td>
+    </tr>
+
+    <tr><td><strong>status</strong></td>
+        <td>String containing the status of the Job ID.  Possible values include: 
+        <ul>
+        <li>"not found": Job ID not found</li>
+        <li>"completed": Job completed before it could be killed</li> 
+        <li>"cancelled": killed before it began</li>
+        <li>"aborted": killed after it began but before completion</li>
+        </ul>
+        </td>
+    </tr>
+    </table>
+ </section> 
+
+  <section>
+   <title>Example</title>
+<source>
+>
+>curl -X DELETE 'http://www.myserver.com/v1/templeton/queue/37275.json'
+>{"result": "ok", "status": "aborted"}
+></source>
+  </section>
+ </body>
+</document>
