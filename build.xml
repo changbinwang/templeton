@@ -46,6 +46,9 @@
   <property name="dist.dir" value="${build.dir}/${final.name}" />
   <property name="webapp.dir" value="${basedir}/src/webapp"/>
   <property name="build.webapp" value="${build.dir}/webapp"/>
+  <condition property="forrest.home" value="${env.FORREST_HOME}">
+      <isset property="env.FORREST_HOME"/>
+  </condition>
 
   <!-- javac properties -->
   <property name="build.encoding" value="UTF8" />
@@ -293,16 +296,14 @@
     ================================================================================
     -->
   <target name="docs" depends="javadoc, forrest.check" description="Generate forrest-based documentation. To use, specify -Dforrest.home=&lt;base of Apache Forrest installation&gt; on the command line." if="forrest.home">
-    <exec dir="${docs.src}" executable="${forrest.home}/bin/forrest"
-          failonerror="true">
+    <exec dir="${docs.src}" executable="${forrest.home}/bin/forrest" failonerror="true">
+      <arg line="-Dproject.build-dir=${build.docs}" />
     </exec>
-    <copy todir="${build.docs}/">
-      <fileset dir="${docs.src}/build/site/" />
-    </copy>
   </target>
 
-  <target name="forrest.check" unless="forrest.home" >
-    <fail message="'forrest.home' is not defined. Please pass -Dforrest.home=&lt;base of Apache Forrest installation&gt; to Ant on the command-line." />
+  <target name="forrest.check" >
+    <fail message="'forrest.home' is not defined. Please pass -Dforrest.home=&lt;base of Apache Forrest installation&gt; to Ant on the command-line."
+          unless="forrest.home"/>
   </target>
 
   <target name="javadoc" depends="jar" description="Create documentation">
