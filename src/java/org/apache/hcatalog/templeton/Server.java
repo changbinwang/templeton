@@ -17,33 +17,66 @@
  */
 package org.apache.hcatalog.templeton;
 
+import java.io.IOException;
+import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.exec.ExecuteException;
+
 /**
- * Stub for the Templeton Web API server.
+ * The Templeton Web API server.
  */
 @Path("/v1")
 public class Server {
-    public final String statusMsg = "{\"status\": \"ok\"}\n";
+    public static final String STATUS_MSG
+        = "{\"status\": \"ok\", \"version\": \"v1\"}\n";
+    public static final String USER_PARAM = "user.name";
+
+    private ExecService execService;
 
     /**
-     * Check the status of this server
+     * Check the status of this server.
      */
     @GET
     @Path("status.json")
     @Produces({MediaType.APPLICATION_JSON})
     public String status() {
-        return statusMsg;
+        return STATUS_MSG;
     }
 
     /**
-     * Start the server.
+     * Exececute a program on the local box.  It is run as the
+     * authenticated user, limited to a small set of programs, and
+     * rate limited.
      */
-    public static void main(String[] args) {
-        System.err.println("hello world");
-        System.exit(1);
+    @GET
+    @Path("exec.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public ExecBean exec(@QueryParam(USER_PARAM) String user,
+                         @QueryParam("program") String program,
+                         @QueryParam("arg") List<String> args)
+        throws ExecuteException, IOException
+    {
+        verifyUser(user);
+        return getExecService().run(user, program, args);
+    }
+
+    /**
+     * Verify that we have a valid user.  Throw an exception if invalid.
+     */
+    public void verifyUser(String user) {
+        if (user == null) {
+            throw new NotAuthorizedException("missing " + USER_PARAM + " parameter");
+        }
+    }
+
+    public ExecService getExecService() {
+        if (execService == null)
+            execService = new ExecService();
+        return execService;
     }
 }

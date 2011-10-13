@@ -41,9 +41,9 @@
                 name="junit"
                 rev="${junit.version}"
                 conf="common->default"/>
-    <dependency org="commons-cli"
-                name="commons-cli"
-                rev="${commons-cli.version}"
+    <dependency org="org.apache.commons"
+                name="commons-exec"
+                rev="1.1"
                 conf="common->master"/>
 
     <dependency org="com.sun.jersey"
@@ -66,6 +66,43 @@
     <dependency org="com.sun.jersey"
                 name="jersey-json"
                 rev="1.9.1"
+                conf="common->master"/>
+
+    <dependency org="org.codehaus.jackson"
+                name="jackson-core-asl"
+                rev="1.8.3"
+                conf="common->master"/>
+    <dependency org="org.codehaus.jackson"
+                name="jackson-mapper-asl"
+                rev="1.8.3"
+                conf="common->master"/>
+    <dependency org="org.codehaus.jackson"
+                name="jackson-jaxrs"
+                rev="1.8.3"
+                conf="common->master"/>
+    <dependency org="org.codehaus.jackson"
+                name="jackson-xc"
+                rev="1.8.3"
+                conf="common->master"/>
+    <dependency org="org.codehaus.jettison"
+                name="jettison"
+                rev="1.1"
+                conf="common->master"/>
+    <dependency org="com.sun.xml.bind"
+                name="jaxb-impl"
+                rev="2.2.3-1"
+                conf="common->master"/>
+    <dependency org="javax.xml.bind"
+                name="jaxb-api"
+                rev="2.2.2"
+                conf="common->master"/>
+    <dependency org="javax.activation"
+                name="activation"
+                rev="1.1"
+                conf="common->master"/>
+    <dependency org="javax.xml.stream"
+                name="stax-api"
+                rev="1.0-2"
                 conf="common->master"/>
 
     <dependency org="asm"
