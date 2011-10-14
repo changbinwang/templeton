@@ -20,7 +20,9 @@ package org.apache.hcatalog.templeton;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -29,15 +31,31 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 
 /**
- * Execute a local program.
+ * Execute a local program.  This is a singelton service that will
+ * execute authorized programs as non-privileged users on the local
+ * box.  See ExecService.run and ExecService.runUnlimited for details.
  */
 public class ExecService {
     public static final String ENCODING = "UTF-8";
     public static final int TIMEOUT_MS = 10 * 1000;
     public static final int MAX_EXECS = 8;
 
+    public static final String SUDO = "/usr/bin/sudo";
+
+    public static final String HCAT = "hcat";
+    public static HashMap<String, String> authorizedPrograms
+        = new HashMap<String, String>() {{
+            put(HCAT, "/usr/local/hcat/bin/hcat");
+            put("date", "/bin/date");
+        }};
+
+    public static final String[] SUDO_ENV_VARS = {"HADOOP_HOME", "JAVA_HOME"};
+
     private static volatile ExecService theSingleton;
 
+    /**
+     * Retrieve the singleton.
+     */
     public static synchronized ExecService getInstance() {
         if (theSingleton == null) {
             theSingleton = new ExecService();
@@ -52,17 +70,16 @@ public class ExecService {
     }
 
     /**
-     * Run the program synchronously as the given user.  Warning:
-     * CommandLine will trim the argument strings.  We rate limit the
-     * number of processes that can simultaneously created for this
-     * instance.
+     * Run the program synchronously as the given user. We rate limit
+     * the number of processes that can simultaneously created for xx
+     * this instance.
      *
      * @param user      A valid user
      * @param program   The program name to run
      * @returns         The result of the run.
      */
     public ExecBean run(String user, String program, List<String> args)
-        throws BusyException, ExecuteException, IOException
+        throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
         boolean aquired = false;
         try {
@@ -81,14 +98,15 @@ public class ExecService {
 
     /**
      * Run the program synchronously as the given user.  Warning:
-     * CommandLine will trim the argument strings.
+     * CommandLine will trim the argument strings.  Only authorized
+     * programs may be run.
      *
      * @param user      A valid user
-     * @param program   The program name to run
+     * @param program   The program name to run.
      * @returns         The result of the run.
      */
     public ExecBean runUnlimited(String user, String program, List<String> args)
-        throws ExecuteException, IOException
+        throws NotAuthorizedException, ExecuteException, IOException
     {
         DefaultExecutor executor = new DefaultExecutor();
         executor.setExitValues(null);
@@ -102,16 +120,77 @@ public class ExecService {
         ExecuteWatchdog watchdog = new ExecuteWatchdog(TIMEOUT_MS);
         executor.setWatchdog(watchdog);
 
-        CommandLine cmd = new CommandLine(new File(program));
-        for (String arg : args) {
-            cmd.addArgument(arg, false);
-        }
+        CommandLine cmd = makeCommandLine(user, program, args);
 
+        System.err.println("--- Running: " + cmd);
         ExecBean res = new ExecBean();
         res.exitCode = executor.execute(cmd);
         res.stdout = outStream.toString(ENCODING);
         res.stderr = errStream.toString(ENCODING);
 
         return res;
+    }
+
+    private CommandLine makeCommandLine(String user, String program, List<String> args)
+        throws NotAuthorizedException, IOException
+    {
+        String path = authedProgram(program);
+
+        CommandLine cmd = new CommandLine(new File(SUDO));
+        cmd.addArgument("-u");
+        cmd.addArgument(user);
+
+        for (Map.Entry entry : sudoEnv().entrySet()) {
+            cmd.addArgument(entry.getKey() + "=" + entry.getValue());
+        }
+
+        cmd.addArgument(path);
+        for (String arg : args) {
+            cmd.addArgument(arg, false);
+        }
+
+        return cmd;
+    }
+
+    /**
+     * Build the environment used for all sudo calls.
+     *
+     * @return The environment variables.
+     */
+    public Map<String, String> sudoEnv() {
+        HashMap<String, String> env = new HashMap<String, String>();
+
+        for (String key : SUDO_ENV_VARS) {
+            String val = System.getenv(key);
+            if (val != null) {
+                env.put(key, val);
+            }
+        }
+
+        return env;
+    }
+
+    /**
+     * Given an authorized program name, lookup the fully qualified
+     * path.  Throws an exception if the program is missing or not
+     * authorized.
+     *
+     * @param program   The name of the program without '/'
+     * @return          The path of the program.
+     */
+    public String authedProgram(String program)
+        throws NotAuthorizedException, IOException
+    {
+        String path = authorizedPrograms.get(program);
+        if (path == null) {
+            throw new NotAuthorizedException("Unauthorized program: " + program);
+        }
+
+        File f = new File(path);
+        if (f.canExecute()) {
+            return f.getCanonicalPath();
+        } else {
+            throw new NotAuthorizedException("Unable to access program: " + program);
+        }
     }
 }

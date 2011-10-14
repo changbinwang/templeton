@@ -18,8 +18,12 @@
 package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -52,15 +56,17 @@ public class Server {
      * authenticated user, limited to a small set of programs, and
      * rate limited.
      */
-    @GET
+    @POST
     @Path("exec.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public ExecBean exec(@QueryParam(USER_PARAM) String user,
-                         @QueryParam("program") String program,
-                         @QueryParam("arg") List<String> args)
-        throws NotAuthorizedException, BusyException, ExecuteException, IOException
+    public ExecBean exec(@FormParam(USER_PARAM) String user,
+                         @FormParam("program") String program,
+                         @FormParam("arg") List<String> args)
+        throws NotAuthorizedException, BusyException, BadParam,
+               ExecuteException, IOException
     {
         verifyUser(user);
+        verifyParam(program, "program");
         return execService.run(user, program, args);
     }
 
@@ -68,16 +74,32 @@ public class Server {
      * Exececute an hcat ddl expression on the local box.  It is run
      * as the authenticated user and rate limited.
      */
-    @GET
+    @POST
     @Path("ddl.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public ExecBean ddl(@QueryParam(USER_PARAM) String user,
-                        @QueryParam("program") String program,
-                        @QueryParam("arg") List<String> args)
-        throws NotAuthorizedException, BusyException, ExecuteException, IOException
+    public ExecBean ddl(@FormParam(USER_PARAM) String user,
+                        @FormParam("exec") String exec,
+                        @FormParam("group") String group,
+                        @FormParam("permissions") String permissions)
+        throws NotAuthorizedException, BusyException, BadParam,
+               ExecuteException, IOException
     {
         verifyUser(user);
-        return execService.run(user, program, args);
+        verifyParam(exec, "exec");
+
+        ArrayList<String> args = new ArrayList<String>();
+        args.add("-e");
+        args.add(exec);
+        if (group != null) {
+            args.add("-g");
+            args.add(group);
+        }
+        if (permissions != null) {
+            args.add("-p");
+            args.add(permissions);
+        }
+
+        return execService.run(user, ExecService.HCAT, args);
     }
 
     /**
@@ -88,6 +110,17 @@ public class Server {
     {
         if (user == null) {
             throw new NotAuthorizedException("missing " + USER_PARAM + " parameter");
+        }
+    }
+
+    /**
+     * Verify that the parameter exists.  Throw an exception if invalid.
+     */
+    public void verifyParam(String param, String name)
+        throws BadParam
+    {
+        if (param == null) {
+            throw new BadParam("Missing " + name + " parameter");
         }
     }
 }
