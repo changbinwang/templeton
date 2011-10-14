@@ -24,7 +24,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
 import org.apache.commons.exec.ExecuteException;
 
 /**
@@ -36,7 +35,7 @@ public class Server {
         = "{\"status\": \"ok\", \"version\": \"v1\"}\n";
     public static final String USER_PARAM = "user.name";
 
-    private ExecService execService;
+    private static ExecService execService = ExecService.getInstance();
 
     /**
      * Check the status of this server.
@@ -59,24 +58,36 @@ public class Server {
     public ExecBean exec(@QueryParam(USER_PARAM) String user,
                          @QueryParam("program") String program,
                          @QueryParam("arg") List<String> args)
-        throws ExecuteException, IOException
+        throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
         verifyUser(user);
-        return getExecService().run(user, program, args);
+        return execService.run(user, program, args);
+    }
+
+    /**
+     * Exececute an hcat ddl expression on the local box.  It is run
+     * as the authenticated user and rate limited.
+     */
+    @GET
+    @Path("ddl.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public ExecBean ddl(@QueryParam(USER_PARAM) String user,
+                        @QueryParam("program") String program,
+                        @QueryParam("arg") List<String> args)
+        throws NotAuthorizedException, BusyException, ExecuteException, IOException
+    {
+        verifyUser(user);
+        return execService.run(user, program, args);
     }
 
     /**
      * Verify that we have a valid user.  Throw an exception if invalid.
      */
-    public void verifyUser(String user) {
+    public void verifyUser(String user)
+        throws NotAuthorizedException
+    {
         if (user == null) {
             throw new NotAuthorizedException("missing " + USER_PARAM + " parameter");
         }
-    }
-
-    public ExecService getExecService() {
-        if (execService == null)
-            execService = new ExecService();
-        return execService;
     }
 }

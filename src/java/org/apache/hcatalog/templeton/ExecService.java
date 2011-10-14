@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
@@ -33,8 +34,50 @@ import org.apache.commons.exec.PumpStreamHandler;
 public class ExecService {
     public static final String ENCODING = "UTF-8";
     public static final int TIMEOUT_MS = 10 * 1000;
+    public static final int MAX_EXECS = 8;
 
-    public ExecService() {}
+    private static volatile ExecService theSingleton;
+
+    public static synchronized ExecService getInstance() {
+        if (theSingleton == null) {
+            theSingleton = new ExecService();
+        }
+        return theSingleton;
+    }
+
+    private Semaphore avail;
+
+    private ExecService() {
+        avail = new Semaphore(MAX_EXECS);
+    }
+
+    /**
+     * Run the program synchronously as the given user.  Warning:
+     * CommandLine will trim the argument strings.  We rate limit the
+     * number of processes that can simultaneously created for this
+     * instance.
+     *
+     * @param user      A valid user
+     * @param program   The program name to run
+     * @returns         The result of the run.
+     */
+    public ExecBean run(String user, String program, List<String> args)
+        throws BusyException, ExecuteException, IOException
+    {
+        boolean aquired = false;
+        try {
+            aquired = avail.tryAcquire();
+            if (aquired) {
+                return runUnlimited(user, program, args);
+            } else {
+                throw new BusyException();
+            }
+        } finally {
+            if (aquired) {
+                avail.release();
+            }
+        }
+    }
 
     /**
      * Run the program synchronously as the given user.  Warning:
@@ -44,7 +87,7 @@ public class ExecService {
      * @param program   The program name to run
      * @returns         The result of the run.
      */
-    public ExecBean run(String user, String program, List<String> args)
+    public ExecBean runUnlimited(String user, String program, List<String> args)
         throws ExecuteException, IOException
     {
         DefaultExecutor executor = new DefaultExecutor();

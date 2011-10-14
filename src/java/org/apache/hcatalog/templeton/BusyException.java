@@ -18,10 +18,10 @@
 package org.apache.hcatalog.templeton;
 
 /**
- * Simple "user not found" type exception.
+ * Simple "we are busy, try again" exception.
  */
-public class NotAuthorizedException extends SimpleWebException {
-    public NotAuthorizedException(String msg) {
-        super(400, msg);
+public class BusyException extends SimpleWebException {
+    public BusyException() {
+        super(503, "Busy, please retry");
     }
 }

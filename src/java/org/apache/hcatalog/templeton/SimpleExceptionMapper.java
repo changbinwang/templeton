@@ -17,11 +17,19 @@
  */
 package org.apache.hcatalog.templeton;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
+
 /**
- * Simple "user not found" type exception.
+ * Map our exceptions to the Jersey response.  This lets us have nice
+ * results in the error body.
  */
-public class NotAuthorizedException extends SimpleWebException {
-    public NotAuthorizedException(String msg) {
-        super(400, msg);
+@Provider
+public class SimpleExceptionMapper
+    implements ExceptionMapper<SimpleWebException>
+{
+    public Response toResponse(SimpleWebException e) {
+        return e.getResponse();
     }
 }
