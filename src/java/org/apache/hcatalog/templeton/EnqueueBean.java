@@ -18,25 +18,22 @@
 package org.apache.hcatalog.templeton;
 
 /**
- * ExecBean - The results of an exec call.
+ * EnqueueBean - The results of a call that enqueues a Hadoop job.
  */
-public class ExecBean {
-    public String stdout;
-    public String stderr;
-    public int exitCode;
+public class EnqueueBean {
+    public String id;
+    public ExecBean exec;
 
-    public ExecBean() {}
+    public EnqueueBean() {}
 
     /**
-     * Create a new ExecBean.
+     * Create a new EnqueueBean.
      *
-     * @param stdout     standard output of the the program.
-     * @param stderr     error output of the the program.
-     * @param exitCode   exit code of the program.
+     * @param id     job id
+     * @param exec   result of the call that queued the job
      */
-    public ExecBean(String stdout, String stderr, int exitCode) {
-        this.stdout = stdout;
-        this.stderr = stderr;
-        this.exitCode = exitCode;
+    public EnqueueBean(String id, ExecBean exec) {
+        this.id = id;
+        this.exec = exec;
     }
 }

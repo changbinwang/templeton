@@ -50,6 +50,14 @@
                 conf="common->master"/>
     <dependency org="org.apache.hadoop" name="hadoop-streaming" rev="0.20.203.0"
                 conf="common->master"/>
+    <dependency org="commons-logging" name="commons-logging" rev="1.0.4"
+                conf="common->master"/>
+    <dependency org="commons-configuration" name="commons-configuration" rev="1.6"
+                conf="common->master"/>
+    <dependency org="commons-configuration" name="commons-configuration" rev="1.6"
+                conf="common->master"/>
+    <dependency org="commons-lang" name="commons-lang" rev="2.5"
+                conf="common->master"/>
 
 
     <dependency org="com.sun.jersey"

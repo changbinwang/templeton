@@ -17,11 +17,21 @@
  */
 package org.apache.hcatalog.templeton;
 
+import java.io.File;;
 import java.io.IOException;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.apache.commons.exec.ExecuteException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapred.JobID;
+import org.apache.hadoop.mapred.JobProfile;
+import org.apache.hadoop.mapred.JobStatus;
+import org.apache.hadoop.mapred.JobTracker;
+import org.apache.hadoop.mapred.TempletonJobTracker;
+import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.hcatalog.templeton.tool.TempletonJarJob;
 import org.apache.hcatalog.templeton.tool.TempletonStreamJob;
 
 /**
@@ -29,12 +39,15 @@ import org.apache.hcatalog.templeton.tool.TempletonStreamJob;
  */
 public class DelegatorService {
     public static final String TEMPLETON_JAR = System.getenv("TEMPLETON_JAR");
-    public static final String STREAM_CLASS
-        = "org.apache.hcatalog.templeton.tool.TempletonStreamJob";
+    public static final String STREAM_CLASS = TempletonStreamJob.class.getName();
+    public static final String JAR_CLASS = TempletonJarJob.class.getName();
     public static final String STREAMING_JAR =
         System.getenv("HADOOP_HOME")
         + "/contrib/streaming/hadoop-streaming-0.20.203.0.jar";
 
+    public static String[] CONF_FILENAMES = {
+        "core-default.xml", "core-site.xml", "mapred-default.xml", "mapred-site.xml"
+    };
 
     private static volatile DelegatorService theSingleton;
 
@@ -88,10 +101,10 @@ public class DelegatorService {
      *
      * This is the backend of the mapreduce/streaming web service.
      */
-    public TrackerBean runStreaming( String user, List<String> inputs,
-                                     String output, String mapper, String reducer)
+    public EnqueueBean runStreaming(String user, List<String> inputs,
+                                    String output, String mapper, String reducer)
         throws NotAuthorizedException, BusyException, QueueException,
-               ExecuteException, IOException
+        ExecuteException, IOException
     {
         ArrayList<String> args = new ArrayList<String>();
         args.add("jar");
@@ -120,6 +133,78 @@ public class DelegatorService {
         if (id == null)
             throw new QueueException("Unable to get job id", exec);
 
-        return new TrackerBean(id, exec);
+        return new EnqueueBean(id, exec);
+    }
+
+    /**
+     * Submit a job to the MapReduce queue.  We do this by running the
+     * hadoop executable on the local server using the ExecService.
+     * This allows us to easily verify that the user identity is being
+     * securely used.
+     *
+     * This is the backend of the mapreduce/jar web service.
+     */
+    public EnqueueBean runJar(String user, String jar, String mainClass,
+                              List<String> jarArgs)
+        throws NotAuthorizedException, BusyException, QueueException,
+        ExecuteException, IOException
+    {
+        if (user != null)
+            throw new QueueException("Not implemented", null);
+
+        ArrayList<String> args = new ArrayList<String>();
+        args.add("jar");
+        args.add(TEMPLETON_JAR);
+        args.add(JAR_CLASS);
+        args.add(jar);
+        args.add(mainClass);
+        args.addAll(jarArgs);
+
+        ExecBean exec = execService.run(user, ExecService.HADOOP, args, null);
+        if (exec.exitCode != 0)
+            throw new QueueException("invalid exit code", exec);
+        String id = TempletonStreamJob.extractJobId(exec.stdout);
+        if (id == null)
+            throw new QueueException("Unable to get job id", exec);
+
+        return new EnqueueBean(id, exec);
+    }
+
+    private Configuration loadConf() {
+        Configuration conf = new Configuration();
+
+        for (String fname : CONF_FILENAMES) {
+            String full = System.getenv("HADOOP_HOME") + "/conf/" + fname;
+            File f = new File(full);
+            if (f.exists())
+                conf.addResource(new Path(full));
+        }
+
+        return conf;
+    }
+
+    /**
+     * Fetch the status of a given job id in the queue.
+     */
+    public QueueStatusBean jobStatus(String user, String id)
+        throws NotAuthorizedException, BadParam, IOException
+    {
+        UserGroupInformation ugi = UserGroupInformation.createRemoteUser(user);
+        Configuration conf = loadConf();
+        TempletonJobTracker tracker = null;
+        try {
+            tracker = new TempletonJobTracker(ugi,
+                                              JobTracker.getAddress(conf),
+                                              conf);
+            JobID jobid = JobID.forName(id);
+            JobStatus status = tracker.getJobStatus(jobid);
+            JobProfile profile = tracker.getJobProfile(jobid);
+            return new QueueStatusBean(status, profile);
+        } catch (IllegalStateException e) {
+            throw new BadParam(e.getMessage());
+        } finally {
+            if (tracker != null)
+                tracker.close();
+        }
     }
 }

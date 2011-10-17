@@ -40,7 +40,7 @@ import org.apache.commons.exec.PumpStreamHandler;
 public class ExecService {
     public static final String ENCODING = "UTF-8";
     public static final int TIMEOUT_MS = 10 * 1000;
-    public static final int MAX_EXECS = 8;
+    public static final int MAX_EXECS = 16;
 
     public static final String SUDO = "/usr/bin/sudo";
 

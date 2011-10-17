@@ -24,6 +24,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -75,7 +76,7 @@ public class Server {
     @POST
     @Path("mapreduce/streaming.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public TrackerBean mapReduceStreaming(@FormParam(USER_PARAM) String user,
+    public EnqueueBean mapReduceStreaming(@FormParam(USER_PARAM) String user,
                                           @FormParam("input") List<String> inputs,
                                           @FormParam("output") String output,
                                           @FormParam("mapper") String mapper,
@@ -89,6 +90,41 @@ public class Server {
         verifyParam(reducer, "reducer");
 
         return delegator.runStreaming(user, inputs, output, mapper, reducer);
+    }
+
+    /**
+     * Run a MapReduce Streaming job.
+     */
+    @POST
+    @Path("mapreduce/jar.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public EnqueueBean mapReduceJar(@FormParam(USER_PARAM) String user,
+                                    @FormParam("jar") String jar,
+                                    @FormParam("class") String mainClass,
+                                    @FormParam("arg") List<String> args)
+        throws NotAuthorizedException, BusyException, BadParam, QueueException,
+               ExecuteException, IOException
+    {
+        verifyUser(user);
+        verifyParam(jar, "jar");
+        verifyParam(mainClass, "class");
+
+        return delegator.runJar(user, jar, mainClass, args);
+    }
+
+    /**
+     * Return the status of the jobid.
+     */
+    @GET
+    @Path("queue/{jobid}.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public QueueStatusBean showQueueId(@QueryParam(USER_PARAM) String user,
+                                       @PathParam("jobid") String jobid)
+        throws NotAuthorizedException, BadParam, IOException
+    {
+        verifyUser(user);
+        verifyParam(jobid, ":jobid");
+        return delegator.jobStatus(user, jobid);
     }
 
     /**

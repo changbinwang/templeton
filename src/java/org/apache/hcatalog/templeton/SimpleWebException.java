@@ -61,7 +61,7 @@ public class SimpleWebException extends Throwable {
         String json = "\"error\"";
         try {
             json = new ObjectMapper().writeValueAsString(err);
-        } catch(IOException e) {
+        } catch (IOException e) {
         }
 
         return Response.status(httpCode)

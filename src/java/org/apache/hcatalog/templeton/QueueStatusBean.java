@@ -17,23 +17,26 @@
  */
 package org.apache.hcatalog.templeton;
 
-/**
- * TrackerBean - The results of a call that enqueues a Hadoop job.
- */
-public class TrackerBean {
-    public String id;
-    public ExecBean exec;
+import org.apache.hadoop.mapred.JobStatus;
+import org.apache.hadoop.mapred.JobProfile;
 
-    public TrackerBean() {}
+/**
+ * QueueStatusBean - The results of an exec call.
+ */
+public class QueueStatusBean {
+    public JobStatus status;
+    public JobProfile profile;
+
+    public QueueStatusBean() {}
 
     /**
-     * Create a new Tracker Bean.
+     * Create a new QueueStatusBean
      *
-     * @param id     tracker id
-     * @param exec   result of the call that queued the job
+     * @param status     job status
+     * @param profile    job profile
      */
-    public TrackerBean(String id, ExecBean exec) {
-        this.id = id;
-        this.exec = exec;
+    public QueueStatusBean(JobStatus status, JobProfile profile) {
+        this.status = status;
+        this.profile = profile;
     }
 }
