@@ -33,7 +33,9 @@ import org.apache.commons.exec.PumpStreamHandler;
 /**
  * Execute a local program.  This is a singelton service that will
  * execute authorized programs as non-privileged users on the local
- * box.  See ExecService.run and ExecService.runUnlimited for details.
+ * box.  We do allow hadoop in the list of authorized programs, so
+ * don't rely on authorized programs as a security feature.  See
+ * ExecService.run and ExecService.runUnlimited for details.
  */
 public class ExecService {
     public static final String ENCODING = "UTF-8";
@@ -43,9 +45,11 @@ public class ExecService {
     public static final String SUDO = "/usr/bin/sudo";
 
     public static final String HCAT = "hcat";
+    public static final String HADOOP = "hadoop";
     public static HashMap<String, String> authorizedPrograms
         = new HashMap<String, String>() {{
             put(HCAT, "/usr/local/hcat/bin/hcat");
+            put(HADOOP, System.getenv("HADOOP_HOME") + "/bin/hadoop");
             put("date", "/bin/date");
         }};
 
@@ -71,21 +75,23 @@ public class ExecService {
 
     /**
      * Run the program synchronously as the given user. We rate limit
-     * the number of processes that can simultaneously created for xx
+     * the number of processes that can simultaneously created for
      * this instance.
      *
      * @param user      A valid user
      * @param program   The program name to run
+     * @param env       Any extra environment variables to set
      * @returns         The result of the run.
      */
-    public ExecBean run(String user, String program, List<String> args)
+    public ExecBean run(String user, String program, List<String> args,
+                        Map<String, String> env)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
         boolean aquired = false;
         try {
             aquired = avail.tryAcquire();
             if (aquired) {
-                return runUnlimited(user, program, args);
+                return runUnlimited(user, program, args, env);
             } else {
                 throw new BusyException();
             }
@@ -105,7 +111,8 @@ public class ExecService {
      * @param program   The program name to run.
      * @returns         The result of the run.
      */
-    public ExecBean runUnlimited(String user, String program, List<String> args)
+    public ExecBean runUnlimited(String user, String program, List<String> args,
+                                 Map<String, String> env)
         throws NotAuthorizedException, ExecuteException, IOException
     {
         DefaultExecutor executor = new DefaultExecutor();
@@ -120,7 +127,7 @@ public class ExecService {
         ExecuteWatchdog watchdog = new ExecuteWatchdog(TIMEOUT_MS);
         executor.setWatchdog(watchdog);
 
-        CommandLine cmd = makeCommandLine(user, program, args);
+        CommandLine cmd = makeCommandLine(user, program, args, env);
 
         System.err.println("--- Running: " + cmd);
         ExecBean res = new ExecBean();
@@ -131,7 +138,8 @@ public class ExecService {
         return res;
     }
 
-    private CommandLine makeCommandLine(String user, String program, List<String> args)
+    private CommandLine makeCommandLine(String user, String program, List<String> args,
+                                        Map<String, String> env)
         throws NotAuthorizedException, IOException
     {
         String path = authedProgram(program);
@@ -140,14 +148,14 @@ public class ExecService {
         cmd.addArgument("-u");
         cmd.addArgument(user);
 
-        for (Map.Entry entry : sudoEnv().entrySet()) {
+        for (Map.Entry entry : sudoEnv(env).entrySet()) {
             cmd.addArgument(entry.getKey() + "=" + entry.getValue());
         }
 
         cmd.addArgument(path);
-        for (String arg : args) {
-            cmd.addArgument(arg, false);
-        }
+        if (args != null)
+            for (String arg : args)
+                cmd.addArgument(arg, false);
 
         return cmd;
     }
@@ -157,17 +165,18 @@ public class ExecService {
      *
      * @return The environment variables.
      */
-    public Map<String, String> sudoEnv() {
-        HashMap<String, String> env = new HashMap<String, String>();
+    public Map<String, String> sudoEnv(Map<String, String> env) {
+        HashMap<String, String> res = new HashMap<String, String>();
 
         for (String key : SUDO_ENV_VARS) {
             String val = System.getenv(key);
-            if (val != null) {
-                env.put(key, val);
-            }
+            if (val != null)
+                res.put(key, val);
         }
+        if (env != null)
+            res.putAll(env);
 
-        return env;
+        return res;
     }
 
     /**

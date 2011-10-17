@@ -17,29 +17,23 @@
  */
 package org.apache.hcatalog.templeton;
 
-import java.util.Map;
-import java.util.HashMap;
-
 /**
- * ExecBean - The results of an exec call.
+ * TrackerBean - The results of a call that enqueues a Hadoop job.
  */
-public class ExecBean {
-    public String stdout;
-    public String stderr;
-    public int exitCode;
+public class TrackerBean {
+    public String id;
+    public ExecBean exec;
 
-    public ExecBean() {}
+    public TrackerBean() {}
 
     /**
-     * Create a new Exec Bean.
+     * Create a new Tracker Bean.
      *
-     * @param stdout     standard output of the the program.
-     * @param stderr     error output of the the program.
-     * @param exitCode   exit code of the program.
+     * @param id     tracker id
+     * @param exec   result of the call that queued the job
      */
-    public ExecBean(String stdout, String stderr, int exitCode) {
-        this.stdout = stdout;
-        this.stderr = stderr;
-        this.exitCode = exitCode;
+    public TrackerBean(String id, ExecBean exec) {
+        this.id = id;
+        this.exec = exec;
     }
 }

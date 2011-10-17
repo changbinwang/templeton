@@ -321,7 +321,7 @@
   <!-- ================================================================== -->
   <!-- Make war file                                                      -->
   <!-- ================================================================== -->
-  <target name="war" depends="compile-src">
+  <target name="war" depends="jar">
     <war destfile="${build.dir}/${ant.project.name}.war"
          webxml="${webapp.dir}/WEB-INF/web.xml">
          <lib dir="${ivy.lib.dir}"/>

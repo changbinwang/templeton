@@ -17,29 +17,14 @@
  */
 package org.apache.hcatalog.templeton;
 
-import java.util.Map;
 import java.util.HashMap;
 
 /**
- * ExecBean - The results of an exec call.
+ * Unable to queue the job
  */
-public class ExecBean {
-    public String stdout;
-    public String stderr;
-    public int exitCode;
-
-    public ExecBean() {}
-
-    /**
-     * Create a new Exec Bean.
-     *
-     * @param stdout     standard output of the the program.
-     * @param stderr     error output of the the program.
-     * @param exitCode   exit code of the program.
-     */
-    public ExecBean(String stdout, String stderr, int exitCode) {
-        this.stdout = stdout;
-        this.stderr = stderr;
-        this.exitCode = exitCode;
+public class QueueException extends SimpleWebException {
+    public QueueException(String msg, final ExecBean bean) {
+        super(500, msg, new HashMap<String, Object>() {{ put("exec", bean); }});
     }
+
 }

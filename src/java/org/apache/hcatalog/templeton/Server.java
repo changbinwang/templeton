@@ -18,7 +18,6 @@
 package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -39,7 +38,7 @@ public class Server {
         = "{\"status\": \"ok\", \"version\": \"v1\"}\n";
     public static final String USER_PARAM = "user.name";
 
-    private static ExecService execService = ExecService.getInstance();
+    private static DelegatorService delegator = DelegatorService.getInstance();
 
     /**
      * Check the status of this server.
@@ -49,25 +48,6 @@ public class Server {
     @Produces({MediaType.APPLICATION_JSON})
     public String status() {
         return STATUS_MSG;
-    }
-
-    /**
-     * Exececute a program on the local box.  It is run as the
-     * authenticated user, limited to a small set of programs, and
-     * rate limited.
-     */
-    @POST
-    @Path("exec.json")
-    @Produces({MediaType.APPLICATION_JSON})
-    public ExecBean exec(@FormParam(USER_PARAM) String user,
-                         @FormParam("program") String program,
-                         @FormParam("arg") List<String> args)
-        throws NotAuthorizedException, BusyException, BadParam,
-               ExecuteException, IOException
-    {
-        verifyUser(user);
-        verifyParam(program, "program");
-        return execService.run(user, program, args);
     }
 
     /**
@@ -86,20 +66,44 @@ public class Server {
     {
         verifyUser(user);
         verifyParam(exec, "exec");
+        return delegator.runHcat(user, exec, group, permissions);
+    }
 
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("-e");
-        args.add(exec);
-        if (group != null) {
-            args.add("-g");
-            args.add(group);
-        }
-        if (permissions != null) {
-            args.add("-p");
-            args.add(permissions);
-        }
+    /**
+     * Run a MapReduce Streaming job.
+     */
+    @POST
+    @Path("mapreduce/streaming.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public TrackerBean mapReduceStreaming(@FormParam(USER_PARAM) String user,
+                                          @FormParam("input") List<String> inputs,
+                                          @FormParam("output") String output,
+                                          @FormParam("mapper") String mapper,
+                                          @FormParam("reducer") String reducer)
+        throws NotAuthorizedException, BusyException, BadParam, QueueException,
+               ExecuteException, IOException
+    {
+        verifyUser(user);
+        verifyParam(inputs, "input");
+        verifyParam(mapper, "mapper");
+        verifyParam(reducer, "reducer");
 
-        return execService.run(user, ExecService.HCAT, args);
+        return delegator.runStreaming(user, inputs, output, mapper, reducer);
+    }
+
+    /**
+     * Exececute an test program the local box.  It is run as the
+     * authenticated user and rate limited.
+     */
+    @POST
+    @Path("exectest.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public ExecBean execTest(@FormParam(USER_PARAM) String user)
+        throws NotAuthorizedException, BusyException, BadParam,
+               ExecuteException, IOException
+    {
+        verifyUser(user);
+        return delegator.runDate(user);
     }
 
     /**
@@ -108,9 +112,8 @@ public class Server {
     public void verifyUser(String user)
         throws NotAuthorizedException
     {
-        if (user == null) {
+        if (user == null)
             throw new NotAuthorizedException("missing " + USER_PARAM + " parameter");
-        }
     }
 
     /**
@@ -119,8 +122,17 @@ public class Server {
     public void verifyParam(String param, String name)
         throws BadParam
     {
-        if (param == null) {
+        if (param == null)
             throw new BadParam("Missing " + name + " parameter");
-        }
+    }
+
+    /**
+     * Verify that the parameter exists.  Throw an exception if invalid.
+     */
+    public void verifyParam(List<String> param, String name)
+        throws BadParam
+    {
+        if (param == null || param.isEmpty())
+            throw new BadParam("Missing " + name + " parameter");
     }
 }
