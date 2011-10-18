@@ -22,7 +22,7 @@ package org.apache.hcatalog.templeton;
  */
 public class EnqueueBean {
     public String id;
-    public ExecBean exec;
+    public ExecBean info;
 
     public EnqueueBean() {}
 
@@ -30,10 +30,10 @@ public class EnqueueBean {
      * Create a new EnqueueBean.
      *
      * @param id     job id
-     * @param exec   result of the call that queued the job
+     * @param info   result of the call that queued the job
      */
-    public EnqueueBean(String id, ExecBean exec) {
+    public EnqueueBean(String id, ExecBean info) {
         this.id = id;
-        this.exec = exec;
+        this.info = info;
     }
 }
