@@ -33,7 +33,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/v1/templeton/ddl.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl.json</code></p>
   </section>
 
   <section>
@@ -42,7 +42,7 @@
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
     
     <tr><td><strong>exec</strong></td>
-        <td>The hcat ddl string to execute</td>
+        <td>The HCatalog ddl string to execute</td>
         <td>Required</td>
         <td>None</td>
     </tr>
@@ -65,20 +65,26 @@
   <section>
    <title>Results</title>
      <p>Returns the JSON object:</p>
-     <p><code> {"result": MESSAGE, "response": HCATRESPONSE} </code></p>
-     <p>Where MESSAGE is a string similar to "ok"
-      and HCATRESPONSE is a possibly empty response string from 
-      the HCatalog driver.</p>    
+     <p><code> {"stdout": MESSAGE, "stderr": MESSAGE, "exitcode": CODE} </code></p>
+
+     <table>
+      <tr><th>Name</th><th>Description</th></tr>   
+    
+      <tr><td><strong>stdout</strong></td>
+      <td>A string containing the result HCatalog sent to standard out (possibly empty).</td>
+      </tr>
+
+      <tr><td><strong>stderr</strong></td>
+        <td>A string containing the result HCatalog sent to standard error 
+        (possibly empty).</td>
+      </tr>
+
+      <tr><td><strong>exitcode</strong></td>
+        <td>A string containing the exitcode HCatalog returned.</td>
+      </tr>
+     </table>
  </section> 
 
- <section>
-   <title>Example</title>
-<source>
->
->curl --data "exec=alter%20table%20raw%20add%20partition%20new%20hdfs://data/raw/new/data" \
- 'http://www.myserver.com/v1/templeton/ddl.json'
->{"result": "ok", "response": ""}
-></source>
- </section>
+
  </body>
 </document>

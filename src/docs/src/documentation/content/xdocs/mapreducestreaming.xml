@@ -33,7 +33,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/v1/templeton/mapreduce/streaming.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/mapreduce/streaming.json</code></p>
   </section>
 
   <section>
@@ -79,19 +79,48 @@
    <title>Results</title>
      <p>The mapreduce/streaming resource queues your MapReduce job and returns 
        the JSON object:</p>
-     <p><code> {"result": MESSAGE, "jobid": JOBID} </code></p>
-     <p>Where MESSAGE is a string similar to "ok", 
-        and JOBID is a string containing the ID of your 
-        job in the queue.</p>    
+     <p><code>{"id": JOBID, "info": {"stdout": MESSAGE, "stderr": MESSAGE, "exitcode": CODE}}</code></p>
+
+     <table>
+      <tr><th>Name</th><th>Description</th></tr>   
+    
+      <tr><td><strong>id</strong></td>
+        <td>A string containing the job id similar to "job_201110132141_0001".</td>
+      </tr>
+
+      <tr><td><strong>info</strong></td>
+        <td>A JSON object containing the information returned when the job was queued.</td>
+      </tr>
+
+      <tr><td><strong>stdout</strong></td>
+      <td>A string containing the result sent to standard out (possibly empty).</td>
+      </tr>
+
+      <tr><td><strong>stderr</strong></td>
+        <td>A string containing the result sent to standard error (possibly empty).</td>
+      </tr>
+
+      <tr><td><strong>exitcode</strong></td>
+        <td>A string containing the exitcode returned.</td>
+      </tr>
+     </table>
   </section> 
 
   <section>
    <title>Example</title>
 <source>
 >
->curl --data "input=hdfs://data/input&amp;mapper=hdfs://scripts/mapper&amp;reducer=hdfs://scripts/reducer" \
- 'http://www.myserver.com/v1/templeton/mapreduce/streaming.json'
->{"result": "ok", "jobid": "37275"}
+>curl -d user.name=charlotte \    
+      -d input=mydata \
+      -d output=mycounts \               
+      -d mapper=/bin/cat \
+      -d reducer=/usr/bin/wc \
+      'http://localhost:8080/templeton/v1/mapreduce/streaming.json'
+>{"id":"job_201110132141_0031",
+  "info":{
+   "stdout":"packageJobJar: [] [/Users/ctdean/var/hadoop/hadoop-0.20.203.0/contrib/streaming/hadoop-streaming-0.20.203.0.jar] /var...",
+   "stderr":"2011-10-17 15:00:09.693 java[50410:1803] Unable to load realm info from SCDynamicStore\n11/10/17 15:00:10 WARN ...",
+   "exitCode":0}}
 ></source>
   </section>
 

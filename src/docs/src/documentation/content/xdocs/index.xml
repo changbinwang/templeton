@@ -41,20 +41,20 @@
         Templeton and can be monitored for progress or stopped as required.  
         Developers specify a location
         in HDFS into which Templeton should place Pig, Hive, and MapReduce results.</p>
-       <figure src="images/TempletonArchV2.jpg" align="left" alt="Templeton Architecture"/>
+       <figure src="images/TempletonArch.jpg" align="left" alt="Templeton Architecture"/>
    </section>
 
     <section>
        <title>URL format </title>
        <p>Templeton resources are accessed using the following URL format:</p>
-       <p><code>http://</code><em>yourserver</em><code>/v1/templeton/</code><em>resource.format</em></p>
+       <p><code>http://</code><em>yourserver</em><code>/templeton/v1/</code><em>resource.format</em></p>
        <p>where "<em>yourserver</em>" is replaced with your server name, and 
           "<em>resource.format</em>" is replaced by the Templeton 
           resource name and output response format.  Note that in Templeton 
           version 0.1.0, JSON is the only supported response format.</p>
        <p>For example, to check if the Templeton server is running you could 
           access the following URL:</p>
-       <p><code>http://www.myserver.com/v1/templeton/status.json </code></p>
+       <p><code>http://www.myserver.com/templeton/v1/status.json </code></p>
     </section>
 
    <section>
@@ -98,6 +98,7 @@
         <li><strong>404 Not Found:</strong> The URI requested is invalid or the 
                     resource requested does not exist.</li>
         <li><strong>500 Internal Server Error:</strong> We received an unexpected result.</li>
+        <li><strong>503 Busy, please retry:</strong> The server is busy.</li>
         </ul>
         <p>Other data returned directly by Templeton is currently returned in JSON format.
          JSON responses are limited to 1MB in size.  Responses over this limit must be

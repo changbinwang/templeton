@@ -30,7 +30,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/v1/templeton/pig.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/pig.json</code></p>
   </section>
 
   <section>
@@ -79,7 +79,7 @@
    <title>Example</title>
 <source>
 >
->curl --data "src=hdfs://src/main.pig" 'http://www.myserver.com/v1/templeton/pig.json'
+>curl --data "src=hdfs://src/main.pig" 'http://www.myserver.com/templeton/v1/pig.json'
 >{"result": "ok", "jobid": "37275"}
 ></source>
   </section>

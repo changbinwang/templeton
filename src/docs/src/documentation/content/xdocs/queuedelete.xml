@@ -19,19 +19,19 @@
 
 <document>
   <header>
-    <title>DELETE templeton/queue/:id </title>
+    <title>DELETE templeton/queue/:jobid </title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
     <p>Kill a job given its job ID.  
-     Substitute ":id" with the job ID received when the job was created.</p>
+     Substitute ":jobid" with the job ID received when the job was created.</p>
   </section>
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/v1/templeton/queue/</code>:id<code>.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/queue/</code>:id<code>.json</code></p>
   </section>
 
   <section>
@@ -39,8 +39,8 @@
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
     
-    <tr><td><strong>:id</strong></td>
-        <td>String containing the job ID to check. This is the ID received when then job
+    <tr><td><strong>:jobid</strong></td>
+        <td>String containing the job ID to delete. This is the ID received when then job
          job was created.</td>
         <td>Required</td>
         <td>None</td>
@@ -76,7 +76,7 @@
    <title>Example</title>
 <source>
 >
->curl -X DELETE 'http://www.myserver.com/v1/templeton/queue/37275.json'
+>curl -X DELETE 'http://www.myserver.com/templeton/v1/queue/37275.json'
 >{"result": "ok", "status": "aborted"}
 ></source>
   </section>

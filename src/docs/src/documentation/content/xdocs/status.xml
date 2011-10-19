@@ -31,7 +31,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/v1/templeton/status.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/status.json</code></p>
   </section>
 
   <section>
@@ -43,16 +43,27 @@
   <section>
    <title>Results</title>
     <p>Returns the JSON object:</p>
-    <p><code> {"status": MESSAGE} </code></p>
-    <p>Where MESSAGE is a string similar to "ok".</p>
+    <p><code> {"status": MESSAGE, "version": VERSION} </code></p>
+
+    <table>
+    <tr><th>Name</th><th>Description</th></tr>   
+    
+    <tr><td><strong>status</strong></td>
+        <td>"ok" if the Templeton server was contacted.</td>
+    </tr>
+
+    <tr><td><strong>version</strong></td>
+        <td>String containing the version number similar to "v1".</td>
+    </tr>
+    </table>
   </section>
 
   <section>
    <title>Example</title>
 <source>
 >
->curl 'http://www.myserver.com/v1/templeton/status.json'
->{"status": "ok"}
+>curl 'http://www.myserver.com/templeton/v1/status.json?user.name=charlotte'
+>{"status": "ok", "version": "v1"}
 ></source>
   </section>
  </body>
