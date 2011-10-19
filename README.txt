@@ -18,14 +18,14 @@ developers.
 
 1.  Setup these environment variables:
 
-    | Var            | Value                                                  |
-    |----------------+--------------------------------------------------------|
-    | HADOOP_HOME    | Set to your Hadoop install                             |
-    | CATALINA_HOME  | Set to your Tomcat install                             |
-    | TEMPLETON_HOME | Set to the Templeton directory                         |
-    | TEMPLETON_JAR  | The location of the Templeton jar file.                |
-    |                | After a build  the location will be                    |
-    |                | TEMPLETON_HOME/build/templeton/templeton-0.1.0-dev.jar |
+    | Var            | Value                                                   |
+    |----------------+---------------------------------------------------------|
+    | HADOOP_HOME    | Set to your Hadoop install                              |
+    | CATALINA_HOME  | Set to your Tomcat install                              |
+    | TEMPLETON_HOME | Set to the Templeton directory                          |
+    | TEMPLETON_JAR  | The location of the Templeton jar file.                 |
+    |                | After a build  the location will be                     |
+    |                | $TEMPLETON_HOME/build/templeton/templeton-0.1.0-dev.jar |
 
 2.  Start tomcat, making sure that the above environment vars are set
     for that process.
