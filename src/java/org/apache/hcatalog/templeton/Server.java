@@ -80,7 +80,9 @@ public class Server {
                                           @FormParam("input") List<String> inputs,
                                           @FormParam("output") String output,
                                           @FormParam("mapper") String mapper,
-                                          @FormParam("reducer") String reducer)
+                                          @FormParam("reducer") String reducer,
+                                          @FormParam("file") List<String> files,
+                                          @FormParam("define") List<String> defines)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
                ExecuteException, IOException
     {
@@ -101,7 +103,29 @@ public class Server {
     public EnqueueBean mapReduceJar(@FormParam(USER_PARAM) String user,
                                     @FormParam("jar") String jar,
                                     @FormParam("class") String mainClass,
-                                    @FormParam("arg") List<String> args)
+                                    @FormParam("arg") List<String> args,
+                                    @FormParam("define") List<String> defines))
+        throws NotAuthorizedException, BusyException, BadParam, QueueException,
+               ExecuteException, IOException
+    {
+        verifyUser(user);
+        verifyParam(jar, "jar");
+        verifyParam(mainClass, "class");
+
+        return delegator.runJar(user, jar, mainClass, args);
+    }
+
+    /**
+     * Run a MapReduce Streaming job.
+     */
+    @POST
+    @Path("mapreduce/jar.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public EnqueueBean mapReduceJar(@FormParam(USER_PARAM) String user,
+                                    @FormParam("jar") String jar,
+                                    @FormParam("class") String mainClass,
+                                    @FormParam("arg") List<String> args,
+                                    @FormParam("define") List<String> defines)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
                ExecuteException, IOException
     {
