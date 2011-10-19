@@ -19,7 +19,7 @@
 
 <document>
   <header>
-    <title>POST templeton/mapreduce/streaming </title>
+    <title>POST mapreduce/streaming </title>
   </header>
 
   <body>
@@ -67,11 +67,26 @@
         <td>None</td>
     </tr>
 
-    <tr><td><strong>...</strong></td>
-        <td>Some options for configuration, TBD.</td>
+    <tr><td><strong>file</strong></td>
+        <td>Add an HDFS file to the distributed cache.</td>
         <td>Optional</td>
         <td>None</td>
     </tr>
+
+    <tr><td><strong>define</strong></td>
+        <td>Set an Hadoop configuration variable using the syntax
+         <code>define=NAME=VALUE</code></td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>    
+
+    <tr><td><strong>cmdenv</strong></td>
+        <td>Set an environment variable using the syntax
+         <code>cmdenv=NAME=VALUE</code></td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
     </table>
   </section>
 

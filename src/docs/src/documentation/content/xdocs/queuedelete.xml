@@ -19,7 +19,7 @@
 
 <document>
   <header>
-    <title>DELETE templeton/queue/:jobid </title>
+    <title>DELETE queue/:jobid </title>
   </header>
 
   <body>
