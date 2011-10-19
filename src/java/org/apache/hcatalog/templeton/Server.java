@@ -82,7 +82,8 @@ public class Server {
                                           @FormParam("mapper") String mapper,
                                           @FormParam("reducer") String reducer,
                                           @FormParam("file") List<String> files,
-                                          @FormParam("define") List<String> defines)
+                                          @FormParam("define") List<String> defines,
+                                          @FormParam("cmdenv") List<String> cmdenv)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
                ExecuteException, IOException
     {
@@ -105,7 +106,7 @@ public class Server {
                                     @FormParam("class") String mainClass,
                                     @FormParam("arg") List<String> args,
                                     @FormParam("define") List<String> defines,
-                                    @FormParam("status.dir") String statusDir)
+                                    @FormParam("statusdir") String statusDir)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
                ExecuteException, IOException
     {
