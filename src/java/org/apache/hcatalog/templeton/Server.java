@@ -106,7 +106,7 @@ public class Server {
                                     @FormParam("class") String mainClass,
                                     @FormParam("arg") List<String> args,
                                     @FormParam("define") List<String> defines,
-                                    @FormParam("statusdir") String statusDir)
+                                    @FormParam("statusdir") String statusdir)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
                ExecuteException, IOException
     {
