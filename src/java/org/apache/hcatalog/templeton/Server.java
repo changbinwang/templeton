@@ -104,7 +104,8 @@ public class Server {
                                     @FormParam("jar") String jar,
                                     @FormParam("class") String mainClass,
                                     @FormParam("arg") List<String> args,
-                                    @FormParam("define") List<String> defines)
+                                    @FormParam("define") List<String> defines,
+                                    @FormParam("status.dir") String statusDir)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
                ExecuteException, IOException
     {
