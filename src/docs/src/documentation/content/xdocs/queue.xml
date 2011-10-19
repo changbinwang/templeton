@@ -19,7 +19,7 @@
 
 <document>
   <header>
-    <title>GET templeton/queue/:jobid </title>
+    <title>GET queue/:jobid </title>
   </header>
 
   <body>

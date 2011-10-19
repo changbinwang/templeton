@@ -19,7 +19,7 @@
 
 <document>
   <header>
-    <title>POST templeton/mapreduce/jar </title>
+    <title>POST mapreduce/jar </title>
   </header>
 
   <body>
@@ -41,19 +41,35 @@
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
     
     <tr><td><strong>jar</strong></td>
-        <td></td>
+        <td>Name of the jar file for Map Reduce to use.</td>
         <td>Required</td>
         <td>None</td>
     </tr>
 
     <tr><td><strong>class</strong></td>
-        <td></td>
+        <td>Name of the class for Map Reduce to use.</td>
         <td>Required</td>
         <td>None</td>
     </tr>
 
     <tr><td><strong>arg</strong></td>
-        <td>Some options for configuration, TBD.</td>
+        <td>Set a program argument using the syntax
+         <code>arg=NAME=VALUE</code>.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>define</strong></td>
+        <td>Set an Hadoop configuration variable using the syntax
+         <code>define=NAME=VALUE</code></td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>statusdir</strong></td>
+        <td>A directory where Templeton will write the status of the
+         Map Reduce job.  If provided, it is the caller's responsibility
+         to remove this directory when done.</td>
         <td>Optional</td>
         <td>None</td>
     </tr>
