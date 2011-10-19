@@ -104,27 +104,6 @@ public class Server {
                                     @FormParam("jar") String jar,
                                     @FormParam("class") String mainClass,
                                     @FormParam("arg") List<String> args,
-                                    @FormParam("define") List<String> defines))
-        throws NotAuthorizedException, BusyException, BadParam, QueueException,
-               ExecuteException, IOException
-    {
-        verifyUser(user);
-        verifyParam(jar, "jar");
-        verifyParam(mainClass, "class");
-
-        return delegator.runJar(user, jar, mainClass, args);
-    }
-
-    /**
-     * Run a MapReduce Streaming job.
-     */
-    @POST
-    @Path("mapreduce/jar.json")
-    @Produces({MediaType.APPLICATION_JSON})
-    public EnqueueBean mapReduceJar(@FormParam(USER_PARAM) String user,
-                                    @FormParam("jar") String jar,
-                                    @FormParam("class") String mainClass,
-                                    @FormParam("arg") List<String> args,
                                     @FormParam("define") List<String> defines)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
                ExecuteException, IOException
