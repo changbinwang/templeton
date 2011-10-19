@@ -127,7 +127,7 @@ public class DelegatorService {
         env.put("HADOOP_CLASSPATH", STREAMING_JAR);
 
         ExecBean exec = execService.run(user, ExecService.HADOOP, args, env);
-        if (exec.exitCode != 0)
+        if (exec.exitcode != 0)
             throw new QueueException("invalid exit code", exec);
         String id = TempletonStreamJob.extractJobId(exec.stdout);
         if (id == null)
@@ -161,7 +161,7 @@ public class DelegatorService {
         args.addAll(jarArgs);
 
         ExecBean exec = execService.run(user, ExecService.HADOOP, args, null);
-        if (exec.exitCode != 0)
+        if (exec.exitcode != 0)
             throw new QueueException("invalid exit code", exec);
         String id = TempletonStreamJob.extractJobId(exec.stdout);
         if (id == null)

@@ -131,7 +131,7 @@ public class ExecService {
 
         System.err.println("--- Running: " + cmd);
         ExecBean res = new ExecBean();
-        res.exitCode = executor.execute(cmd);
+        res.exitcode = executor.execute(cmd);
         res.stdout = outStream.toString(ENCODING);
         res.stderr = errStream.toString(ENCODING);
 

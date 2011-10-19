@@ -22,6 +22,6 @@ package org.apache.hcatalog.templeton;
  */
 public class NotAuthorizedException extends SimpleWebException {
     public NotAuthorizedException(String msg) {
-        super(400, msg);
+        super(401, msg);
     }
 }

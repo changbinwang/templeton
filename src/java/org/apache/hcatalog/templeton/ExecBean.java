@@ -23,7 +23,7 @@ package org.apache.hcatalog.templeton;
 public class ExecBean {
     public String stdout;
     public String stderr;
-    public int exitCode;
+    public int exitcode;
 
     public ExecBean() {}
 
@@ -32,11 +32,11 @@ public class ExecBean {
      *
      * @param stdout     standard output of the the program.
      * @param stderr     error output of the the program.
-     * @param exitCode   exit code of the program.
+     * @param exitcode   exit code of the program.
      */
-    public ExecBean(String stdout, String stderr, int exitCode) {
+    public ExecBean(String stdout, String stderr, int exitcode) {
         this.stdout = stdout;
         this.stderr = stderr;
-        this.exitCode = exitCode;
+        this.exitcode = exitcode;
     }
 }
