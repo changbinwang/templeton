@@ -46,9 +46,9 @@
                 rev="1.1"
                 conf="common->master"/>
 
-    <dependency org="org.apache.hadoop" name="hadoop-core" rev="0.20.203.0"
+    <dependency org="org.apache.hadoop" name="hadoop-core" rev="0.20.205.0"
                 conf="common->master"/>
-    <dependency org="org.apache.hadoop" name="hadoop-streaming" rev="0.20.203.0"
+    <dependency org="org.apache.hadoop" name="hadoop-streaming" rev="0.20.205.0"
                 conf="common->master"/>
     <dependency org="commons-logging" name="commons-logging" rev="1.0.4"
                 conf="common->master"/>
