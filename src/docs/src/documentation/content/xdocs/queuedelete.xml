@@ -31,7 +31,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/queue/</code>:id<code>.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/queue/</code>:jobid<code>.json</code></p>
   </section>
 
   <section>
@@ -50,9 +50,6 @@
 
   <section>
    <title>Results</title>
-     <p>Returns the JSON object:</p>
-     <p><code> {"result": MESSAGE, "status": STATUS}</code></p>
-  
     <table>
     <tr><th>Name</th><th>Description</th></tr>   
     <tr><td><strong>result</strong></td>
@@ -75,10 +72,9 @@
   <section>
    <title>Example</title>
 <source>
->
->curl -X DELETE 'http://www.myserver.com/templeton/v1/queue/37275.json'
->{"result": "ok", "status": "aborted"}
-></source>
+% curl -X DELETE 'http://www.myserver.com/templeton/v1/queue/37275.json'
+{"result": "ok", "status": "aborted"}
+%</source>
   </section>
  </body>
 </document>

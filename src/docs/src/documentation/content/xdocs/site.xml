@@ -54,7 +54,7 @@ See http://forrest.apache.org/docs/linking.html for more info
      <index label="GET queue/:jobid" href="queue.html" />
      <index label="DELETE queue/:jobid" href="queuedelete.html" />
     </index>
-    <about tab="home" label="About" href="">
+    <about tab="home" label="PDF" href="">
      <all_sitePDF label="Full PDF" href="wholesite.pdf" />
     </about>
    </docs>

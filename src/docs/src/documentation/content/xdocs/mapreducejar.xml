@@ -78,10 +78,6 @@
 
   <section>
    <title>Results</title>
-     <p>The mapreduce/jar resource queues your MapReduce job and returns 
-       the JSON object:</p>
-     <p><code>{"id": JOBID, "info": {"stdout": MESSAGE, "stderr": MESSAGE, "exitcode": CODE}}</code></p>
-
      <table>
       <tr><th>Name</th><th>Description</th></tr>   
     
@@ -91,18 +87,6 @@
 
       <tr><td><strong>info</strong></td>
         <td>A JSON object containing the information returned when the job was queued.</td>
-      </tr>
-
-      <tr><td><strong>stdout</strong></td>
-      <td>A string containing the result sent to standard out (possibly empty).</td>
-      </tr>
-
-      <tr><td><strong>stderr</strong></td>
-        <td>A string containing the result sent to standard error (possibly empty).</td>
-      </tr>
-
-      <tr><td><strong>exitcode</strong></td>
-        <td>A string containing the exitcode returned.</td>
       </tr>
      </table>
   </section> 

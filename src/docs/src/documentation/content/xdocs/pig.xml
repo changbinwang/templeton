@@ -57,31 +57,23 @@
         <td>Optional</td>
         <td>See description</td>
     </tr>
-
-    <tr><td><strong>...</strong></td>
-        <td>Some options for configuration, TBD.</td>
-        <td>Optional</td>
-        <td>None</td>
-    </tr>
     </table>
   </section>
 
   <section>
    <title>Results</title>
-     <p>The pig resource queues your pig job and returns the JSON object:</p>
-     <p><code> {"result": MESSAGE, "jobid": JOBID} </code></p>
-     <p>Where MESSAGE is a string similar to "ok", 
-        and JOBID is a string containing the ID of your 
-        job in the queue.</p>    
+     <table>
+      <tr><th>Name</th><th>Description</th></tr>   
+    
+      <tr><td><strong>id</strong></td>
+        <td>A string containing the job id similar to "job_201110132141_0001".</td>
+      </tr>
+
+      <tr><td><strong>info</strong></td>
+        <td>A JSON object containing the information returned when the job was queued.</td>
+      </tr>
+     </table>   
   </section> 
 
-  <section>
-   <title>Example</title>
-<source>
->
->curl --data "src=hdfs://src/main.pig" 'http://www.myserver.com/templeton/v1/pig.json'
->{"result": "ok", "jobid": "37275"}
-></source>
-  </section>
   </body>
 </document>

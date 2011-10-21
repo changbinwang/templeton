@@ -60,7 +60,7 @@
   <tr><td><code>TEMPLETON_JAR</code></td>
       <td>Set to the location of the Templeton jar file. 
           After a build the location will be 
-          <code>TEMPLETON_HOME/build/templeton/templeton-0.1.0.jar.</code></td>
+          <code>$TEMPLETON_HOME/build/templeton/templeton-0.1.0.jar.</code></td>
   </tr>
   </table>
   </section>
@@ -74,12 +74,9 @@
   <li>Build and install the Templeton war file using <code>ant install -war</code>
       from <code>$TEMPLETON_HOME</code>.  The Tomcat webapps directory must be writable.</li>
   <li>Check that your local install works.  Assuming that Tomcat is running
-      on port 8080, use: 
+      on port 8080, the following command would give output similar to that shown. 
 <source>
-curl -i http://localhost:8080/templeton/v1/status.json
-</source>
-      Typical output is:
-<source>
+% curl -i http://localhost:8080/templeton/v1/status.json
 HTTP/1.1 200 OK
 Server: Apache-Coyote/1.1
 Content-Type: application/json
@@ -87,30 +84,30 @@ Transfer-Encoding: chunked
 Date: Tue, 18 Oct 2011 19:35:17 GMT
 
 {"status": "ok", "version": "v1"}
+%
 </source></li>
   </ol>
   </section>
 
   <section>
-  <title>Authentification</title>
+  <title>Authentication</title>
   <p>To run any of the authenticated API calls, sudo must be setup properly.</p>
-  <p><strong>For Development</strong> you can simply:</p>
+  <p><strong>For Development</strong></p>
   <ol>
   <li>Run Tomcat as yourself.</li>
   <li>Make sure that you can sudo as yourself.  For example,
      <code>sudo -u $USER date </code></li>
   </ol>
-  <p><strong>For Production</strong> you likely want to set up special user.</p>
+  <p><strong>For Production</strong></p>
   <ol>
-  <li>Create a user group containing the owners of API call programs the 
-      Templeton API will wish to call. Let's call our owner group "hadoop".</li>
-  <li>As root, edit the sudoers file and add the following line:
+  <li>Create user runner with permission to run the required commands.  In the sudoers file:
 <source>
 runner ALL=(%hadoop) NOPASSWD: command1[,command2, ...]
 </source>
-      This allows user "runner" to run the commands listed if they are owned by
-      a user in the group "hadoop". 
+      allows runner to run the commands if they are owned by
+      a user in the group hadoop. 
   </li>
+  <li>Run Tomcat as runner.</li>
   </ol>
   </section>
   </body>

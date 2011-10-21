@@ -61,8 +61,8 @@
       <title>Security </title> 
        <p>The current version of Templeton supports two types of security:</p>
        <ul>
-       <li>Default security (without additional authentification)</li>
-       <li>Authentification via 
+       <li>Default security (without additional authentication)</li>
+       <li>Authentication via 
            <a href="http://web.mit.edu/kerberos/">Kerberos</a></li>
        </ul>
      <section>
@@ -72,7 +72,7 @@
          <ul>
          <li>user.name: The user name as a string.  
              Only valid when using default security. </li>
-         <li>SPNEGO credentials: When running with Kerberos authentification. </li>
+         <li>SPNEGO credentials: When running with Kerberos authentication. </li>
          </ul>
      </section>
    </section>
@@ -105,14 +105,6 @@
          stored into HDFS using provided options instead of being directly returned.
          If an HCatalog DDL command might return results greater than 1MB, it's
          suggested that a corresponding Hive request be executed instead.</p>
-   </section>
-
-   <section>
-      <title>Unsupported items </title>
-      <p>Interfaces to the following items are currently unsupported: </p>
-        <ul>
-        <li>Notifications</li>
-        </ul>
    </section>
 
    <section>
