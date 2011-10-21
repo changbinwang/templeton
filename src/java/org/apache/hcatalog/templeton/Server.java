@@ -104,17 +104,22 @@ public class Server {
     public EnqueueBean mapReduceJar(@FormParam(USER_PARAM) String user,
                                     @FormParam("jar") String jar,
                                     @FormParam("class") String mainClass,
+                                    @FormParam("libjars") String libjars,
+                                    @FormParam("files") String files,
                                     @FormParam("arg") List<String> args,
                                     @FormParam("define") List<String> defines,
                                     @FormParam("statusdir") String statusdir)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
-               ExecuteException, IOException
+        ExecuteException, IOException
     {
         verifyUser(user);
         verifyParam(jar, "jar");
         verifyParam(mainClass, "class");
 
-        return delegator.runJar(user, jar, mainClass, args);
+        return delegator.runJar(user,
+                                jar, mainClass,
+                                libjars, files, args,
+                                defines, statusdir);
     }
 
     /**

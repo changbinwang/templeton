@@ -18,12 +18,16 @@
 package org.apache.hcatalog.templeton;
 
 import java.io.File;;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.JobID;
 import org.apache.hadoop.mapred.JobProfile;
@@ -31,8 +35,10 @@ import org.apache.hadoop.mapred.JobStatus;
 import org.apache.hadoop.mapred.JobTracker;
 import org.apache.hadoop.mapred.TempletonJobTracker;
 import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.hadoop.util.StringUtils;
 import org.apache.hcatalog.templeton.tool.TempletonJarJob;
 import org.apache.hcatalog.templeton.tool.TempletonStreamJob;
+import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
  * Delegate a Templeton job to the backend Hadoop service.
@@ -61,6 +67,8 @@ public class DelegatorService {
     }
 
     private static ExecService execService = ExecService.getInstance();
+
+    private Configuration systemConf = null;
 
     /**
      * Run date on the local server using the ExecService.
@@ -129,7 +137,7 @@ public class DelegatorService {
         ExecBean exec = execService.run(user, ExecService.HADOOP, args, env);
         if (exec.exitcode != 0)
             throw new QueueException("invalid exit code", exec);
-        String id = TempletonStreamJob.extractJobId(exec.stdout);
+        String id = TempletonUtils.extractJobId(exec.stdout);
         if (id == null)
             throw new QueueException("Unable to get job id", exec);
 
@@ -145,29 +153,100 @@ public class DelegatorService {
      * This is the backend of the mapreduce/jar web service.
      */
     public EnqueueBean runJar(String user, String jar, String mainClass,
-                              List<String> jarArgs)
-        throws NotAuthorizedException, BusyException, QueueException,
+                              String libjars, String files,
+                              List<String> jarArgs, List<String> defines,
+                              String statusdir)
+        throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
-        if (user != null)
-            throw new QueueException("Not implemented", null);
-
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("jar");
-        args.add(TEMPLETON_JAR);
-        args.add(JAR_CLASS);
-        args.add(jar);
-        args.add(mainClass);
-        args.addAll(jarArgs);
+        ArrayList<String> args = makeJarArgs(jar, mainClass,
+                                             libjars, files, jarArgs, defines,
+                                             statusdir);
 
         ExecBean exec = execService.run(user, ExecService.HADOOP, args, null);
         if (exec.exitcode != 0)
             throw new QueueException("invalid exit code", exec);
-        String id = TempletonStreamJob.extractJobId(exec.stdout);
+        String id = TempletonUtils.extractJobId(exec.stdout);
         if (id == null)
             throw new QueueException("Unable to get job id", exec);
 
         return new EnqueueBean(id, exec);
+    }
+
+    private ArrayList<String> makeJarArgs(String jar, String mainClass,
+                                          String libjars, String files,
+                                          List<String> jarArgs, List<String> defines,
+                                          String statusdir)
+        throws BadParam, IOException
+    {
+        ArrayList<String> args = new ArrayList<String>();
+        try {
+            args.add("jar");
+            args.add(TEMPLETON_JAR);
+            args.add(JAR_CLASS);
+            args.add(hadoopFsFile(jar));
+            if (TempletonUtils.isset(mainClass))
+                args.add("*" + mainClass);
+            else
+                args.add("*");
+            if (TempletonUtils.isset(statusdir))
+                args.add("*" + statusdir);
+            else
+                args.add("*");
+            args.add("--");
+            if (TempletonUtils.isset(libjars)) {
+                args.add("-libjars");
+                args.add(hadoopFsList(libjars));
+            }
+            if (TempletonUtils.isset(files)) {
+                args.add("-files");
+                args.add(hadoopFsList(files));
+            }
+
+            for (String d : defines)
+                args.add("-D" + d);
+
+            args.addAll(jarArgs);
+        } catch (FileNotFoundException e) {
+            throw new BadParam(e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new BadParam(e.getMessage());
+        }
+
+        return args;
+    }
+
+    private String hadoopFsList(String files)
+        throws URISyntaxException, FileNotFoundException, IOException
+    {
+        String[] dirty = files.split(",");
+        String[] clean = new String[dirty.length];
+
+        for (int i = 0; i < dirty.length; ++i)
+            clean[i] = hadoopFsFile(dirty[i]);
+
+        return StringUtils.arrayToString(clean);
+    }
+
+    private String hadoopFsFile(String fname)
+        throws URISyntaxException, FileNotFoundException, IOException
+    {
+        Configuration conf = getConfiguration();
+        FileSystem defaultFs = FileSystem.get(conf);
+        URI u = new URI(fname);
+        Path p = new Path(u).makeQualified(defaultFs);
+
+        FileSystem fs = p.getFileSystem(conf);
+        if (! fs.exists(p))
+            throw new FileNotFoundException("File " + fname + " does not exist.");
+
+        return p.toString();
+    }
+
+    public Configuration getConfiguration() {
+        if (systemConf == null)
+            systemConf = loadConf();
+        return systemConf;
     }
 
     private Configuration loadConf() {
@@ -190,7 +269,7 @@ public class DelegatorService {
         throws NotAuthorizedException, BadParam, IOException
     {
         UserGroupInformation ugi = UserGroupInformation.createRemoteUser(user);
-        Configuration conf = loadConf();
+        Configuration conf = getConfiguration();
         TempletonJobTracker tracker = null;
         try {
             tracker = new TempletonJobTracker(ugi,

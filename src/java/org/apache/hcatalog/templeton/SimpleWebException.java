@@ -53,7 +53,7 @@ public class SimpleWebException extends Throwable {
     public static Response buildMessage(int httpCode, Map<String, Object> params,
                                         String msg)
     {
-        HashMap err = new HashMap<String,Object>();
+        HashMap<String,Object> err = new HashMap<String,Object>();
         err.put("error", msg);
         if (params != null)
             err.putAll(params);
