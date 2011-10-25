@@ -49,7 +49,7 @@ public class DelegatorService {
     public static final String JAR_CLASS = TempletonJarJob.class.getName();
     public static final String STREAMING_JAR =
         System.getenv("HADOOP_HOME")
-        + "/contrib/streaming/hadoop-streaming-0.20.203.0.jar";
+        + "/contrib/streaming/hadoop-streaming-0.20.205.0.jar";
 
     public static String[] CONF_FILENAMES = {
         "core-default.xml", "core-site.xml", "mapred-default.xml", "mapred-site.xml"
