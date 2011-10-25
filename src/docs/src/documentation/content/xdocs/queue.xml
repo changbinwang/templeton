@@ -53,11 +53,18 @@
     <table>
     <tr><th>Name</th><th>Description</th></tr>   
     <tr><td><strong>status</strong></td>
-        <td>A JSON object containing the job status information.</td>
+        <td>A JSON object containing the job status information.
+            See the Hadoop documentation 
+            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/JobStatus.html">Class 
+            JobStatus</a>) for more information.</td>
     </tr>
 
     <tr><td><strong>profile</strong></td>
-        <td>A JSON object containing the job profile information.</td>
+        <td>A JSON object containing the job profile information.
+             See the Hadoop documentation 
+            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/JobProfile.html">Class 
+            JobProfile</a>) for more information.
+</td>
     </tr>
     </table>
  </section> 

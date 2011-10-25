@@ -27,7 +27,8 @@
   <section>
    <title>Description</title>
     <p>Creates and queues a standard 
-     <a href="http://hadoop.apache.org/mapreduce/">Hadoop MapReduce</a> job.</p>
+     <a href="http://hadoop.apache.org/common/docs/current/commands_manual.html">
+        Hadoop MapReduce</a> job.</p>
   </section>
 
   <section>
@@ -49,6 +50,18 @@
     <tr><td><strong>class</strong></td>
         <td>Name of the class for Map Reduce to use.</td>
         <td>Required</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>libjars</strong></td>
+        <td>Comma seperated jar files to include in the classpath.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr
+>
+    <tr><td><strong>files</strong></td>
+        <td>Comma separated files to be copied to the map reduce cluster</td>
+        <td>Optional</td>
         <td>None</td>
     </tr>
 
@@ -86,10 +99,33 @@
       </tr>
 
       <tr><td><strong>info</strong></td>
-        <td>A JSON object containing the information returned when the job was queued.</td>
+        <td>A JSON object containing the information returned when the job was queued.
+            See the Hadoop documentation 
+            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/TaskController.html">Class 
+            TaskController</a>) for more information.</td>
       </tr>
      </table>
   </section> 
+
+  <section>
+   <title>Example</title>
+<source>
+% curl -d user.name=charlotte \    
+       -d jar=wordcount.jar \
+       -d class=org.myorg.WordCount \
+       -d libjars=transform.jar,wordcount.jar \
+       -d arg=wordcount/input \
+       -d statusdir=status \
+       -d arg=wordcount/output \
+      'http://localhost:8080/templeton/v1/mapreduce/jar.json'
+{"id":"job_201110132141_0008",
+ "info":{
+  "stdout":"packageJobJar: [] [/Users/charlotte/var/hadoop/hadoop-0.20.203.0/contrib/jar/hadoop-jar-0.20.203.0.jar] ...",
+  "stderr":"2011-10-17 15:00:09.693 java[50410:1803] Unable to load realm info from SCDynamicStore\n11/10/17 15:00:10 WARN ...",
+  "exitCode":0}}
+%</source>
+  </section>
+
 
   </body>
 </document>
