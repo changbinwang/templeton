@@ -13,7 +13,7 @@ developers.
 0.  Requirements
   - ant >= 1.8
   - tomcat >= 7.0
-  - Hadoop == 0.20.203.0 
+  - Hadoop == 0.20.205.0 
   - hcat
 
 1.  Setup these environment variables:
