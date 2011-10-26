@@ -40,7 +40,7 @@
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
     
     <tr><td><strong>:jobid</strong></td>
-        <td>String containing the job ID to check. This is the ID received when then
+        <td>The job ID to check. This is the ID received when then
          job was created.</td>
         <td>Required</td>
         <td>None</td>

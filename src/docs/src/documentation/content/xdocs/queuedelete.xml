@@ -40,7 +40,7 @@
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
     
     <tr><td><strong>:jobid</strong></td>
-        <td>String containing the job ID to delete. This is the ID received when then job
+        <td>The job ID to delete. This is the ID received when then job
          job was created.</td>
         <td>Required</td>
         <td>None</td>
@@ -52,19 +52,19 @@
    <title>Results</title>
     <table>
     <tr><th>Name</th><th>Description</th></tr>   
-    <tr><td><strong>result</strong></td>
-        <td>String similar to "ok" if the request was successfully completed.</td>
+    <tr><td><strong>status</strong></td>
+        <td>A JSON object containing the job status information.
+            See the Hadoop documentation 
+            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/JobStatus.html">Class 
+            JobStatus</a>) for more information.</td>
     </tr>
 
-    <tr><td><strong>status</strong></td>
-        <td>String containing the status of the Job ID.  Possible values include: 
-        <ul>
-        <li>"not found": Job ID not found</li>
-        <li>"completed": Job completed before it could be killed</li> 
-        <li>"cancelled": killed before it began</li>
-        <li>"aborted": killed after it began but before completion</li>
-        </ul>
-        </td>
+    <tr><td><strong>profile</strong></td>
+        <td>A JSON object containing the job profile information.
+             See the Hadoop documentation 
+            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/JobProfile.html">Class 
+            JobProfile</a>) for more information.
+</td>
     </tr>
     </table>
  </section> 
@@ -72,8 +72,25 @@
   <section>
    <title>Example</title>
 <source>
-% curl -X DELETE 'http://www.myserver.com/templeton/v1/queue/37275.json'
-{"result": "ok", "status": "aborted"}
+% curl -X DELETE -d user.name=charlotte \
+       'http://localhost:8080/templeton/v1/queue/job_201110132141_0030.json'
+{"status":{"startTime":1318885279506,
+           "username":"charlotte",
+           "jobID":{"jtIdentifier":"201110132141", "id":30},
+           "failureInfo":"NA",
+           "jobACLs":{},
+           "schedulingInfo":"NA",
+           "jobId":"job_201110132141_0030",
+           "jobPriority":"NORMAL",
+           "runState":2,
+           "jobComplete":true},
+ "profile":{"url":"http://localhost:50030/jobdetails.jsp?jobid=job_201110132141_0030",
+           "jobID":{"jtIdentifier":"201110132141", "id":30},
+           "user":"charlotte",
+           "queueName":"default",
+           "jobFile":"hdfs://localhost:9000/tmp/hadoop-charlotte/mapred/staging/charlotte/.staging/job_201110132141_0030/job.xml",
+           "jobName":"streamjob455607061040212405.jar",
+           "jobId":"job_201110132141_0030"}}
 %</source>
   </section>
  </body>
