@@ -17,7 +17,7 @@
  */
 package org.apache.hcatalog.templeton;
 
-import java.io.File;;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import org.apache.commons.exec.ExecuteException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -48,8 +49,8 @@ public class DelegatorService {
     public static final String STREAM_CLASS = TempletonStreamJob.class.getName();
     public static final String JAR_CLASS = TempletonQueuerJob.class.getName();
     public static final String STREAMING_JAR =
-        System.getenv("HADOOP_HOME")
-        + "/contrib/streaming/hadoop-streaming-0.20.205.0.jar";
+        System.getenv("HADOOP_PREFIX")
+        + "/share/hadoop/contrib/streaming/hadoop-streaming-0.20.205.1.jar";
 
     /**
      * The name of the hadoop command on the Map Reduce cluster.
@@ -315,7 +316,7 @@ public class DelegatorService {
         Configuration conf = new Configuration();
 
         for (String fname : CONF_FILENAMES) {
-            String full = System.getenv("HADOOP_HOME") + "/conf/" + fname;
+            String full = System.getenv("HADOOP_CONF_DIR") + fname;
             File f = new File(full);
             if (f.exists())
                 conf.addResource(new Path(full));

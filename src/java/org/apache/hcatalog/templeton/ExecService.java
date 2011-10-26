@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
+
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
@@ -49,11 +50,11 @@ public class ExecService {
     public static HashMap<String, String> authorizedPrograms
         = new HashMap<String, String>() {{
             put(HCAT, "/usr/local/hcat/bin/hcat");
-            put(HADOOP, System.getenv("HADOOP_HOME") + "/bin/hadoop");
+            put(HADOOP, System.getenv("HADOOP_PREFIX") + "/bin/hadoop");
             put("date", "/bin/date");
         }};
 
-    public static final String[] SUDO_ENV_VARS = {"HADOOP_HOME", "JAVA_HOME"};
+    public static final String[] SUDO_ENV_VARS = {"HADOOP_PREFIX","HADOOP_HOME", "JAVA_HOME"};
 
     private static volatile ExecService theSingleton;
 
