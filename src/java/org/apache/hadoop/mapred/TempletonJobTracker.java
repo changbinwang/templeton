@@ -30,6 +30,9 @@ import org.apache.hadoop.security.UserGroupInformation;
 public class TempletonJobTracker {
     private JobSubmissionProtocol cnx;
 
+    /**
+     * Create a connection to the Job Tracker.
+     */
     public TempletonJobTracker(UserGroupInformation ugi,
                                InetSocketAddress addr,
                                Configuration conf)
@@ -47,6 +50,7 @@ public class TempletonJobTracker {
 
     /**
      * Grab a handle to a job that is already known to the JobTracker.
+     *
      * @return Profile of the job, or null if not found.
      */
     public JobProfile getJobProfile(JobID jobid)
@@ -57,6 +61,7 @@ public class TempletonJobTracker {
 
     /**
      * Grab a handle to a job that is already known to the JobTracker.
+     *
      * @return Status of the job, or null if not found.
      */
     public JobStatus getJobStatus(JobID jobid)
@@ -66,6 +71,18 @@ public class TempletonJobTracker {
     }
 
 
+    /**
+     * Kill a job.
+     */
+    public void killJob(JobID jobid)
+        throws IOException
+    {
+        cnx.killJob(jobid);
+    }
+
+    /**
+     * Close the connection to the Job Tracker.
+     */
     public void close() {
         RPC.stopProxy(cnx);
     }

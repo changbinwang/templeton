@@ -20,6 +20,7 @@ package org.apache.hcatalog.templeton;
 import java.io.IOException;
 import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -136,20 +137,19 @@ public class Server {
         verifyParam(jobid, ":jobid");
         return delegator.jobStatus(user, jobid);
     }
-
     /**
-     * Exececute an test program the local box.  It is run as the
-     * authenticated user and rate limited.
+     * Kill a job in the queue.
      */
-    @POST
-    @Path("exectest.json")
+    @DELETE
+    @Path("queue/{jobid}.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public ExecBean execTest(@FormParam(USER_PARAM) String user)
-        throws NotAuthorizedException, BusyException, BadParam,
-               ExecuteException, IOException
+    public QueueStatusBean deleteQueueId(@QueryParam(USER_PARAM) String user,
+                                       @PathParam("jobid") String jobid)
+        throws NotAuthorizedException, BadParam, IOException
     {
         verifyUser(user);
-        return delegator.runDate(user);
+        verifyParam(jobid, ":jobid");
+        return delegator.jobDelete(user, jobid);
     }
 
     /**

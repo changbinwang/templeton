@@ -264,6 +264,8 @@ public class DelegatorService {
 
     /**
      * Fetch the status of a given job id in the queue.
+     *
+     * @return The status
      */
     public QueueStatusBean jobStatus(String user, String id)
         throws NotAuthorizedException, BadParam, IOException
@@ -276,6 +278,34 @@ public class DelegatorService {
                                               JobTracker.getAddress(conf),
                                               conf);
             JobID jobid = JobID.forName(id);
+            JobStatus status = tracker.getJobStatus(jobid);
+            JobProfile profile = tracker.getJobProfile(jobid);
+            return new QueueStatusBean(status, profile);
+        } catch (IllegalStateException e) {
+            throw new BadParam(e.getMessage());
+        } finally {
+            if (tracker != null)
+                tracker.close();
+        }
+    }
+
+    /**
+     * Delete a job
+     *
+     * @return The new status.
+     */
+    public QueueStatusBean jobDelete(String user, String id)
+        throws NotAuthorizedException, BadParam, IOException
+    {
+        UserGroupInformation ugi = UserGroupInformation.createRemoteUser(user);
+        Configuration conf = getConfiguration();
+        TempletonJobTracker tracker = null;
+        try {
+            tracker = new TempletonJobTracker(ugi,
+                                              JobTracker.getAddress(conf),
+                                              conf);
+            JobID jobid = JobID.forName(id);
+            tracker.killJob(jobid);
             JobStatus status = tracker.getJobStatus(jobid);
             JobProfile profile = tracker.getJobProfile(jobid);
             return new QueueStatusBean(status, profile);
