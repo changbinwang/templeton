@@ -36,7 +36,7 @@ import org.apache.hadoop.mapred.JobTracker;
 import org.apache.hadoop.mapred.TempletonJobTracker;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.util.StringUtils;
-import org.apache.hcatalog.templeton.tool.TempletonJarJob;
+import org.apache.hcatalog.templeton.tool.TempletonQueuerJob;
 import org.apache.hcatalog.templeton.tool.TempletonStreamJob;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
@@ -46,10 +46,19 @@ import org.apache.hcatalog.templeton.tool.TempletonUtils;
 public class DelegatorService {
     public static final String TEMPLETON_JAR = System.getenv("TEMPLETON_JAR");
     public static final String STREAM_CLASS = TempletonStreamJob.class.getName();
-    public static final String JAR_CLASS = TempletonJarJob.class.getName();
+    public static final String JAR_CLASS = TempletonQueuerJob.class.getName();
     public static final String STREAMING_JAR =
         System.getenv("HADOOP_HOME")
         + "/contrib/streaming/hadoop-streaming-0.20.205.0.jar";
+
+    /**
+     * The name of the hadoop command on the Map Reduce cluster.
+     */
+    public static final String CLUSTER_HADOOP
+        = System.getenv("HADOOP_HOME") + "/bin/hadoop";
+
+    public static final String CLUSTER_PIG = "/usr/local/pig/current/bin/pig";
+
 
     public static String[] CONF_FILENAMES = {
         "core-default.xml", "core-site.xml", "mapred-default.xml", "mapred-site.xml"
@@ -173,6 +182,30 @@ public class DelegatorService {
         return new EnqueueBean(id, exec);
     }
 
+    /**
+     * Submit a Pig job.  We do this by running the hadoop executable
+     * on the local server using the ExecService.  This allows us to
+     * easily verify that the user identity is being securely used.
+     *
+     * This is the backend of the pig web service.
+     */
+    public EnqueueBean runPig(String user, String execute, String statusdir)
+        throws NotAuthorizedException, BadParam, BusyException, QueueException,
+        ExecuteException, IOException
+    {
+        ArrayList<String> args = makePigArgs(execute, statusdir);
+
+        System.err.println("--- args " + args);
+        ExecBean exec = execService.run(user, ExecService.HADOOP, args, null);
+        if (exec.exitcode != 0)
+            throw new QueueException("invalid exit code", exec);
+        String id = TempletonUtils.extractJobId(exec.stdout);
+        if (id == null)
+            throw new QueueException("Unable to get job id", exec);
+
+        return new EnqueueBean(id, exec);
+    }
+
     private ArrayList<String> makeJarArgs(String jar, String mainClass,
                                           String libjars, String files,
                                           List<String> jarArgs, List<String> defines,
@@ -184,16 +217,14 @@ public class DelegatorService {
             args.add("jar");
             args.add(TEMPLETON_JAR);
             args.add(JAR_CLASS);
-            args.add(hadoopFsFile(jar));
-            if (TempletonUtils.isset(mainClass))
-                args.add("*" + mainClass);
-            else
-                args.add("*");
-            if (TempletonUtils.isset(statusdir))
-                args.add("*" + statusdir);
-            else
-                args.add("*");
+            args.add(TempletonUtils.encodeCliArray(hadoopFsFilename(jar)));
+            args.add(TempletonUtils.encodeCliArg(statusdir));
             args.add("--");
+            args.add(CLUSTER_HADOOP);
+            args.add("jar");
+            args.add(hadoopFsPath(jar).getName());
+            if (TempletonUtils.isset(mainClass))
+                args.add(mainClass);
             if (TempletonUtils.isset(libjars)) {
                 args.add("-libjars");
                 args.add(hadoopFsList(libjars));
@@ -216,6 +247,27 @@ public class DelegatorService {
         return args;
     }
 
+    private ArrayList<String> makePigArgs(String execute,
+                                          String statusdir)
+        throws BadParam, IOException
+    {
+        ArrayList<String> args = new ArrayList<String>();
+        try {
+            args.add("jar");
+            args.add(TEMPLETON_JAR);
+            args.add(JAR_CLASS);
+            args.add(TempletonUtils.encodeCliArray(""));
+            args.add(TempletonUtils.encodeCliArg(statusdir));
+            args.add("--");
+            args.add(CLUSTER_PIG);
+            args.add("-execute");
+            args.add(execute);
+        } finally {
+        }
+
+        return args;
+    }
+
     private String hadoopFsList(String files)
         throws URISyntaxException, FileNotFoundException, IOException
     {
@@ -223,12 +275,22 @@ public class DelegatorService {
         String[] clean = new String[dirty.length];
 
         for (int i = 0; i < dirty.length; ++i)
-            clean[i] = hadoopFsFile(dirty[i]);
+            clean[i] = hadoopFsFilename(dirty[i]);
 
         return StringUtils.arrayToString(clean);
     }
 
-    private String hadoopFsFile(String fname)
+    private String hadoopFsFilename(String fname)
+        throws URISyntaxException, FileNotFoundException, IOException
+    {
+        Path p = hadoopFsPath(fname);
+        if (p == null)
+            return null;
+        else
+            return p.toString();
+    }
+
+    private Path hadoopFsPath(String fname)
         throws URISyntaxException, FileNotFoundException, IOException
     {
         Configuration conf = getConfiguration();
@@ -240,7 +302,7 @@ public class DelegatorService {
         if (! fs.exists(p))
             throw new FileNotFoundException("File " + fname + " does not exist.");
 
-        return p.toString();
+        return p;
     }
 
     public Configuration getConfiguration() {

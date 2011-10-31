@@ -20,6 +20,7 @@ package org.apache.hcatalog.templeton.tool;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import org.apache.hadoop.mapreduce.JobID;
+import org.apache.hadoop.util.StringUtils;
 
 /**
  * General utility methods.
@@ -61,5 +62,88 @@ public class TempletonUtils {
         if (! m.find())
             return null;
         return m.group(1);
+    }
+
+
+    /**
+     * Encode a command line argument.  We need to allow for empty
+     * arguments.
+     */
+    public static String encodeCliArg(String s) {
+        if (TempletonUtils.isset(s))
+            return "*" + s;
+        else
+            return "*";
+    }
+
+    /**
+     * Decode a command line argument.  We need to allow for empty
+     * arguments.
+     */
+    public static String decodeCliArg(String s) {
+        if (s != null && s.startsWith("*"))
+            return s.substring(1);
+        else
+            return s;
+    }
+
+    /**
+     * Take an array of strings and encode it into one string.
+     */
+    public static String encodeArray(String[] plain) {
+        if (plain == null)
+            return null;
+
+        String[] escaped = new String[plain.length];
+
+        for (int i = 0; i < plain.length; ++i)
+            escaped[i] = StringUtils.escapeString(plain[i]);
+
+        return StringUtils.arrayToString(escaped);
+    }
+
+    /**
+     * Take an encode strings and decode it into an array of strings.
+     */
+    public static String[] decodeArray(String s) {
+        if (s == null)
+            return null;
+
+        String[] escaped = StringUtils.split(s);
+        String[] plain = new String[escaped.length];
+
+        for (int i = 0; i < escaped.length; ++i)
+            plain[i] = StringUtils.unEscapeString(escaped[i]);
+
+        return plain;
+    }
+
+    /**
+     * Encode an array to be used on the command line.
+     */
+    public static String encodeCliArray(String[] array) {
+        String x = encodeArray(array);
+        return encodeCliArg(x);
+    }
+
+    /**
+     * Encode a string as a one element array to be used on the
+     * command line.
+     */
+    public static String encodeCliArray(String s) {
+        if (s == null)
+            return null;
+
+        String[] array = new String[1];
+        array[0] = s;
+        return encodeCliArray(array);
+    }
+
+    /**
+     * Decode a command line arg into an array of strings.
+     */
+    public static String[] decodeCliArray(String s) {
+        String x = decodeCliArg(s);
+        return decodeArray(x);
     }
 }

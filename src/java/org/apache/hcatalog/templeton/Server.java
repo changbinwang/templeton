@@ -97,7 +97,7 @@ public class Server {
     }
 
     /**
-     * Run a MapReduce Streaming job.
+     * Run a MapReduce Jar job.
      */
     @POST
     @Path("mapreduce/jar.json")
@@ -121,6 +121,26 @@ public class Server {
                                 jar, mainClass,
                                 libjars, files, args,
                                 defines, statusdir);
+    }
+
+    /**
+     * Run a Pig job.
+     */
+    @POST
+    @Path("pig.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public EnqueueBean pig(@FormParam(USER_PARAM) String user,
+                           @FormParam("execute") String execute,
+                           @FormParam("statusdir") String statusdir)
+        throws NotAuthorizedException, BusyException, BadParam, QueueException,
+        ExecuteException, IOException
+    {
+        verifyUser(user);
+        verifyParam(execute, "execute");
+
+        return delegator.runPig(user,
+                                execute,
+                                statusdir);
     }
 
     /**
