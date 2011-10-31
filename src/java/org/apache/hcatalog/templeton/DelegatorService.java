@@ -60,6 +60,8 @@ public class DelegatorService {
 
     public static final String CLUSTER_PIG = "/usr/local/pig/current/bin/pig";
 
+    public static final String CLUSTER_HIVE
+        = "/usr/local/hcat/share/hcatalog/hive/external/bin/hive";
 
     public static String[] CONF_FILENAMES = {
         "core-default.xml", "core-site.xml", "mapred-default.xml", "mapred-site.xml"
@@ -191,17 +193,41 @@ public class DelegatorService {
      * This is the backend of the pig web service.
      */
     public EnqueueBean runPig(String user,
-                              String execute, String pigFile,
+                              String execute, String srcFile,
                               List<String> pigArgs, String otherFiles,
                               String statusdir)
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
         List<String> args = makePigArgs(execute,
-                                        pigFile, pigArgs,
+                                        srcFile, pigArgs,
                                         otherFiles, statusdir);
 
-        System.err.println("--- args " + args);
+        ExecBean exec = execService.run(user, ExecService.HADOOP, args, null);
+        if (exec.exitcode != 0)
+            throw new QueueException("invalid exit code", exec);
+        String id = TempletonUtils.extractJobId(exec.stdout);
+        if (id == null)
+            throw new QueueException("Unable to get job id", exec);
+
+        return new EnqueueBean(id, exec);
+    }
+
+    /**
+     * Submit a Hive job.  We do this by running the hadoop executable
+     * on the local server using the ExecService.  This allows us to
+     * easily verify that the user identity is being securely used.
+     *
+     * This is the backend of the pig web service.
+     */
+    public EnqueueBean runHive(String user,
+                               String execute, String srcFile,
+                               String statusdir)
+        throws NotAuthorizedException, BadParam, BusyException, QueueException,
+        ExecuteException, IOException
+    {
+        List<String> args = makeHiveArgs(execute, srcFile, statusdir);
+
         ExecBean exec = execService.run(user, ExecService.HADOOP, args, null);
         if (exec.exitcode != 0)
             throw new QueueException("invalid exit code", exec);
@@ -253,7 +279,7 @@ public class DelegatorService {
         return args;
     }
 
-    private List<String> makePigArgs(String execute, String pigFile,
+    private List<String> makePigArgs(String execute, String srcFile,
                                      List<String> pigArgs, String otherFiles,
                                      String statusdir)
         throws BadParam, IOException
@@ -265,8 +291,8 @@ public class DelegatorService {
             args.add(JAR_CLASS);
 
             ArrayList<String> allFiles = new ArrayList<String>();
-            if (TempletonUtils.isset(pigFile))
-                allFiles.add(hadoopFsFilename(pigFile));
+            if (TempletonUtils.isset(srcFile))
+                allFiles.add(hadoopFsFilename(srcFile));
             if (TempletonUtils.isset(otherFiles)) {
                 String[] ofs = hadoopFsListAsArray(otherFiles);
                 allFiles.addAll(Arrays.asList(ofs));
@@ -279,11 +305,47 @@ public class DelegatorService {
             if (TempletonUtils.isset(execute)) {
                 args.add("-execute");
                 args.add(execute);
-            } else if (TempletonUtils.isset(pigFile)) {
+            } else if (TempletonUtils.isset(srcFile)) {
                 args.add("-file");
-                args.add(hadoopFsPath(pigFile).getName());
+                args.add(hadoopFsPath(srcFile).getName());
             }
             args.addAll(pigArgs);
+        } catch (FileNotFoundException e) {
+            throw new BadParam(e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new BadParam(e.getMessage());
+        }
+
+        return args;
+    }
+
+    private List<String> makeHiveArgs(String execute, String srcFile,
+                                      String statusdir)
+        throws BadParam, IOException
+    {
+        ArrayList<String> args = new ArrayList<String>();
+        try {
+            args.add("jar");
+            args.add(TEMPLETON_JAR);
+            args.add(JAR_CLASS);
+
+            ArrayList<String> allFiles = new ArrayList<String>();
+            if (TempletonUtils.isset(srcFile))
+                allFiles.add(hadoopFsFilename(srcFile));
+
+            args.add(TempletonUtils.encodeCliArray(allFiles));
+            args.add(TempletonUtils.encodeCliArg(statusdir));
+            args.add("--");
+            args.add(CLUSTER_HIVE);
+            args.add("--service");
+            args.add("cli");
+            if (TempletonUtils.isset(execute)) {
+                args.add("-e");
+                args.add(execute);
+            } else if (TempletonUtils.isset(srcFile)) {
+                args.add("-f");
+                args.add(hadoopFsPath(srcFile).getName());
+            }
         } catch (FileNotFoundException e) {
             throw new BadParam(e.getMessage());
         } catch (URISyntaxException e) {

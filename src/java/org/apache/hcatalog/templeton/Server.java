@@ -131,7 +131,7 @@ public class Server {
     @Produces({MediaType.APPLICATION_JSON})
     public EnqueueBean pig(@FormParam(USER_PARAM) String user,
                            @FormParam("execute") String execute,
-                           @FormParam("file") String pigFile,
+                           @FormParam("file") String srcFile,
                            @FormParam("arg") List<String> pigArgs,
                            @FormParam("files") String otherFiles,
                            @FormParam("statusdir") String statusdir)
@@ -139,12 +139,34 @@ public class Server {
         ExecuteException, IOException
     {
         verifyUser(user);
-        if (execute == null && pigFile == null)
+        if (execute == null && srcFile == null)
             throw new BadParam("Either execute or file parameter required");
 
         return delegator.runPig(user,
-                                execute, pigFile,
+                                execute, srcFile,
                                 pigArgs, otherFiles,
+                                statusdir);
+    }
+
+    /**
+     * Run a Hive job.
+     */
+    @POST
+    @Path("hive.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public EnqueueBean pig(@FormParam(USER_PARAM) String user,
+                           @FormParam("execute") String execute,
+                           @FormParam("file") String srcFile,
+                           @FormParam("statusdir") String statusdir)
+        throws NotAuthorizedException, BusyException, BadParam, QueueException,
+        ExecuteException, IOException
+    {
+        verifyUser(user);
+        if (execute == null && srcFile == null)
+            throw new BadParam("Either execute or file parameter required");
+
+        return delegator.runHive(user,
+                                execute, srcFile,
                                 statusdir);
     }
 
