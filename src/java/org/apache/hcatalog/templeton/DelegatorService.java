@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
 import org.apache.commons.exec.ExecuteException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -169,9 +169,9 @@ public class DelegatorService {
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
-        ArrayList<String> args = makeJarArgs(jar, mainClass,
-                                             libjars, files, jarArgs, defines,
-                                             statusdir);
+        List<String> args = makeJarArgs(jar, mainClass,
+                                        libjars, files, jarArgs, defines,
+                                        statusdir);
 
         ExecBean exec = execService.run(user, ExecService.HADOOP, args, null);
         if (exec.exitcode != 0)
@@ -190,11 +190,16 @@ public class DelegatorService {
      *
      * This is the backend of the pig web service.
      */
-    public EnqueueBean runPig(String user, String execute, String statusdir)
+    public EnqueueBean runPig(String user,
+                              String execute, String pigFile,
+                              List<String> pigArgs, String otherFiles,
+                              String statusdir)
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
-        ArrayList<String> args = makePigArgs(execute, statusdir);
+        List<String> args = makePigArgs(execute,
+                                        pigFile, pigArgs,
+                                        otherFiles, statusdir);
 
         System.err.println("--- args " + args);
         ExecBean exec = execService.run(user, ExecService.HADOOP, args, null);
@@ -207,10 +212,10 @@ public class DelegatorService {
         return new EnqueueBean(id, exec);
     }
 
-    private ArrayList<String> makeJarArgs(String jar, String mainClass,
-                                          String libjars, String files,
-                                          List<String> jarArgs, List<String> defines,
-                                          String statusdir)
+    private List<String> makeJarArgs(String jar, String mainClass,
+                                     String libjars, String files,
+                                     List<String> jarArgs, List<String> defines,
+                                     String statusdir)
         throws BadParam, IOException
     {
         ArrayList<String> args = new ArrayList<String>();
@@ -228,11 +233,11 @@ public class DelegatorService {
                 args.add(mainClass);
             if (TempletonUtils.isset(libjars)) {
                 args.add("-libjars");
-                args.add(hadoopFsList(libjars));
+                args.add(hadoopFsListAsString(libjars));
             }
             if (TempletonUtils.isset(files)) {
                 args.add("-files");
-                args.add(hadoopFsList(files));
+                args.add(hadoopFsListAsString(files));
             }
 
             for (String d : defines)
@@ -248,8 +253,9 @@ public class DelegatorService {
         return args;
     }
 
-    private ArrayList<String> makePigArgs(String execute,
-                                          String statusdir)
+    private List<String> makePigArgs(String execute, String pigFile,
+                                     List<String> pigArgs, String otherFiles,
+                                     String statusdir)
         throws BadParam, IOException
     {
         ArrayList<String> args = new ArrayList<String>();
@@ -257,19 +263,37 @@ public class DelegatorService {
             args.add("jar");
             args.add(TEMPLETON_JAR);
             args.add(JAR_CLASS);
-            args.add(TempletonUtils.encodeCliArray(""));
+
+            ArrayList<String> allFiles = new ArrayList<String>();
+            if (TempletonUtils.isset(pigFile))
+                allFiles.add(hadoopFsFilename(pigFile));
+            if (TempletonUtils.isset(otherFiles)) {
+                String[] ofs = hadoopFsListAsArray(otherFiles);
+                allFiles.addAll(Arrays.asList(ofs));
+            }
+
+            args.add(TempletonUtils.encodeCliArray(allFiles));
             args.add(TempletonUtils.encodeCliArg(statusdir));
             args.add("--");
             args.add(CLUSTER_PIG);
-            args.add("-execute");
-            args.add(execute);
-        } finally {
+            if (TempletonUtils.isset(execute)) {
+                args.add("-execute");
+                args.add(execute);
+            } else if (TempletonUtils.isset(pigFile)) {
+                args.add("-file");
+                args.add(hadoopFsPath(pigFile).getName());
+            }
+            args.addAll(pigArgs);
+        } catch (FileNotFoundException e) {
+            throw new BadParam(e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new BadParam(e.getMessage());
         }
 
         return args;
     }
 
-    private String hadoopFsList(String files)
+    private String[] hadoopFsListAsArray(String files)
         throws URISyntaxException, FileNotFoundException, IOException
     {
         String[] dirty = files.split(",");
@@ -278,7 +302,13 @@ public class DelegatorService {
         for (int i = 0; i < dirty.length; ++i)
             clean[i] = hadoopFsFilename(dirty[i]);
 
-        return StringUtils.arrayToString(clean);
+        return clean;
+    }
+
+    private String hadoopFsListAsString(String files)
+        throws URISyntaxException, FileNotFoundException, IOException
+    {
+        return StringUtils.arrayToString(hadoopFsListAsArray(files));
     }
 
     private String hadoopFsFilename(String fname)

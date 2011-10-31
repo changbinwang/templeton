@@ -20,7 +20,7 @@ developers.
 
     | Var            | Value                                                   |
     |----------------+---------------------------------------------------------|
-    | HADOOP_HOME    | Set to your Hadoop install                              |
+    | HADOOP_PREFIX  | Set to your Hadoop install                              |
     | CATALINA_HOME  | Set to your Tomcat install                              |
     | TEMPLETON_HOME | Set to the Templeton directory                          |
     | TEMPLETON_JAR  | The location of the Templeton jar file.                 |

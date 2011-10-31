@@ -17,8 +17,9 @@
  */
 package org.apache.hcatalog.templeton.tool;
 
-import java.util.regex.Pattern;
+import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.hadoop.mapreduce.JobID;
 import org.apache.hadoop.util.StringUtils;
 
@@ -123,6 +124,15 @@ public class TempletonUtils {
      */
     public static String encodeCliArray(String[] array) {
         String x = encodeArray(array);
+        return encodeCliArg(x);
+    }
+
+    /**
+     * Encode an array to be used on the command line.
+     */
+    public static String encodeCliArray(List<String> list) {
+        String[] array = new String[list.size()];
+        String x = encodeArray(list.toArray(array));
         return encodeCliArg(x);
     }
 

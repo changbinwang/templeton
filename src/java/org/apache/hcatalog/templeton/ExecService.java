@@ -54,7 +54,7 @@ public class ExecService {
             put("date", "/bin/date");
         }};
 
-    public static final String[] SUDO_ENV_VARS = {"HADOOP_PREFIX","HADOOP_HOME", "JAVA_HOME"};
+    public static final String[] SUDO_ENV_VARS = {"HADOOP_PREFIX","JAVA_HOME"};
 
     private static volatile ExecService theSingleton;
 

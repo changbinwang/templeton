@@ -131,15 +131,20 @@ public class Server {
     @Produces({MediaType.APPLICATION_JSON})
     public EnqueueBean pig(@FormParam(USER_PARAM) String user,
                            @FormParam("execute") String execute,
+                           @FormParam("file") String pigFile,
+                           @FormParam("arg") List<String> pigArgs,
+                           @FormParam("files") String otherFiles,
                            @FormParam("statusdir") String statusdir)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException
     {
         verifyUser(user);
-        verifyParam(execute, "execute");
+        if (execute == null && pigFile == null)
+            throw new BadParam("Either execute or file parameter required");
 
         return delegator.runPig(user,
-                                execute,
+                                execute, pigFile,
+                                pigArgs, otherFiles,
                                 statusdir);
     }
 
