@@ -40,23 +40,37 @@
     
     <tr><td><strong>exec</strong></td>
         <td>String containing an entire, short pig program to run.</td>
-        <td>One of either "exec" or "src" is required</td>
+        <td>One of either "exec" or "file" is required</td>
         <td>None</td>
     </tr>
         
-    <tr><td><strong>src</strong></td>
+    <tr><td><strong>file</strong></td>
         <td>HDFS file name of a pig program to run.</td>
-        <td>One of either "exec" or "src" is required</td>
+        <td>One of either "exec" or "file" is required</td>
         <td>None</td>
     </tr>  
 
-    <tr><td><strong>output</strong></td>
-        <td>Location in which to store the output data.  If not specified, 
-            Templeton will store the output in a location that can be discovered 
-            using the <a href="queue.html">queue</a> resource.</td>
+    <tr><td><strong>arg</strong></td>
+        <td>Set a program argument using the syntax
+         <code>arg=NAME=VALUE</code>.</td>
         <td>Optional</td>
-        <td>See description</td>
+        <td>None</td>
     </tr>
+
+    <tr><td><strong>files</strong></td>
+        <td>Comma separated files to be copied to the map reduce cluster</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>statusdir</strong></td>
+        <td>A directory where Templeton will write the status of the
+         Pig job.  If provided, it is the caller's responsibility
+         to remove this directory when done.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
     </table>
   </section>
 
@@ -70,10 +84,12 @@
       </tr>
 
       <tr><td><strong>info</strong></td>
-        <td>A JSON object containing the information returned when the job was queued.</td>
+        <td>A JSON object containing the information returned when the job was queued.
+            See the Hadoop documentation 
+            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/TaskController.html">Class 
+            TaskController</a>) for more information.</td>
       </tr>
-     </table>   
+     </table>
   </section> 
-
   </body>
 </document>

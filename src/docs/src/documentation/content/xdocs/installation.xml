@@ -35,7 +35,7 @@
   <ul>
    <li><a href="http://ant.apache.org/">Ant</a>, version 1.8 or higher</li>
    <li><a href="http://tomcat.apache.org/">Tomcat</a>, version 7.0 or higher</li>
-   <li><a href="http://hadoop.apache.org/">Hadoop</a>, version 0.20.203.0</li>
+   <li><a href="http://hadoop.apache.org/">Hadoop</a>, version 0.20.205.0</li>
    <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a></li>
   </ul>
   <p><strong>Note:</strong> To run the dll api call, HCatalog must be installed in
@@ -46,7 +46,7 @@
   <title>Environment variables</title>
   <table>
   <tr><th>Variable</th><th>Value</th></tr>
-  <tr><td><code>HADOOP_HOME</code></td>
+  <tr><td><code>HADOOP_PREFIX</code></td>
       <td>Set to the location of your Hadoop install</td>
   </tr>
   <tr><td><code>CATALINA_HOME</code></td>
