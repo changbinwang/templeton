@@ -33,29 +33,11 @@ import org.apache.commons.exec.PumpStreamHandler;
 
 /**
  * Execute a local program.  This is a singelton service that will
- * execute authorized programs as non-privileged users on the local
- * box.  We do allow hadoop in the list of authorized programs, so
- * don't rely on authorized programs as a security feature.  See
+ * execute programs as non-privileged users on the local box.  See
  * ExecService.run and ExecService.runUnlimited for details.
  */
 public class ExecService {
-    public static final String ENCODING = "UTF-8";
-    public static final int TIMEOUT_MS = 10 * 1000;
-    public static final int MAX_EXECS = 16;
-
-    public static final String SUDO = "/usr/bin/sudo";
-
-    public static final String HCAT = "hcat";
-    public static final String HADOOP = "hadoop";
-    public static HashMap<String, String> authorizedPrograms
-        = new HashMap<String, String>() {{
-            put(HCAT, "/usr/local/hcat/bin/hcat");
-            put(HADOOP, System.getenv("HADOOP_PREFIX") + "/bin/hadoop");
-            put("date", "/bin/date");
-        }};
-
-    public static final String[] SUDO_ENV_VARS = {"HADOOP_PREFIX","HADOOP_HOME",
-                                                  "JAVA_HOME"};
+    private static AppConfig appConf = AppConfig.getInstance();
 
     private static volatile ExecService theSingleton;
 
@@ -72,7 +54,7 @@ public class ExecService {
     private Semaphore avail;
 
     private ExecService() {
-        avail = new Semaphore(MAX_EXECS);
+        avail = new Semaphore(appConf.getInt(AppConfig.EXEC_MAX_PROCS_NAME, 16));
     }
 
     /**
@@ -81,7 +63,7 @@ public class ExecService {
      * this instance.
      *
      * @param user      A valid user
-     * @param program   The program name to run
+     * @param program   The program to run
      * @param env       Any extra environment variables to set
      * @returns         The result of the run.
      */
@@ -106,11 +88,10 @@ public class ExecService {
 
     /**
      * Run the program synchronously as the given user.  Warning:
-     * CommandLine will trim the argument strings.  Only authorized
-     * programs may be run.
+     * CommandLine will trim the argument strings.
      *
      * @param user      A valid user
-     * @param program   The program name to run.
+     * @param program   The program to run.
      * @returns         The result of the run.
      */
     public ExecBean runUnlimited(String user, String program, List<String> args,
@@ -125,8 +106,9 @@ public class ExecService {
         ByteArrayOutputStream errStream = new ByteArrayOutputStream();
         executor.setStreamHandler(new PumpStreamHandler(outStream, errStream));
 
-        // Only run for N seconds
-        ExecuteWatchdog watchdog = new ExecuteWatchdog(TIMEOUT_MS);
+        // Only run for N milliseconds
+        int timeout = appConf.getInt(AppConfig.EXEC_TIMEOUT_NAME, 0);
+        ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
         executor.setWatchdog(watchdog);
 
         CommandLine cmd = makeCommandLine(user, program, args, env);
@@ -134,8 +116,9 @@ public class ExecService {
         System.err.println("--- Running: " + cmd);
         ExecBean res = new ExecBean();
         res.exitcode = executor.execute(cmd);
-        res.stdout = outStream.toString(ENCODING);
-        res.stderr = errStream.toString(ENCODING);
+        String enc = appConf.get(AppConfig.EXEC_ENCODING_NAME);
+        res.stdout = outStream.toString(enc);
+        res.stderr = errStream.toString(enc);
 
         return res;
     }
@@ -144,9 +127,9 @@ public class ExecService {
                                         Map<String, String> env)
         throws NotAuthorizedException, IOException
     {
-        String path = authedProgram(program);
+        String path = validateProgram(program);
 
-        CommandLine cmd = new CommandLine(new File(SUDO));
+        CommandLine cmd = new CommandLine(new File(appConf.sudoPath()));
         cmd.addArgument("-u");
         cmd.addArgument(user);
 
@@ -170,7 +153,7 @@ public class ExecService {
     public Map<String, String> sudoEnv(Map<String, String> env) {
         HashMap<String, String> res = new HashMap<String, String>();
 
-        for (String key : SUDO_ENV_VARS) {
+        for (String key : appConf.getStrings(AppConfig.EXEC_ENVS_NAME)) {
             String val = System.getenv(key);
             if (val != null)
                 res.put(key, val);
@@ -182,26 +165,20 @@ public class ExecService {
     }
 
     /**
-     * Given an authorized program name, lookup the fully qualified
-     * path.  Throws an exception if the program is missing or not
-     * authorized.
+     * Given a program name, lookup the fully qualified path.  Throws
+     * an exception if the program is missing or not authorized.
      *
-     * @param program   The name of the program without '/'
-     * @return          The path of the program.
+     * @param path      The path of the program.
+     * @return          The path of the validated program.
      */
-    public String authedProgram(String program)
+    public String validateProgram(String path)
         throws NotAuthorizedException, IOException
     {
-        String path = authorizedPrograms.get(program);
-        if (path == null) {
-            throw new NotAuthorizedException("Unauthorized program: " + program);
-        }
-
         File f = new File(path);
         if (f.canExecute()) {
             return f.getCanonicalPath();
         } else {
-            throw new NotAuthorizedException("Unable to access program: " + program);
+            throw new NotAuthorizedException("Unable to access program: " + path);
         }
     }
 }

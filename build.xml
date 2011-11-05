@@ -36,6 +36,7 @@
   <property environment="env"/>
   <property name="lib.dir" value="${basedir}/lib/" />
   <property name="src.dir"  location="${basedir}/src/java"/>
+  <property name="resources.dir"  location="${basedir}/src/resources"/>
   <property name="package.dir"  location="${basedir}/src/packages"/>
   <property name="docs.src" value="${basedir}/src/docs"/>
   <property name="build.dir" value="${basedir}/build"/>
@@ -197,7 +198,6 @@
     <mkdir dir="${test.build.classes}" />
   </target>
 
-
   <!--
     ================================================================================
     Main Build and Jar Section
@@ -215,10 +215,22 @@
     </javac>
   </target>
 
+  <!-- Build Templeton resource files -->
+  <target name="compile-resources" depends="init">
+    <mkdir dir="${build.classes}"/>
+    <copy todir="${build.classes}/">
+      <fileset dir="${resources.dir}" />
+    </copy>
+
+  </target>
+
+  <target name="compile" depends="compile-src, compile-resources">
+  </target>
+
   <!-- Build the templeton client jar -->
-  <target name="jar" depends="compile-src">
-    <jar jarfile="${build.dir}/${ant.project.name}/${templeton.jar}"
-         basedir="${build.classes}">
+  <target name="jar" depends="compile">
+    <jar jarfile="${build.dir}/${ant.project.name}/${templeton.jar}">
+      <fileset dir="${build.classes}" />
     </jar>
   </target>
 

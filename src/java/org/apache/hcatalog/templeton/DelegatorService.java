@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.exec.ExecuteException;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.JobID;
@@ -45,27 +44,8 @@ import org.apache.hcatalog.templeton.tool.TempletonUtils;
  * Delegate a Templeton job to the backend Hadoop service.
  */
 public class DelegatorService {
-    public static final String TEMPLETON_JAR = System.getenv("TEMPLETON_JAR");
     public static final String STREAM_CLASS = TempletonStreamJob.class.getName();
     public static final String JAR_CLASS = TempletonQueuerJob.class.getName();
-    public static final String STREAMING_JAR =
-        System.getenv("HADOOP_PREFIX")
-        + "/share/hadoop/contrib/streaming/hadoop-streaming-0.20.205.1.jar";
-
-    /**
-     * The name of the hadoop command on the Map Reduce cluster.
-     */
-    public static final String CLUSTER_HADOOP
-        = System.getenv("HADOOP_HOME") + "/bin/hadoop";
-
-    public static final String CLUSTER_PIG = "/usr/local/pig/current/bin/pig";
-
-    public static final String CLUSTER_HIVE
-        = "/usr/local/hcat/share/hcatalog/hive/external/bin/hive";
-
-    public static String[] CONF_FILENAMES = {
-        "core-default.xml", "core-site.xml", "mapred-default.xml", "mapred-site.xml"
-    };
 
     private static volatile DelegatorService theSingleton;
 
@@ -79,17 +59,7 @@ public class DelegatorService {
     }
 
     private static ExecService execService = ExecService.getInstance();
-
-    private Configuration systemConf = null;
-
-    /**
-     * Run date on the local server using the ExecService.
-     */
-    public ExecBean runDate(String user)
-        throws NotAuthorizedException, BusyException, ExecuteException, IOException
-    {
-        return execService.run(user, "date", null, null);
-    }
+    private static AppConfig appConf = AppConfig.getInstance();
 
     /**
      * Run hcat on the local server using the ExecService.  This is
@@ -110,7 +80,7 @@ public class DelegatorService {
             args.add(permissions);
         }
 
-        return execService.run(user, ExecService.HCAT, args, null);
+        return execService.run(user, appConf.clusterHcat(), args, null);
     }
 
     /**
@@ -128,10 +98,10 @@ public class DelegatorService {
     {
         ArrayList<String> args = new ArrayList<String>();
         args.add("jar");
-        args.add(TEMPLETON_JAR);
+        args.add(appConf.templetonJar());
         args.add(STREAM_CLASS);
         args.add("-libjars");
-        args.add(STREAMING_JAR);
+        args.add(appConf.streamingJar());
         for (String input : inputs) {
             args.add("-input");
             args.add(input);
@@ -144,9 +114,9 @@ public class DelegatorService {
         args.add(reducer);
 
         HashMap<String, String> env = new HashMap<String, String>();
-        env.put("HADOOP_CLASSPATH", STREAMING_JAR);
+        env.put("HADOOP_CLASSPATH", appConf.streamingJar());
 
-        ExecBean exec = execService.run(user, ExecService.HADOOP, args, env);
+        ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, env);
         if (exec.exitcode != 0)
             throw new QueueException("invalid exit code", exec);
         String id = TempletonUtils.extractJobId(exec.stdout);
@@ -175,7 +145,7 @@ public class DelegatorService {
                                         libjars, files, jarArgs, defines,
                                         statusdir);
 
-        ExecBean exec = execService.run(user, ExecService.HADOOP, args, null);
+        ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, null);
         if (exec.exitcode != 0)
             throw new QueueException("invalid exit code", exec);
         String id = TempletonUtils.extractJobId(exec.stdout);
@@ -203,7 +173,7 @@ public class DelegatorService {
                                         srcFile, pigArgs,
                                         otherFiles, statusdir);
 
-        ExecBean exec = execService.run(user, ExecService.HADOOP, args, null);
+        ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, null);
         if (exec.exitcode != 0)
             throw new QueueException("invalid exit code", exec);
         String id = TempletonUtils.extractJobId(exec.stdout);
@@ -228,7 +198,7 @@ public class DelegatorService {
     {
         List<String> args = makeHiveArgs(execute, srcFile, statusdir);
 
-        ExecBean exec = execService.run(user, ExecService.HADOOP, args, null);
+        ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, null);
         if (exec.exitcode != 0)
             throw new QueueException("invalid exit code", exec);
         String id = TempletonUtils.extractJobId(exec.stdout);
@@ -247,12 +217,12 @@ public class DelegatorService {
         ArrayList<String> args = new ArrayList<String>();
         try {
             args.add("jar");
-            args.add(TEMPLETON_JAR);
+            args.add(appConf.templetonJar());
             args.add(JAR_CLASS);
             args.add(TempletonUtils.encodeCliArray(hadoopFsFilename(jar)));
             args.add(TempletonUtils.encodeCliArg(statusdir));
             args.add("--");
-            args.add(CLUSTER_HADOOP);
+            args.add(appConf.clusterHadoop());
             args.add("jar");
             args.add(hadoopFsPath(jar).getName());
             if (TempletonUtils.isset(mainClass))
@@ -287,7 +257,7 @@ public class DelegatorService {
         ArrayList<String> args = new ArrayList<String>();
         try {
             args.add("jar");
-            args.add(TEMPLETON_JAR);
+            args.add(appConf.templetonJar());
             args.add(JAR_CLASS);
 
             ArrayList<String> allFiles = new ArrayList<String>();
@@ -301,7 +271,7 @@ public class DelegatorService {
             args.add(TempletonUtils.encodeCliArray(allFiles));
             args.add(TempletonUtils.encodeCliArg(statusdir));
             args.add("--");
-            args.add(CLUSTER_PIG);
+            args.add(appConf.clusterPig());
             if (TempletonUtils.isset(execute)) {
                 args.add("-execute");
                 args.add(execute);
@@ -326,7 +296,7 @@ public class DelegatorService {
         ArrayList<String> args = new ArrayList<String>();
         try {
             args.add("jar");
-            args.add(TEMPLETON_JAR);
+            args.add(appConf.templetonJar());
             args.add(JAR_CLASS);
 
             ArrayList<String> allFiles = new ArrayList<String>();
@@ -336,7 +306,7 @@ public class DelegatorService {
             args.add(TempletonUtils.encodeCliArray(allFiles));
             args.add(TempletonUtils.encodeCliArg(statusdir));
             args.add("--");
-            args.add(CLUSTER_HIVE);
+            args.add(appConf.clusterHive());
             args.add("--service");
             args.add("cli");
             if (TempletonUtils.isset(execute)) {
@@ -386,35 +356,15 @@ public class DelegatorService {
     private Path hadoopFsPath(String fname)
         throws URISyntaxException, FileNotFoundException, IOException
     {
-        Configuration conf = getConfiguration();
-        FileSystem defaultFs = FileSystem.get(conf);
+        FileSystem defaultFs = FileSystem.get(appConf);
         URI u = new URI(fname);
         Path p = new Path(u).makeQualified(defaultFs);
 
-        FileSystem fs = p.getFileSystem(conf);
+        FileSystem fs = p.getFileSystem(appConf);
         if (! fs.exists(p))
             throw new FileNotFoundException("File " + fname + " does not exist.");
 
         return p;
-    }
-
-    public Configuration getConfiguration() {
-        if (systemConf == null)
-            systemConf = loadConf();
-        return systemConf;
-    }
-
-    private Configuration loadConf() {
-        Configuration conf = new Configuration();
-
-        for (String fname : CONF_FILENAMES) {
-            String full = System.getenv("HADOOP_CONF_DIR") + fname;
-            File f = new File(full);
-            if (f.exists())
-                conf.addResource(new Path(full));
-        }
-
-        return conf;
     }
 
     /**
@@ -426,12 +376,11 @@ public class DelegatorService {
         throws NotAuthorizedException, BadParam, IOException
     {
         UserGroupInformation ugi = UserGroupInformation.createRemoteUser(user);
-        Configuration conf = getConfiguration();
         TempletonJobTracker tracker = null;
         try {
             tracker = new TempletonJobTracker(ugi,
-                                              JobTracker.getAddress(conf),
-                                              conf);
+                                              JobTracker.getAddress(appConf),
+                                              appConf);
             JobID jobid = JobID.forName(id);
             JobStatus status = tracker.getJobStatus(jobid);
             JobProfile profile = tracker.getJobProfile(jobid);
@@ -453,12 +402,11 @@ public class DelegatorService {
         throws NotAuthorizedException, BadParam, IOException
     {
         UserGroupInformation ugi = UserGroupInformation.createRemoteUser(user);
-        Configuration conf = getConfiguration();
         TempletonJobTracker tracker = null;
         try {
             tracker = new TempletonJobTracker(ugi,
-                                              JobTracker.getAddress(conf),
-                                              conf);
+                                              JobTracker.getAddress(appConf),
+                                              appConf);
             JobID jobid = JobID.forName(id);
             tracker.killJob(jobid);
             JobStatus status = tracker.getJobStatus(jobid);
