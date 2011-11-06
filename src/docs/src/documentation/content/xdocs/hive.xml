@@ -53,7 +53,7 @@
 
     <tr><td><strong>statusdir</strong></td>
         <td>A directory where Templeton will write the status of the
-         Pig job.  If provided, it is the caller's responsibility
+         Hive job.  If provided, it is the caller's responsibility
          to remove this directory when done.</td>
         <td>Optional</td>
         <td>None</td>
