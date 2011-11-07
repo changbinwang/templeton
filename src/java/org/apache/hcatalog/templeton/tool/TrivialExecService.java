@@ -39,7 +39,7 @@ public class TrivialExecService {
     public Process run(List<String> cmd)
         throws IOException
     {
-        System.err.println("--- Starting " + cmd);
+        System.err.println("templeton: starting " + cmd);
         ProcessBuilder pb = new ProcessBuilder(cmd);
         return pb.start();
     }

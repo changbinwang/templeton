@@ -24,12 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
-
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Execute a local program.  This is a singelton service that will
@@ -37,6 +38,7 @@ import org.apache.commons.exec.PumpStreamHandler;
  * ExecService.run and ExecService.runUnlimited for details.
  */
 public class ExecService {
+    private static final Log LOG = LogFactory.getLog(ExecService.class);
     private static AppConfig appConf = AppConfig.getInstance();
 
     private static volatile ExecService theSingleton;
@@ -113,7 +115,7 @@ public class ExecService {
 
         CommandLine cmd = makeCommandLine(user, program, args, env);
 
-        System.err.println("--- Running: " + cmd);
+        LOG.info("Running: " + cmd);
         ExecBean res = new ExecBean();
         res.exitcode = executor.execute(cmd);
         String enc = appConf.get(AppConfig.EXEC_ENCODING_NAME);

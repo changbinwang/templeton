@@ -72,7 +72,7 @@ public class TempletonQueuerJob extends Configured implements Tool {
                     Path src = new Path(filename);
                     Path dst = new Path(src.getName());
                     FileSystem fs = src.getFileSystem(conf);
-                    System.err.println("--- copy " + src + " => " + dst);
+                    System.err.println("templeton: copy " + src + " => " + dst);
                     fs.copyToLocalFile(src, dst);
                 }
             }
@@ -125,7 +125,7 @@ public class TempletonQueuerJob extends Configured implements Tool {
                 Path p = new Path(statusdir, name);
                 FileSystem fs = p.getFileSystem(conf);
                 out = fs.create(p);
-                System.err.println("--- Writing status to " + p);
+                System.err.println("templeton: Writing status to " + p);
             }
         }
 
@@ -137,7 +137,7 @@ public class TempletonQueuerJob extends Configured implements Tool {
                 while ((len = in.read(buf)) >= 0)
                     out.write(buf, 0, len);
             } catch (IOException e) {
-                System.err.println("--- execute error: " + e);
+                System.err.println("templeton: execute error: " + e);
             }
         }
     }
@@ -159,7 +159,6 @@ public class TempletonQueuerJob extends Configured implements Tool {
     public int run(String[] args)
         throws IOException, InterruptedException, ClassNotFoundException
     {
-        System.err.println("--- raw args " + Arrays.asList(args));
         Configuration conf = getConf();
         conf.set(COPY_NAME, TempletonUtils.decodeCliArg(args[0]));
         conf.set(STATUSDIR_NAME, TempletonUtils.decodeCliArg(args[1]));

@@ -20,6 +20,8 @@ package org.apache.hcatalog.templeton;
 import java.io.File;
 import java.net.URL;
 import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 
@@ -86,6 +88,8 @@ public class AppConfig extends Configuration {
     public static final String EXEC_TIMEOUT_NAME     = "templeton.exec.timeout";
     public static final String EXEC_MAX_PROCS_NAME   = "templeton.exec.max-procs";
 
+    private static final Log LOG = LogFactory.getLog(AppConfig.class);
+
     private static volatile AppConfig theSingleton;
 
     /**
@@ -146,7 +150,7 @@ public class AppConfig extends Configuration {
             File f = new File(dir, fname);
             if (f.exists()) {
                 addResource(new Path(f.getAbsolutePath()));
-                System.err.println("--- loaded config file " + f.getAbsolutePath());
+                LOG.info("loaded config file " + f.getAbsolutePath());
                 return true;
             }
         }
@@ -157,7 +161,7 @@ public class AppConfig extends Configuration {
         URL x = getResource(fname);
         if (x != null) {
             addResource(x);
-            System.err.println("--- loaded config from classpath  " + x);
+            LOG.info("loaded config from classpath  " + x);
             return true;
         }
 
