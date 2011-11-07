@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+
+<document>
+  <header>
+    <title>Configuration </title>
+  </header>
+  <body>
+  <p>The configuration for Templeton merges the normal Hadoop configuration with 
+     the Templeton specific variables.</p>  
+
+  <p>The Templeton specific configuration is split into three layers:</p>
+
+  <ol>
+   <li><strong>templeton-default.xml</strong> - All the configuration variables 
+    that Templeton needs. This file sets the defaults that ship with Templeton and 
+    should only be changed by the Templeton developers.</li>
+
+   <li><strong>templeton-dist.xml</strong> - The (possibly empty) configuration 
+    file that can set variables for a particular distribution, such as an RPM file.</li>
+
+   <li><strong>templeton-site.xml</strong> - The (possibly empty) configuration 
+    file in which the system administrator can set variables for their Hadoop cluster.</li>
+  </ol>
+
+  <p>The configuration files are loaded in this order with later files overriding 
+     earlier ones.</p>
+
+  <p>To find the configuration files, Templeton first attempts to load a file from the 
+     <code>CLASSPATH</code> and then looks in the directory specified in the 
+     <code>TEMPLETON_HOME</code> environment variable.</p>
+
+  <p>In addition the configuration files may access the special environment variable 
+     <code>env</code> for all environment variables. For example, the pig executable 
+     could be specified using:</p>
+
+<source>
+${env.PIG_HOME}/bin/pig
+</source>
+
+  <section>
+  <title>Variables</title>
+  <table>
+  <tr><th>Name</th><th>Default</th><th>Description</th></tr>
+
+  <tr>
+    <td><strong>templeton.jar</strong></td>
+    <td><code>${env.TEMPLETON_HOME}/build/templeton/templeton-0.1.0-dev.jar</code></td>
+    <td>The path to the Templeton jar file.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.streaming.jar</strong></td>
+    <td><code>${env.HADOOP_PREFIX}/share/hadoop/contrib/streaming/hadoop-streaming-0.20.205.0.jar</code></td>
+    <td>The path to the Hadoop streaming jar file.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.hadoop</strong></td>
+    <td><code>${env.HADOOP_PREFIX}/bin/hadoop</code></td>
+    <td>The path to the Hadoop executable.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.pig</strong></td>
+    <td><code>${env.PIG_HOME}/bin/pig</code></td>
+    <td>The path to the Pig executable.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.hcat</strong></td>
+    <td><code>${env.HCAT_PREFIX}/bin/hcat</code></td>
+    <td>The path to the Hcatalog executable.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.hive</strong></td>
+    <td><code>${env.HIVE_HOME}/bin/hive</code></td>
+    <td>The path to the Hive executable.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.sudo</strong></td>
+    <td><code>/usr/bin/sudo</code></td>
+    <td>The path to the sudo program.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.exec.encoding</strong></td>
+    <td><code>UTF-8</code></td>
+    <td>The encoding of the stdout and stderr data.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.exec.timeout</strong></td>
+    <td><code>10000</code></td>
+    <td>How long in milliseconds a program is allowed to run on the
+      Templeton box.
+    </td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.exec.max-procs</strong></td>
+    <td><code>16</code></td>
+    <td>The maximum number of processes allowed to run at once.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.exec.envs</strong></td>
+    <td><code>HADOOP_PREFIX,HADOOP_HOME,JAVA_HOME</code></td>
+    <td>The environment variables passed through to sudo.</td>
+  </tr>
+
+  </table>
+  </section>
+ 
+  </body>
+</document>

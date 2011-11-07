@@ -43,6 +43,7 @@ See http://forrest.apache.org/docs/linking.html for more info
 <!--    <index label="Example" href="example.html" />  
 -->
     <index label="Installation" href="installation.html" />
+    <index label="Configuration" href="configuration.html" />
     <index label="Reference">
      <index label="Resource List" href="resources.html" />
      <index label="status" href="status.html" />
