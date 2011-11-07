@@ -40,7 +40,8 @@ public class Server {
         = "{\"status\": \"ok\", \"version\": \"v1\"}\n";
     public static final String USER_PARAM = "user.name";
 
-    private static DelegatorService delegator = DelegatorService.getInstance();
+    private static ExecService execService = ExecService.getInstance();
+    private static AppConfig appConf = AppConfig.getInstance();
 
     /**
      * Check the status of this server.
@@ -68,7 +69,9 @@ public class Server {
     {
         verifyUser(user);
         verifyParam(exec, "exec");
-        return delegator.runHcat(user, exec, group, permissions);
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.run(user, exec, group, permissions);
     }
 
     /**
@@ -93,7 +96,8 @@ public class Server {
         verifyParam(mapper, "mapper");
         verifyParam(reducer, "reducer");
 
-        return delegator.runStreaming(user, inputs, output, mapper, reducer);
+        StreamingDelegator d = new StreamingDelegator(appConf, execService);
+        return d.run(user, inputs, output, mapper, reducer);
     }
 
     /**
@@ -117,10 +121,11 @@ public class Server {
         verifyParam(jar, "jar");
         verifyParam(mainClass, "class");
 
-        return delegator.runJar(user,
-                                jar, mainClass,
-                                libjars, files, args,
-                                defines, statusdir);
+        JarDelegator d = new JarDelegator(appConf, execService);
+        return d.run(user,
+                     jar, mainClass,
+                     libjars, files, args,
+                     defines, statusdir);
     }
 
     /**
@@ -142,10 +147,11 @@ public class Server {
         if (execute == null && srcFile == null)
             throw new BadParam("Either execute or file parameter required");
 
-        return delegator.runPig(user,
-                                execute, srcFile,
-                                pigArgs, otherFiles,
-                                statusdir);
+        PigDelegator d = new PigDelegator(appConf, execService);
+        return d.run(user,
+                     execute, srcFile,
+                     pigArgs, otherFiles,
+                     statusdir);
     }
 
     /**
@@ -165,9 +171,8 @@ public class Server {
         if (execute == null && srcFile == null)
             throw new BadParam("Either execute or file parameter required");
 
-        return delegator.runHive(user,
-                                execute, srcFile,
-                                statusdir);
+        HiveDelegator d = new HiveDelegator(appConf, execService);
+        return d.run(user, execute, srcFile, statusdir);
     }
 
     /**
@@ -182,8 +187,11 @@ public class Server {
     {
         verifyUser(user);
         verifyParam(jobid, ":jobid");
-        return delegator.jobStatus(user, jobid);
+
+        StatusDelegator d = new StatusDelegator(appConf, execService);
+        return d.run(user, jobid);
     }
+
     /**
      * Kill a job in the queue.
      */
@@ -196,7 +204,9 @@ public class Server {
     {
         verifyUser(user);
         verifyParam(jobid, ":jobid");
-        return delegator.jobDelete(user, jobid);
+
+        DeleteDelegator d = new DeleteDelegator(appConf, execService);
+        return d.run(user, jobid);
     }
 
     /**

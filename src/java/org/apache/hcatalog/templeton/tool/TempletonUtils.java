@@ -17,11 +17,20 @@
  */
 package org.apache.hcatalog.templeton.tool;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.JobID;
 import org.apache.hadoop.util.StringUtils;
+import org.apache.hcatalog.templeton.tool.TempletonQueuerJob;
+
 
 /**
  * General utility methods.
@@ -156,4 +165,47 @@ public class TempletonUtils {
         String x = decodeCliArg(s);
         return decodeArray(x);
     }
+
+    public static String[] hadoopFsListAsArray(String files, Configuration conf)
+        throws URISyntaxException, FileNotFoundException, IOException
+    {
+        String[] dirty = files.split(",");
+        String[] clean = new String[dirty.length];
+
+        for (int i = 0; i < dirty.length; ++i)
+            clean[i] = hadoopFsFilename(dirty[i], conf);
+
+        return clean;
+    }
+
+    public static String hadoopFsListAsString(String files, Configuration conf)
+        throws URISyntaxException, FileNotFoundException, IOException
+    {
+        return StringUtils.arrayToString(hadoopFsListAsArray(files, conf));
+    }
+
+    public static String hadoopFsFilename(String fname, Configuration conf)
+        throws URISyntaxException, FileNotFoundException, IOException
+    {
+        Path p = hadoopFsPath(fname, conf);
+        if (p == null)
+            return null;
+        else
+            return p.toString();
+    }
+
+    public static Path hadoopFsPath(String fname, Configuration conf)
+        throws URISyntaxException, FileNotFoundException, IOException
+    {
+        FileSystem defaultFs = FileSystem.get(conf);
+        URI u = new URI(fname);
+        Path p = new Path(u).makeQualified(defaultFs);
+
+        FileSystem fs = p.getFileSystem(conf);
+        if (! fs.exists(p))
+            throw new FileNotFoundException("File " + fname + " does not exist.");
+
+        return p;
+    }
+
 }
