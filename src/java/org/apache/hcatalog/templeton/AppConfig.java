@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.util.VersionInfo;
 
 /**
  * The configuration for Templeton.  This merges the normal Hadoop
@@ -103,6 +104,7 @@ public class AppConfig extends Configuration {
 
     public AppConfig() {
         init();
+        LOG.info("Using Hadoop version " + VersionInfo.getVersion());
     }
 
     private void init() {

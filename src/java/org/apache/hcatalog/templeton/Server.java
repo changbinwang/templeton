@@ -28,8 +28,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
 import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hdfs.web.AuthFilter;
+import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.hadoop.security.authentication.client.PseudoAuthenticator;
 
 /**
  * The Templeton Web API server.
@@ -38,10 +45,11 @@ import org.apache.commons.exec.ExecuteException;
 public class Server {
     public static final String STATUS_MSG
         = "{\"status\": \"ok\", \"version\": \"v1\"}\n";
-    public static final String USER_PARAM = "user.name";
 
     private static ExecService execService = ExecService.getInstance();
     private static AppConfig appConf = AppConfig.getInstance();
+
+    private @Context SecurityContext theSecurityContext;
 
     /**
      * Check the status of this server.
@@ -60,18 +68,17 @@ public class Server {
     @POST
     @Path("ddl.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public ExecBean ddl(@FormParam(USER_PARAM) String user,
-                        @FormParam("exec") String exec,
+    public ExecBean ddl(@FormParam("exec") String exec,
                         @FormParam("group") String group,
                         @FormParam("permissions") String permissions)
         throws NotAuthorizedException, BusyException, BadParam,
                ExecuteException, IOException
     {
-        verifyUser(user);
+        verifyUser();
         verifyParam(exec, "exec");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.run(user, exec, group, permissions);
+        return d.run(getUser(), exec, group, permissions);
     }
 
     /**
@@ -80,8 +87,7 @@ public class Server {
     @POST
     @Path("mapreduce/streaming.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public EnqueueBean mapReduceStreaming(@FormParam(USER_PARAM) String user,
-                                          @FormParam("input") List<String> inputs,
+    public EnqueueBean mapReduceStreaming(@FormParam("input") List<String> inputs,
                                           @FormParam("output") String output,
                                           @FormParam("mapper") String mapper,
                                           @FormParam("reducer") String reducer,
@@ -91,13 +97,13 @@ public class Server {
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
                ExecuteException, IOException
     {
-        verifyUser(user);
+        verifyUser();
         verifyParam(inputs, "input");
         verifyParam(mapper, "mapper");
         verifyParam(reducer, "reducer");
 
         StreamingDelegator d = new StreamingDelegator(appConf, execService);
-        return d.run(user, inputs, output, mapper, reducer);
+        return d.run(getUser(), inputs, output, mapper, reducer);
     }
 
     /**
@@ -106,8 +112,7 @@ public class Server {
     @POST
     @Path("mapreduce/jar.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public EnqueueBean mapReduceJar(@FormParam(USER_PARAM) String user,
-                                    @FormParam("jar") String jar,
+    public EnqueueBean mapReduceJar(@FormParam("jar") String jar,
                                     @FormParam("class") String mainClass,
                                     @FormParam("libjars") String libjars,
                                     @FormParam("files") String files,
@@ -117,12 +122,12 @@ public class Server {
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException
     {
-        verifyUser(user);
+        verifyUser();
         verifyParam(jar, "jar");
         verifyParam(mainClass, "class");
 
         JarDelegator d = new JarDelegator(appConf, execService);
-        return d.run(user,
+        return d.run(getUser(),
                      jar, mainClass,
                      libjars, files, args,
                      defines, statusdir);
@@ -134,8 +139,7 @@ public class Server {
     @POST
     @Path("pig.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public EnqueueBean pig(@FormParam(USER_PARAM) String user,
-                           @FormParam("execute") String execute,
+    public EnqueueBean pig(@FormParam("execute") String execute,
                            @FormParam("file") String srcFile,
                            @FormParam("arg") List<String> pigArgs,
                            @FormParam("files") String otherFiles,
@@ -143,12 +147,12 @@ public class Server {
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException
     {
-        verifyUser(user);
+        verifyUser();
         if (execute == null && srcFile == null)
             throw new BadParam("Either execute or file parameter required");
 
         PigDelegator d = new PigDelegator(appConf, execService);
-        return d.run(user,
+        return d.run(getUser(),
                      execute, srcFile,
                      pigArgs, otherFiles,
                      statusdir);
@@ -160,19 +164,18 @@ public class Server {
     @POST
     @Path("hive.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public EnqueueBean pig(@FormParam(USER_PARAM) String user,
-                           @FormParam("execute") String execute,
+    public EnqueueBean pig(@FormParam("execute") String execute,
                            @FormParam("file") String srcFile,
                            @FormParam("statusdir") String statusdir)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException
     {
-        verifyUser(user);
+        verifyUser();
         if (execute == null && srcFile == null)
             throw new BadParam("Either execute or file parameter required");
 
         HiveDelegator d = new HiveDelegator(appConf, execService);
-        return d.run(user, execute, srcFile, statusdir);
+        return d.run(getUser(), execute, srcFile, statusdir);
     }
 
     /**
@@ -181,15 +184,14 @@ public class Server {
     @GET
     @Path("queue/{jobid}.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public QueueStatusBean showQueueId(@QueryParam(USER_PARAM) String user,
-                                       @PathParam("jobid") String jobid)
+    public QueueStatusBean showQueueId(@PathParam("jobid") String jobid)
         throws NotAuthorizedException, BadParam, IOException
     {
-        verifyUser(user);
+        verifyUser();
         verifyParam(jobid, ":jobid");
 
         StatusDelegator d = new StatusDelegator(appConf, execService);
-        return d.run(user, jobid);
+        return d.run(getUser(), jobid);
     }
 
     /**
@@ -198,25 +200,28 @@ public class Server {
     @DELETE
     @Path("queue/{jobid}.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public QueueStatusBean deleteQueueId(@QueryParam(USER_PARAM) String user,
-                                       @PathParam("jobid") String jobid)
+    public QueueStatusBean deleteQueueId(@PathParam("jobid") String jobid)
         throws NotAuthorizedException, BadParam, IOException
     {
-        verifyUser(user);
+        verifyUser();
         verifyParam(jobid, ":jobid");
 
         DeleteDelegator d = new DeleteDelegator(appConf, execService);
-        return d.run(user, jobid);
+        return d.run(getUser(), jobid);
     }
 
     /**
      * Verify that we have a valid user.  Throw an exception if invalid.
      */
-    public void verifyUser(String user)
+    public void verifyUser()
         throws NotAuthorizedException
     {
-        if (user == null)
-            throw new NotAuthorizedException("missing " + USER_PARAM + " parameter");
+        if (getUser() == null) {
+            String msg = "No user found.";
+            if (! UserGroupInformation.isSecurityEnabled())
+                msg += "  Missing " + PseudoAuthenticator.USER_NAME + " parameter.";
+            throw new NotAuthorizedException(msg);
+        }
     }
 
     /**
@@ -237,5 +242,13 @@ public class Server {
     {
         if (param == null || param.isEmpty())
             throw new BadParam("Missing " + name + " parameter");
+    }
+
+    public String getUser() {
+        if (theSecurityContext == null)
+            return null;
+        if (theSecurityContext.getUserPrincipal() == null)
+            return null;
+        return theSecurityContext.getUserPrincipal().getName();
     }
 }
