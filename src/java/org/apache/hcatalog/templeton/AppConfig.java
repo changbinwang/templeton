@@ -25,6 +25,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.VersionInfo;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import com.sun.jersey.spi.container.servlet.WebComponent;
 
 /**
  * The configuration for Templeton.  This merges the normal Hadoop
@@ -119,6 +122,12 @@ public class AppConfig extends Configuration {
         for (String fname : TEMPLETON_CONF_FILENAMES)
             if (! loadOneClasspathConfig(fname))
                 loadOneFileConfig(templetonDir, fname);
+
+        // What a horrible place to do this.  Needs to move into the
+        // logging config file.
+        Logger filterLogger = Logger.getLogger(WebComponent.class.getName());
+        if (filterLogger != null)
+            filterLogger.setLevel(Level.SEVERE);
     }
 
     public static String getHadoopPrefix() {
