@@ -1,0 +1,114 @@
+#
+# Rakefile - Simple script to run through Templeton calls
+#
+# Chris Dean
+
+require 'cgi'
+
+RakeFileUtils.verbose(true)
+
+SERVER = "http://localhost:8080/templeton/v1"
+USERNAME = `whoami`.chomp
+USER = ["-d", "user.name=#{USERNAME}"]
+
+TESTS = [:status, :ddl, :streaming, :jar, :pig, :hive,
+         :queue, :queue_delete]
+
+task :default do
+  puts "Use rake test to run all the tests"
+end
+
+desc "Run all the tests"
+task :test do
+  TESTS.each do |t|
+    Rake::Task[t].invoke
+    puts "# ========================"
+  end
+end
+
+desc "Run status.json"
+task :status do
+  curl "status.json"
+end
+
+desc "Run ddl.json"
+task :ddl do
+  curl("ddl.json",
+       *USER,
+       "-d", "exec=show tables;")
+end
+
+desc "Run mapreduce/streaming.json"
+task :streaming do
+  stamp = `date '+%H%M%S'`.chomp
+  curl("mapreduce/streaming.json",
+       *USER,
+       "-d", "input=mydata",
+       "-d", "output=myoutput-#{stamp}",
+       "-d", "mapper=/bin/cat",
+       "-d", "reducer=/usr/bin/wc -w")
+end
+
+desc "Run mapreduce/jar.json"
+task :jar do
+  stamp = `date '+%H%M%S'`.chomp
+  curl("mapreduce/jar.json",
+       *USER,
+       "-d", "jar=wordcount.jar",
+       "-d", "class=org.myorg.WordCount",
+       "-d", "libjars=transform.jar,wordcount.jar",
+       "-d", "statusdir=wordcount/status-#{stamp}",
+       "-d", "arg=wordcount/input",
+       "-d", "arg=wordcount/output-#{stamp}")
+end
+
+desc "Run pig.json"
+task :pig do
+  script = <<EOS
+A = load 'passwd' using PigStorage(':');
+B = foreach A generate $0 as id;
+dump B;
+EOS
+
+  curl("pig.json",
+       *USER,
+       "-d", "execute=#{CGI.escape script}")
+end
+
+desc "Run hive.json"
+task :hive do
+  script = "select * from my_other_table;"
+
+  curl("hive.json",
+       *USER,
+       "-d", "execute=#{CGI.escape script}")
+end
+
+# Run like rake 'queue[job_201111061521_0018]'
+desc "Run queue status"
+task :queue, :job_id do |t, args|
+  job_id = args[:job_id] || "job_201111091507_0005"
+  curl("queue/#{job_id}.json?user.name=#{USERNAME}")
+end
+
+# Run like rake 'queue[job_201111061521_0019]'
+desc "Run queue delete"
+task :queue_delete, :job_id do |t, args|
+  job_id = args[:job_id] || "job_201111061521_0019"
+  curl("queue/#{job_id}.json?user.name=#{USERNAME}", "-X", "DELETE")
+end
+
+def curl(cmd, *opts)
+  args =["curl", "-s",  *opts, "#{SERVER}/#{cmd}"]
+  quoted = args.map {|x| quote(x)}.join(" ");
+  puts quoted
+  sh "#{quoted} | json-pretty-print", {:verbose => false}
+end
+
+def quote(s)
+  if s.match(/[\s&?]/)
+    "'" + s + "'"
+  else
+    s
+  end
+end
