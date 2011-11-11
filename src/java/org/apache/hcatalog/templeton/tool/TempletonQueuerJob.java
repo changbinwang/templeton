@@ -32,7 +32,6 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -95,6 +94,12 @@ public class TempletonQueuerJob extends Configured implements Tool {
             pool.shutdown();
             if (! pool.awaitTermination(WATCHER_TIMEOUT_SECS, TimeUnit.SECONDS))
                 pool.shutdownNow();
+
+            if (proc.exitValue() != 0) {
+                System.err.println("templeton: job failed with exit code "
+                                   + proc.exitValue());
+                System.exit(proc.exitValue());
+            }
         }
 
         private void executeWatcher(ExecutorService pool, Configuration conf,
@@ -142,16 +147,6 @@ public class TempletonQueuerJob extends Configured implements Tool {
         }
     }
 
-    public static class MonitorReducer
-        extends Reducer<Text, Text, NullWritable, NullWritable>
-    {
-        @Override
-        public void reduce(Text name, Iterable<Text> values, Context context)
-            throws IOException
-        {
-        }
-    }
-
     /**
      * Enqueue the job and print out the job id for later collection.
      */
@@ -174,8 +169,7 @@ public class TempletonQueuerJob extends Configured implements Tool {
         NullOutputFormat<NullWritable, NullWritable> of
             = new NullOutputFormat<NullWritable, NullWritable>();
         job.setOutputFormatClass(of.getClass());
-        job.setReducerClass(MonitorReducer.class);
-        job.setNumReduceTasks(1);
+        job.setNumReduceTasks(0);
 
         job.submit();
         TempletonUtils.printTaggedJobID(job.getJobID());

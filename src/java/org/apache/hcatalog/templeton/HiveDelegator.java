@@ -68,6 +68,8 @@ public class HiveDelegator extends TempletonDelegator {
             args.add("jar");
             args.add(appConf.templetonJar());
             args.add(JAR_CLASS);
+            args.add("-archives");
+            args.add(appConf.hiveArchive());
 
             ArrayList<String> allFiles = new ArrayList<String>();
             if (TempletonUtils.isset(srcFile))
@@ -76,7 +78,7 @@ public class HiveDelegator extends TempletonDelegator {
             args.add(TempletonUtils.encodeCliArray(allFiles));
             args.add(TempletonUtils.encodeCliArg(statusdir));
             args.add("--");
-            args.add(appConf.clusterHive());
+            args.add(appConf.hivePath());
             args.add("--service");
             args.add("cli");
             if (TempletonUtils.isset(execute)) {

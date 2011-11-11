@@ -72,6 +72,8 @@ public class PigDelegator extends TempletonDelegator {
             args.add("jar");
             args.add(appConf.templetonJar());
             args.add(JAR_CLASS);
+            args.add("-archives");
+            args.add(appConf.pigArchive());
 
             ArrayList<String> allFiles = new ArrayList<String>();
             if (TempletonUtils.isset(srcFile))
@@ -84,7 +86,7 @@ public class PigDelegator extends TempletonDelegator {
             args.add(TempletonUtils.encodeCliArray(allFiles));
             args.add(TempletonUtils.encodeCliArg(statusdir));
             args.add("--");
-            args.add(appConf.clusterPig());
+            args.add(appConf.pigPath());
             if (TempletonUtils.isset(execute)) {
                 args.add("-execute");
                 args.add(execute);

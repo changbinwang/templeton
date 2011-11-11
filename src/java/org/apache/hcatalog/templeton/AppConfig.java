@@ -57,10 +57,10 @@ import com.sun.jersey.spi.container.servlet.WebComponent;
  * TEMPLETON_HOME environment variable.
  *
  * In addition the configuration files may access the special env
- * variable env for all environment variables.  For example, the pig
- * executable could be specified using:
+ * variable env for all environment variables.  For example, the
+ * hadoop executable could be specified using:
  *<pre>
- *      ${env.PIG_HOME}/bin/pig
+ *      ${env.HADOOP_PREFIX}/bin/hadoop
  *</pre>
  */
 public class AppConfig extends Configuration {
@@ -83,9 +83,11 @@ public class AppConfig extends Configuration {
     public static final String TEMPLETON_JAR_NAME    = "templeton.jar";
     public static final String STREAMING_JAR_NAME    = "templeton.streaming.jar";
     public static final String HADOOP_NAME           = "templeton.hadoop";
-    public static final String PIG_NAME              = "templeton.pig";
     public static final String HCAT_NAME             = "templeton.hcat";
-    public static final String HIVE_NAME             = "templeton.hive";
+    public static final String PIG_ARCHIVE_NAME      = "templeton.pig.archive";
+    public static final String PIG_PATH_NAME         = "templeton.pig.path";
+    public static final String HIVE_ARCHIVE_NAME     = "templeton.hive.archive";
+    public static final String HIVE_PATH_NAME        = "templeton.hive.path";
     public static final String SUDO_NAME             = "templeton.sudo";
     public static final String EXEC_ENVS_NAME        = "templeton.exec.envs";
     public static final String EXEC_ENCODING_NAME    = "templeton.exec.encoding";
@@ -181,9 +183,11 @@ public class AppConfig extends Configuration {
 
     public String templetonJar()  { return get(TEMPLETON_JAR_NAME); }
     public String clusterHadoop() { return get(HADOOP_NAME); }
-    public String clusterPig()    { return get(PIG_NAME); }
     public String clusterHcat()   { return get(HCAT_NAME); }
-    public String clusterHive()   { return get(HIVE_NAME); }
+    public String pigPath()       { return get(PIG_PATH_NAME); }
+    public String pigArchive()    { return get(PIG_ARCHIVE_NAME); }
+    public String hivePath()      { return get(HIVE_PATH_NAME); }
+    public String hiveArchive()   { return get(HIVE_ARCHIVE_NAME); }
     public String sudoPath()      { return get(SUDO_NAME); }
 
     public String streamingJar() {

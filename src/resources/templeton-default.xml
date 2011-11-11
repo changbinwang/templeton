@@ -42,8 +42,14 @@ limitations under the License.
   </property>
 
   <property>
-    <name>templeton.pig</name>
-    <value>${env.PIG_HOME}/bin/pig</value>
+    <name>templeton.pig.archive</name>
+    <value>hdfs:///user/templeton/pig.tar</value>
+    <description>The path to the Pig archive.</description>
+  </property>
+
+  <property>
+    <name>templeton.pig.path</name>
+    <value>pig.tar/bin/pig</value>
     <description>The path to the Pig executable.</description>
   </property>
 
@@ -54,9 +60,15 @@ limitations under the License.
   </property>
 
   <property>
-    <name>templeton.hive</name>
-    <value>${env.HIVE_HOME}/bin/hive</value>
-    <description>The path to the hive executable.</description>
+    <name>templeton.hive.archive</name>
+    <value>hdfs:///user/templeton/hive.tar</value>
+    <description>The path to the Hive archive.</description>
+  </property>
+
+  <property>
+    <name>templeton.hive.path</name>
+    <value>hive.tar/bin/hive</value>
+    <description>The path to the Hive executable.</description>
   </property>
 
   <property>
