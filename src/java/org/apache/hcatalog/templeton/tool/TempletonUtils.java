@@ -29,8 +29,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.JobID;
 import org.apache.hadoop.util.StringUtils;
-import org.apache.hcatalog.templeton.tool.TempletonQueuerJob;
-
 
 /**
  * General utility methods.

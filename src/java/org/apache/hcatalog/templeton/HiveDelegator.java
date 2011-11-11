@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.exec.ExecuteException;
-import org.apache.hcatalog.templeton.tool.TempletonQueuerJob;
+import org.apache.hcatalog.templeton.tool.TempletonControllerJob;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
@@ -35,7 +35,7 @@ import org.apache.hcatalog.templeton.tool.TempletonUtils;
  * This is the backend of the pig web service.
  */
 public class HiveDelegator extends TempletonDelegator {
-    public static final String JAR_CLASS = TempletonQueuerJob.class.getName();
+    public static final String JAR_CLASS = TempletonControllerJob.class.getName();
 
     public HiveDelegator(AppConfig appConf, ExecService execService) {
         super(appConf, execService);

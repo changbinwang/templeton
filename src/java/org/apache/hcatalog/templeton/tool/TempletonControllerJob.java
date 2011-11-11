@@ -39,7 +39,7 @@ import org.apache.hadoop.util.ToolRunner;
 /**
  * A Map Reduce job that will start another job.
  */
-public class TempletonQueuerJob extends Configured implements Tool {
+public class TempletonControllerJob extends Configured implements Tool {
     public static final String COPY_NAME      = "templeton.copy";
     public static final String STATUSDIR_NAME = "templeton.statusdir";
     public static final String JAR_ARGS_NAME  = "templeton.args";
@@ -160,8 +160,8 @@ public class TempletonQueuerJob extends Configured implements Tool {
         String[] childArgs = Arrays.copyOfRange(args, 2, args.length);
         conf.set(JAR_ARGS_NAME, TempletonUtils.encodeArray(childArgs));
         Job job = new Job(conf);
-        job.setJarByClass(TempletonQueuerJob.class);
-        job.setJobName("TempletonQueuerJob");
+        job.setJarByClass(TempletonControllerJob.class);
+        job.setJobName("TempletonControllerJob");
         job.setMapperClass(LaunchMapper.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
@@ -177,9 +177,9 @@ public class TempletonQueuerJob extends Configured implements Tool {
     }
 
     public static void main(String[] args) throws Exception {
-        int ret = ToolRunner.run(new TempletonQueuerJob(), args);
+        int ret = ToolRunner.run(new TempletonControllerJob(), args);
         if (ret != 0)
-            System.err.println("TempletonQueuerJob failed!");
+            System.err.println("TempletonControllerJob failed!");
         System.exit(ret);
     }
 }
