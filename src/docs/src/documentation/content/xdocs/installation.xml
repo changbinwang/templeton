@@ -36,10 +36,19 @@
    <li><a href="http://ant.apache.org/">Ant</a>, version 1.8 or higher</li>
    <li><a href="http://tomcat.apache.org/">Tomcat</a>, version 7.0 or higher</li>
    <li><a href="http://hadoop.apache.org/">Hadoop</a>, version 0.20.205.0</li>
-   <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a></li>
+   <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>,
+   <ul>
+    <li>To use the dll resource, HCatalog must be installed in
+        <code>/usr/local/hcat/bin/hcat</code></li>
+    <li>To use the hive reousrce, see instructions 
+        <a href="installation.html#Hadoop+Distributed+Cache">below</a> 
+        for placing HCatalog into the Hadoop distributed cache.</li>
+   </ul>
+   </li>
+   <li><a href="http://pig.apache.org/">Pig</a>, see instructions 
+       <a href="installation.html#Hadoop+Distributed+Cache">below</a>
+       for placing Pig into the Hadoop distributed cache.</li>
   </ul>
-  <p><strong>Note:</strong> To run the dll api call, HCatalog must be installed in
-    <code>/usr/local/hcat/bin/hcat</code>.</p>
   </section>
 
   <section>
@@ -110,5 +119,77 @@ runner ALL=(%hadoop) NOPASSWD: command1[,command2, ...]
   <li>Run Tomcat as runner.</li>
   </ol>
   </section>
+
+  <section>
+  <title>Hadoop Distributed Cache</title>
+  <p>To avoid the installation of Pig and Hive everywhere on the cluster, 
+     Templeton gathers a version of Pig or Hive from the 
+     <a href="http://hadoop.apache.org/common/docs/current/mapred_tutorial.html#DistributedCache">
+     Hadoop distributed cache</a> whenever those resources are invoked. To install the 
+     required components in the locations specificed by the default configuration, 
+     follow these steps:</p>
+  
+  <ol>
+  <li>Create <code>hive.tar</code>.  If you installed HCatalog as noted above, this 
+      this is done as follows:
+<source>
+cd /usr/local/hcat
+tar cf /tmp/hive.tar
+</source>
+  </li>
+  <li>Place <code>hive.tar</code> into the cache.
+<source>
+hadoop fs -put /tmp/hive.tar /user/templeton/hive.tar
+</source>
+  </li>
+  <li>Install Pig locally, for example in <code>/usr/local/pig</code>.</li>
+  <li>Create <code>pig.tar</code>:
+<source>
+cd /usr/local/pig
+tar cf /tmp/pig.tar
+</source>
+  </li>
+  <li>Place <code>pig.tar</code> into the cache.
+<source>
+hadoop fs -put /tmp/pig.tar /user/templeton/pig.tar
+</source>
+  </li>
+  </ol>
+
+  <p>The location of these archives (tar files) in the cache, and the location 
+     of the installations inside the archives can be specified using the following 
+     Templeton configuration variables.  (See the 
+     <a href="configuration.html">Configuration</a> documentation for more information
+     on changing Templeton configuration parameters.)</p> 
+
+  <table>
+  <tr><th>Name</th><th>Default</th><th>Description</th></tr>
+
+  <tr>
+    <td><strong>templeton.pig.archive</strong></td>
+    <td><code>hdfs:///user/templeton/pig.tar</code></td>
+    <td>The path to the Pig archive.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.pig.path</strong></td>
+    <td><code>pig.tar/bin/pig</code></td>
+    <td>The path to the Pig executable.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.hive.archive</strong></td>
+    <td><code>hdfs:///user/templeton/hive.tar</code></td>
+    <td>The path to the Hive archive.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.hive.path</strong></td>
+    <td><code>hive.tar/bin/hive</code></td>
+    <td>The path to the Hive executable.</td>
+  </tr>
+  </table>
+  </section>
+
   </body>
 </document>
