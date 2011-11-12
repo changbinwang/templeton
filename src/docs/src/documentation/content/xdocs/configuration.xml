@@ -78,8 +78,14 @@ ${env.PIG_HOME}/bin/pig
   </tr>
 
   <tr>
-    <td><strong>templeton.pig</strong></td>
-    <td><code>${env.PIG_HOME}/bin/pig</code></td>
+    <td><strong>templeton.pig.archive</strong></td>
+    <td><code>hdfs:///user/templeton/pig.tar</code></td>
+    <td>The path to the Pig archive.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.pig.path</strong></td>
+    <td><code>pig.tar/bin/pig</code></td>
     <td>The path to the Pig executable.</td>
   </tr>
 
@@ -90,8 +96,14 @@ ${env.PIG_HOME}/bin/pig
   </tr>
 
   <tr>
-    <td><strong>templeton.hive</strong></td>
-    <td><code>${env.HIVE_HOME}/bin/hive</code></td>
+    <td><strong>templeton.hive.archive</strong></td>
+    <td><code>hdfs:///user/templeton/hive.tar</code></td>
+    <td>The path to the Hive archive.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.hive.path</strong></td>
+    <td><code>hive.tar/bin/hive</code></td>
     <td>The path to the Hive executable.</td>
   </tr>
 
