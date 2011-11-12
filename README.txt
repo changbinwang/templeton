@@ -14,7 +14,14 @@ developers.
   - ant >= 1.8
   - tomcat >= 7.0
   - Hadoop == 0.20.205.0 
-  - hcat
+  - Hcatalog
+    * To run the dll api call hcat must be installed in 
+      "/usr/local/hcat/bin/hcat". (!)
+    * To run hive commands, hcat should additionally be installed 
+      in the Hadoop distributed cache.  (see below)
+  - Pig
+    * To run pig commands, pig should be installed in the
+      Hadoop distributed cache.  (see below)
 
 1.  Setup these environment variables:
 
@@ -55,6 +62,20 @@ developers.
     - Make sure that you can sudo as yourself.  For example, 
         sudo -u $USER date
 
-6.  To run the dll api call hcat must be installed in
-    "/usr/local/hcat/bin/hcat". (!)
+6.  To install pig and hive into the distributed cache:
+
+    - Create a tar of the hcat installation (called hive.tar) and
+      place it into Hadoop
+
+        cd /usr/local/hcat
+        tar cf /tmp/hive.tar
+        hadoop fs -put /tmp/hive.tar /user/templeton/hive.tar
+
+    - Install pig locally, create a tar of the pig installation
+      and place it into Hadoop
+
+        cd /usr/local/pig
+        tar cf /tmp/pig.tar
+        hadoop fs -put /tmp/pig.tar /user/templeton/pig.tar 
+    
 
