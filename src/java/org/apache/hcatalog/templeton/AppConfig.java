@@ -88,6 +88,7 @@ public class AppConfig extends Configuration {
     public static final String PIG_PATH_NAME         = "templeton.pig.path";
     public static final String HIVE_ARCHIVE_NAME     = "templeton.hive.archive";
     public static final String HIVE_PATH_NAME        = "templeton.hive.path";
+    public static final String HIVE_PROPS_NAME       = "templeton.hive.properties";
     public static final String SUDO_NAME             = "templeton.sudo";
     public static final String EXEC_ENVS_NAME        = "templeton.exec.envs";
     public static final String EXEC_ENCODING_NAME    = "templeton.exec.encoding";

@@ -77,7 +77,7 @@ end
 
 desc "Run hive.json"
 task :hive do
-  script = "select * from my_other_table;"
+  script = "select * from pokes;"
 
   curl("hive.json",
        *USER,

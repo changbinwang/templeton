@@ -81,6 +81,10 @@ public class HiveDelegator extends TempletonDelegator {
             args.add(appConf.hivePath());
             args.add("--service");
             args.add("cli");
+            for (String prop : appConf.getStrings(AppConfig.HIVE_PROPS_NAME)) {
+                args.add("--hiveconf");
+                args.add(prop);
+            }
             if (TempletonUtils.isset(execute)) {
                 args.add("-e");
                 args.add(execute);

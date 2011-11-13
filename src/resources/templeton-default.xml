@@ -72,6 +72,12 @@ limitations under the License.
   </property>
 
   <property>
+    <name>templeton.hive.properties</name>
+    <value>hive.metastore.local=false,hive.metastore.uris=thrift://localhost:9933,hive.metastore.sasl.enabled=false</value>
+    <description>Properties to set when running hive.</description>
+  </property>
+
+  <property>
     <name>templeton.sudo</name>
     <value>/usr/bin/sudo</value>
     <description>The path to the sudo program.</description>
