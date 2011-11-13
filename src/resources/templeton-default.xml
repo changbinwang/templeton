@@ -99,6 +99,14 @@ limitations under the License.
   </property>
 
   <property>
+    <name>templeton.exec.max-output-bytes</name>
+    <value>1048576</value>
+    <description>
+      The maximum number of bytes from stdout or stderr stored in ram.
+    </description>
+  </property>
+
+  <property>
     <name>templeton.exec.envs</name>
     <value>HADOOP_PREFIX,HADOOP_HOME,JAVA_HOME</value>
     <description>The environment variables passed through to sudo.</description>

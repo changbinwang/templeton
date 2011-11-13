@@ -93,6 +93,7 @@ public class AppConfig extends Configuration {
     public static final String EXEC_ENCODING_NAME    = "templeton.exec.encoding";
     public static final String EXEC_TIMEOUT_NAME     = "templeton.exec.timeout";
     public static final String EXEC_MAX_PROCS_NAME   = "templeton.exec.max-procs";
+    public static final String EXEC_MAX_BYTES_NAME   = "templeton.exec.max-output-bytes";
 
     private static final Log LOG = LogFactory.getLog(AppConfig.class);
 

@@ -104,8 +104,9 @@ public class ExecService {
         executor.setExitValues(null);
 
         // Setup stdout and stderr
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        ByteArrayOutputStream errStream = new ByteArrayOutputStream();
+        int nbytes = appConf.getInt(AppConfig.EXEC_MAX_BYTES_NAME, -1);
+        ByteArrayOutputStream outStream = new MaxByteArrayOutputStream(nbytes);
+        ByteArrayOutputStream errStream = new MaxByteArrayOutputStream(nbytes);
         executor.setStreamHandler(new PumpStreamHandler(outStream, errStream));
 
         // Only run for N milliseconds
