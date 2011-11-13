@@ -30,6 +30,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
@@ -40,11 +41,14 @@ import org.apache.hadoop.util.ToolRunner;
  * A Map Reduce job that will start another job.
  */
 public class TempletonControllerJob extends Configured implements Tool {
+    static enum ControllerCounters { SIMPLE_COUNTER };
+
     public static final String COPY_NAME      = "templeton.copy";
     public static final String STATUSDIR_NAME = "templeton.statusdir";
     public static final String JAR_ARGS_NAME  = "templeton.args";
 
     public static final int WATCHER_TIMEOUT_SECS = 10;
+    public static final int KEEP_ALIVE_MSEC      = 60 * 1000;
 
     private static TrivialExecService execService = TrivialExecService.getInstance();
 
@@ -85,12 +89,15 @@ public class TempletonControllerJob extends Configured implements Tool {
 
             Configuration conf = context.getConfiguration();
             String statusdir = conf.get(STATUSDIR_NAME);
+            Counter cnt = context.getCounter(ControllerCounters.SIMPLE_COUNTER);
 
             ExecutorService pool = Executors.newCachedThreadPool();
             executeWatcher(pool, conf, proc.getInputStream(), statusdir, "stdout");
             executeWatcher(pool, conf, proc.getErrorStream(), statusdir, "stderr");
+            KeepAlive keepAlive = startCounterKeepAlive(pool, cnt);
 
             proc.waitFor();
+            keepAlive.sendReport = false;
             pool.shutdown();
             if (! pool.awaitTermination(WATCHER_TIMEOUT_SECS, TimeUnit.SECONDS))
                 pool.shutdownNow();
@@ -108,6 +115,14 @@ public class TempletonControllerJob extends Configured implements Tool {
         {
             Watcher w = new Watcher(conf, in, statusdir, name);
             pool.execute(w);
+        }
+
+        private KeepAlive startCounterKeepAlive(ExecutorService pool, Counter cnt)
+            throws IOException
+        {
+            KeepAlive k = new KeepAlive(cnt);
+            pool.execute(k);
+            return k;
         }
     }
 
@@ -143,6 +158,29 @@ public class TempletonControllerJob extends Configured implements Tool {
                     out.write(buf, 0, len);
             } catch (IOException e) {
                 System.err.println("templeton: execute error: " + e);
+            }
+        }
+    }
+
+    public static class KeepAlive implements Runnable {
+        private Counter cnt;
+        public boolean sendReport;
+
+        public KeepAlive(Counter cnt)
+        {
+            this.cnt = cnt;
+            this.sendReport = true;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (sendReport) {
+                    cnt.increment(1);
+                    Thread.sleep(KEEP_ALIVE_MSEC);
+                }
+            } catch (InterruptedException e) {
+                // Ok to be interrupted
             }
         }
     }
