@@ -91,5 +91,47 @@
       </tr>
      </table>
   </section> 
+
+  <section>
+   <title>Example</title>
+
+  <p><strong>Code and Data Setup</strong></p>
+<source>
+% cat id.pig
+A = load 'passwd' using PigStorage(':');
+B = foreach A generate $0 as id;
+dump B;
+
+% cat fake-passwd
+ctdean:Chris Dean:secret
+pauls:Paul Stolorz:good
+carmas:Carlos Armas:evil
+dra:Deirdre McClure:marvelous
+
+% hadoop fs -put id.pig .
+% hadoop fs -put fake-passwd passwd
+</source>
+
+   <p><strong>Curl Command</strong></p>
+<source>
+% curl -d user.name=ctdean \
+       -d file=id.pig \
+       -d arg=-v \
+       'http://www.myserver.com/templeton/v1/pig.json' 
+</source>
+
+   <p><strong>JSON Output</strong></p>
+<source>
+{
+ "id": "job_201111101627_0018",
+ "info": {
+          "stdout": "templeton-job-id:job_201111101627_0018
+                    ",
+          "stderr": "",
+          "exitcode": 0
+         }
+}
+</source>
+  </section>
   </body>
 </document>

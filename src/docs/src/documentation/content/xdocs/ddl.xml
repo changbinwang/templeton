@@ -82,6 +82,33 @@
      </table>
  </section> 
 
+ <section>
+   <title>Example</title>
 
+   <p><strong>Curl Command</strong></p>
+<source>
+% curl -d user.name=ctdean \
+       -d 'exec=show tables;' \
+       'http://www.myserver.com/templeton/v1/ddl.json'
+</source>
+
+   <p><strong>JSON Output</strong></p>
+<source>
+{
+ "stdout": "important_table
+            my_other_table
+            my_table
+            my_table_2
+            pokes
+            ",
+ "stderr": "WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated...
+            Hive history file=/tmp/ctdean/hive_job_log_ctdean_201111111258_2117356679.txt
+            OK
+            Time taken: 1.202 seconds
+            ",
+ "exitcode": 0
+}
+</source>
+  </section>
  </body>
 </document>

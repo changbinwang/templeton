@@ -109,23 +109,30 @@
 
   <section>
    <title>Example</title>
+
+   <p><strong>Curl Command</strong></p>
 <source>
-% curl -d user.name=charlotte \    
+% curl -d user.name=ctdean \
        -d jar=wordcount.jar \
        -d class=org.myorg.WordCount \
        -d libjars=transform.jar,wordcount.jar \
        -d arg=wordcount/input \
-       -d statusdir=status \
        -d arg=wordcount/output \
-      'http://localhost:8080/templeton/v1/mapreduce/jar.json'
-{"id":"job_201110132141_0008",
- "info":{
-  "stdout":"packageJobJar: [] [/Users/charlotte/var/hadoop/hadoop-0.20.203.0/contrib/jar/hadoop-jar-0.20.203.0.jar] ...",
-  "stderr":"2011-10-17 15:00:09.693 java[50410:1803] Unable to load realm info from SCDynamicStore\n11/10/17 15:00:10 WARN ...",
-  "exitCode":0}}
-%</source>
+       'http://www.myserver.com/templeton/v1/mapreduce/jar.json'
+</source>
+
+   <p><strong>JSON Output</strong></p>
+<source>
+{
+ "id": "job_201111121211_0001",
+ "info": {
+          "stdout": "templeton-job-id:job_201111121211_0001
+                    ",
+          "stderr": "",
+          "exitcode": 0
+         }
+}
+</source>
   </section>
-
-
   </body>
 </document>

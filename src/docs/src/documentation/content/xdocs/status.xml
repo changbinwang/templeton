@@ -57,11 +57,19 @@
 
   <section>
    <title>Example</title>
+
+   <p><strong>Curl Command</strong></p>
 <source>
-%
 % curl 'http://www.myserver.com/templeton/v1/status.json?user.name=charlotte'
-{"status": "ok", "version": "v1"}
-%</source>
+</source>
+
+   <p><strong>JSON Output</strong></p>
+<source>
+{
+ "status": "ok", 
+ "version": "v1"
+}
+</source>
   </section>
  </body>
 </document>

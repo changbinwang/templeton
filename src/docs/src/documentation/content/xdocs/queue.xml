@@ -71,26 +71,45 @@
 
   <section>
    <title>Example</title>
+
+   <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://localhost:8080/templeton/v1/queue/job_201110132141_0032.json?user.name=charlotte'
-{"status":{"startTime":1318885279506,
-           "username":"charlotte",
-           "jobID":{"jtIdentifier":"201110132141", "id":30},
-           "failureInfo":"NA",
-           "jobACLs":{},
-           "schedulingInfo":"NA",
-           "jobId":"job_201110132141_0030",
-           "jobPriority":"NORMAL",
-           "runState":2,
-           "jobComplete":true},
- "profile":{"url":"http://localhost:50030/jobdetails.jsp?jobid=job_201110132141_0030",
-           "jobID":{"jtIdentifier":"201110132141", "id":30},
-           "user":"charlotte",
-           "queueName":"default",
-           "jobFile":"hdfs://localhost:9000/tmp/hadoop-charlotte/mapred/staging/charlotte/.staging/job_201110132141_0030/job.xml",
-           "jobName":"streamjob455607061040212405.jar",
-           "jobId":"job_201110132141_0030"}}
-%</source>
+% curl 'http://www.myserver.com/templeton/v1/queue/job_201111111311_0008.json?user.name=ctdean'
+</source>
+
+   <p><strong>JSON Output</strong></p>
+<source>
+{
+ "status": {
+            "startTime": 1321046803361,
+            "username": "ctdean",
+            "jobID": {
+                      "jtIdentifier": "201111111311",
+                      "id": 8
+                     },
+            "jobACLs": { 
+                       },
+            "schedulingInfo": "NA",
+            "failureInfo": "NA",
+            "jobId": "job_201111111311_0008",
+            "jobPriority": "NORMAL",
+            "runState": 2,
+            "jobComplete": true
+           },
+ "profile": {
+             "url": "http://localhost:50030/jobdetails.jsp?jobid=job_201111111311_0008",
+             "user": "ctdean",
+             "jobID": {
+                       "jtIdentifier": "201111111311",
+                       "id": 8
+                      },
+             "queueName": "default",
+             "jobFile": "hdfs://localhost:9000/tmp/hadoop-ctdean/mapred/staging/ctdean/.staging/job_201111111311_0008/job.xml",
+             "jobName": "streamjob2396312251369831644.jar",
+             "jobId": "job_201111111311_0008"
+            }
+}
+</source>
   </section>
  </body>
 </document>

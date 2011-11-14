@@ -78,5 +78,43 @@
       </tr>
      </table>
   </section> 
+
+  <section>
+   <title>Example</title>
+
+   <p><strong>Curl Command</strong></p>
+<source>
+% curl -d user.name=ctdean \
+       -d execute="select+*+from+pokes;" \
+       -d statusdir="pokes.output" \
+       'http://www.myserver.com/templeton/v1/hive.json'
+</source>
+
+   <p><strong>JSON Output</strong></p>
+<source>
+{
+ "id": "job_201111111311_0005",
+ "info": {
+          "stdout": "templeton-job-id:job_201111111311_0005
+                    ",
+          "stderr": "",
+          "exitcode": 0
+         }
+}
+</source>
+
+   <p><strong>Results</strong></p>
+<source>
+% hadoop fs -ls pokes.output
+Found 2 items
+-rw-r--r--   1 ctdean supergroup        610 2011-11-11 13:22 /user/ctdean/pokes.output/stderr
+-rw-r--r--   1 ctdean supergroup         15 2011-11-11 13:22 /user/ctdean/pokes.output/stdout
+
+% hadoop fs -cat pokes.output/stdout
+1       a
+2       bb
+3       ccc
+</source>
+  </section>
   </body>
 </document>

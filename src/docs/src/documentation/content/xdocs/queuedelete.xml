@@ -69,29 +69,52 @@
     </table>
  </section> 
 
+
   <section>
    <title>Example</title>
+
+   <p><strong>Curl Command</strong></p>
 <source>
-% curl -X DELETE -d user.name=charlotte \
-       'http://localhost:8080/templeton/v1/queue/job_201110132141_0030.json'
-{"status":{"startTime":1318885279506,
-           "username":"charlotte",
-           "jobID":{"jtIdentifier":"201110132141", "id":30},
-           "failureInfo":"NA",
-           "jobACLs":{},
-           "schedulingInfo":"NA",
-           "jobId":"job_201110132141_0030",
-           "jobPriority":"NORMAL",
-           "runState":2,
-           "jobComplete":true},
- "profile":{"url":"http://localhost:50030/jobdetails.jsp?jobid=job_201110132141_0030",
-           "jobID":{"jtIdentifier":"201110132141", "id":30},
-           "user":"charlotte",
-           "queueName":"default",
-           "jobFile":"hdfs://localhost:9000/tmp/hadoop-charlotte/mapred/staging/charlotte/.staging/job_201110132141_0030/job.xml",
-           "jobName":"streamjob455607061040212405.jar",
-           "jobId":"job_201110132141_0030"}}
-%</source>
+% curl -X DELETE 'http://www.myserver.com/templeton/v1/queue/job_201111111311_0009.json?user.name=ctdean'
+</source>
+
+   <p><strong>JSON Output</strong></p>
+<source>
+{
+ "status": {
+            "startTime": 1321047216471,
+            "username": "ctdean",
+            "jobID": {
+                      "jtIdentifier": "201111111311",
+                      "id": 9
+                     },
+            "jobACLs": {
+                       },
+            "schedulingInfo": "NA",
+            "failureInfo": "NA",
+            "jobId": "job_201111111311_0009",
+            "jobPriority": "NORMAL",
+            "runState": 1,
+            "jobComplete": false
+           },
+ "profile": {
+             "url": "http://localhost:50030/jobdetails.jsp?jobid=job_201111111311_0009",
+             "user": "ctdean",
+             "jobID": {
+                       "jtIdentifier": "201111111311",
+                       "id": 9
+                      },
+             "queueName": "default",
+             "jobFile": "hdfs://localhost:9000/tmp/hadoop-ctdean/mapred/staging/ctdean/.staging/job_201111111311_0009/job.xml",
+             "jobName": "streamjob3322518350676530377.jar",
+             "jobId": "job_201111111311_0009"
+            }
+}
+</source>
+<p><strong>Note:</strong> The job is not immediately deleted, therefore the 
+   information returned may not reflect deletion, like in our example.  
+   Use <a href="queue.html"><code>GET queue/:jobid</code></a>
+   to monitor the job and confirm that it is eventually deleted.</p>
   </section>
  </body>
 </document>
