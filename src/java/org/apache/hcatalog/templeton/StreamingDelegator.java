@@ -40,8 +40,12 @@ public class StreamingDelegator extends TempletonDelegator {
         super(appConf, execService);
     }
 
-    public EnqueueBean run(String user, List<String> inputs,
-                           String output, String mapper, String reducer)
+    public EnqueueBean run(String user,
+                           List<String> inputs, String output,
+                           String mapper, String reducer,
+                           List<String> files, List<String> defines,
+                           List<String> cmdenvs,
+                           List<String> jarArgs)
         throws NotAuthorizedException, BusyException, QueueException,
         ExecuteException, IOException
     {
@@ -61,6 +65,14 @@ public class StreamingDelegator extends TempletonDelegator {
         args.add(mapper);
         args.add("-reducer");
         args.add(reducer);
+
+        for (String f : files)
+            args.add("-file" + f);
+        for (String d : defines)
+            args.add("-D" + d);
+        for (String e : cmdenvs)
+            args.add("-cmdenv" + e);
+        args.addAll(jarArgs);
 
         HashMap<String, String> env = new HashMap<String, String>();
         env.put("HADOOP_CLASSPATH", appConf.streamingJar());

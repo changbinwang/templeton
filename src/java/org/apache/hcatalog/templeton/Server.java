@@ -93,7 +93,8 @@ public class Server {
                                           @FormParam("reducer") String reducer,
                                           @FormParam("file") List<String> files,
                                           @FormParam("define") List<String> defines,
-                                          @FormParam("cmdenv") List<String> cmdenv)
+                                          @FormParam("cmdenv") List<String> cmdenvs,
+                                          @FormParam("arg") List<String> args)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
                ExecuteException, IOException
     {
@@ -103,7 +104,8 @@ public class Server {
         verifyParam(reducer, "reducer");
 
         StreamingDelegator d = new StreamingDelegator(appConf, execService);
-        return d.run(getUser(), inputs, output, mapper, reducer);
+        return d.run(getUser(), inputs, output, mapper, reducer,
+                     files, defines, cmdenvs, args);
     }
 
     /**
