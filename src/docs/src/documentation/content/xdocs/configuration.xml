@@ -108,6 +108,15 @@ ${env.PIG_HOME}/bin/pig
   </tr>
 
   <tr>
+    <td><strong>templeton.hive.properties</strong></td> 
+    <td>
+<code>hive.metastore.local=false,
+hive.metastore.uris=thrift://localhost:9933,
+hive.metastore.sasl.enabled=false</code></td>
+    <td>Properties to set when running hive.</td>
+  </tr>
+
+  <tr>
     <td><strong>templeton.sudo</strong></td>
     <td><code>/usr/bin/sudo</code></td>
     <td>The path to the sudo program.</td>
@@ -131,6 +140,12 @@ ${env.PIG_HOME}/bin/pig
     <td><strong>templeton.exec.max-procs</strong></td>
     <td><code>16</code></td>
     <td>The maximum number of processes allowed to run at once.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.exec.max-output-bytes</strong></td>
+    <td><code>1048576</code></td>
+    <td>The maximum number of bytes from stdout or stderr stored in ram.</td>
   </tr>
 
   <tr>
