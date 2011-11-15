@@ -87,6 +87,13 @@
         <td>None</td>
     </tr>
 
+    <tr><td><strong>arg</strong></td>
+        <td>Set a program argument using the syntax
+         <code>arg=NAME=VALUE</code>.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
     </table>
   </section>
 
