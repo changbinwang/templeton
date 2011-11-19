@@ -38,7 +38,7 @@
    <li><a href="http://hadoop.apache.org/">Hadoop</a>, version 0.20.205.0</li>
    <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>,
    <ul>
-    <li>To use the dll resource, HCatalog must be installed in
+    <li>To use the ddl resource, HCatalog must be installed in
         <code>/usr/local/hcat/bin/hcat</code></li>
     <li>To use the hive resource, see instructions 
         <a href="installation.html#Hadoop+Distributed+Cache">below</a> 
@@ -57,6 +57,9 @@
   <tr><th>Variable</th><th>Value</th></tr>
   <tr><td><code>HADOOP_PREFIX</code></td>
       <td>Set to the location of your Hadoop install</td>
+  </tr>
+  <tr><td><code>HCAT_PREFIX</code></td>
+      <td>Set to the location of your HCatalog install</td>
   </tr>
   <tr><td><code>CATALINA_HOME</code></td>
       <td>Set to the location of your Tomcat install</td>
@@ -80,7 +83,7 @@
   <li>Ensure that the required related installations and environment 
       variables are in place.</li>
   <li>Start Tomcat.</li>
-  <li>Build and install the Templeton war file using <code>ant install -war</code>
+  <li>Build and install the Templeton war file using <code>ant install-war</code>
       from <code>$TEMPLETON_HOME</code>.  The Tomcat webapps directory must be writable.</li>
   <li>Check that your local install works.  Assuming that Tomcat is running
       on port 8080, the following command would give output similar to that shown. 

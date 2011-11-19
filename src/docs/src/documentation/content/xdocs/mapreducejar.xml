@@ -66,8 +66,7 @@
     </tr>
 
     <tr><td><strong>arg</strong></td>
-        <td>Set a program argument using the syntax
-         <code>arg=NAME=VALUE</code>.</td>
+        <td>Set a program argument.</td>
         <td>Optional</td>
         <td>None</td>
     </tr>
@@ -110,12 +109,23 @@
   <section>
    <title>Example</title>
 
+   <p><strong>Code and Data Setup</strong></p>
+<source>
+% hadoop fs -put wordcount.jar .
+% hadoop fs -put transform.jar .
+
+% hadoop fs -ls .
+Found 2 items
+-rw-r--r--   1 ctdean supergroup         23 2011-11-11 13:29 /user/ctdean/wordcount.jar
+-rw-r--r--   1 ctdean supergroup         28 2011-11-11 13:29 /user/ctdean/transform.jar
+</source>
+
    <p><strong>Curl Command</strong></p>
 <source>
 % curl -d user.name=ctdean \
        -d jar=wordcount.jar \
        -d class=org.myorg.WordCount \
-       -d libjars=transform.jar,wordcount.jar \
+       -d libjars=transform.jar \
        -d arg=wordcount/input \
        -d arg=wordcount/output \
        'http://www.myserver.com/templeton/v1/mapreduce/jar.json'

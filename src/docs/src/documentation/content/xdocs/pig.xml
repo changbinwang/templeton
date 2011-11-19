@@ -38,9 +38,9 @@
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
     
-    <tr><td><strong>exec</strong></td>
+    <tr><td><strong>execute</strong></td>
         <td>String containing an entire, short pig program to run.</td>
-        <td>One of either "exec" or "file" is required</td>
+        <td>One of either "execcute" or "file" is required</td>
         <td>None</td>
     </tr>
         
