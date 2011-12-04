@@ -104,8 +104,12 @@ public class TempletonUtils {
 
         String[] escaped = new String[plain.length];
 
-        for (int i = 0; i < plain.length; ++i)
+        for (int i = 0; i < plain.length; ++i) {
+        	if (plain[i] == null) {
+        		plain[i] = "";
+        	}
             escaped[i] = StringUtils.escapeString(plain[i]);
+        }
 
         return StringUtils.arrayToString(escaped);
     }
@@ -138,6 +142,9 @@ public class TempletonUtils {
      * Encode an array to be used on the command line.
      */
     public static String encodeCliArray(List<String> list) {
+    	if (list == null) {
+    		return null;
+    	}
         String[] array = new String[list.size()];
         String x = encodeArray(list.toArray(array));
         return encodeCliArg(x);
@@ -167,6 +174,9 @@ public class TempletonUtils {
     public static String[] hadoopFsListAsArray(String files, Configuration conf)
         throws URISyntaxException, FileNotFoundException, IOException
     {
+    	if (files == null || conf == null) {
+    		return null;
+    	}
         String[] dirty = files.split(",");
         String[] clean = new String[dirty.length];
 
@@ -179,6 +189,9 @@ public class TempletonUtils {
     public static String hadoopFsListAsString(String files, Configuration conf)
         throws URISyntaxException, FileNotFoundException, IOException
     {
+    	if (files == null || conf == null) {
+    		return null;
+    	}
         return StringUtils.arrayToString(hadoopFsListAsArray(files, conf));
     }
 
@@ -195,6 +208,9 @@ public class TempletonUtils {
     public static Path hadoopFsPath(String fname, Configuration conf)
         throws URISyntaxException, FileNotFoundException, IOException
     {
+    	if (fname == null || conf == null) {
+    		return null;
+    	}
         FileSystem defaultFs = FileSystem.get(conf);
         URI u = new URI(fname);
         Path p = new Path(u).makeQualified(defaultFs);
