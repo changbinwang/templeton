@@ -168,6 +168,7 @@ public class Server {
     @Produces({MediaType.APPLICATION_JSON})
     public EnqueueBean pig(@FormParam("execute") String execute,
                            @FormParam("file") String srcFile,
+                           @FormParam("define") List<String> defines,
                            @FormParam("statusdir") String statusdir)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException
@@ -177,7 +178,7 @@ public class Server {
             throw new BadParam("Either execute or file parameter required");
 
         HiveDelegator d = new HiveDelegator(appConf, execService);
-        return d.run(getUser(), execute, srcFile, statusdir);
+        return d.run(getUser(), execute, srcFile, defines, statusdir);
     }
 
     /**

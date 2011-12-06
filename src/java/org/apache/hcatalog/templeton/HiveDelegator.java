@@ -42,12 +42,12 @@ public class HiveDelegator extends TempletonDelegator {
     }
 
     public EnqueueBean run(String user,
-                           String execute, String srcFile,
+                           String execute, String srcFile, List<String> defines,
                            String statusdir)
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
-        List<String> args = makeArgs(execute, srcFile, statusdir);
+        List<String> args = makeArgs(execute, srcFile, defines, statusdir);
 
         ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, null);
         if (exec.exitcode != 0)
@@ -59,29 +59,22 @@ public class HiveDelegator extends TempletonDelegator {
         return new EnqueueBean(id, exec);
     }
 
-    private List<String> makeArgs(String execute, String srcFile,
+    private List<String> makeArgs(String execute, String srcFile, List<String> defines,
                                   String statusdir)
         throws BadParam, IOException
     {
         ArrayList<String> args = new ArrayList<String>();
         try {
-            args.add("jar");
-            args.add(appConf.templetonJar());
-            args.add(JAR_CLASS);
-            args.add("-archives");
-            args.add(appConf.hiveArchive());
-
-            ArrayList<String> allFiles = new ArrayList<String>();
-            if (TempletonUtils.isset(srcFile))
-                allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf));
-
-            args.add(TempletonUtils.encodeCliArray(allFiles));
-            args.add(TempletonUtils.encodeCliArg(statusdir));
+            args.addAll(makeBasicArgs(execute, srcFile, statusdir));
             args.add("--");
             args.add(appConf.hivePath());
             args.add("--service");
             args.add("cli");
             for (String prop : appConf.getStrings(AppConfig.HIVE_PROPS_NAME)) {
+                args.add("--hiveconf");
+                args.add(prop);
+            }
+            for (String prop : defines) {
                 args.add("--hiveconf");
                 args.add(prop);
             }
@@ -98,6 +91,26 @@ public class HiveDelegator extends TempletonDelegator {
             throw new BadParam(e.getMessage());
         }
 
+        return args;
+    }
+
+    private List<String> makeBasicArgs(String execute, String srcFile, String statusdir)
+        throws URISyntaxException, FileNotFoundException, IOException
+    {
+        ArrayList<String> args = new ArrayList<String>();
+
+        args.add("jar");
+        args.add(appConf.templetonJar());
+        args.add(JAR_CLASS);
+        args.add("-archives");
+        args.add(appConf.hiveArchive());
+
+        ArrayList<String> allFiles = new ArrayList<String>();
+        if (TempletonUtils.isset(srcFile))
+            allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf));
+
+        args.add(TempletonUtils.encodeCliArray(allFiles));
+        args.add(TempletonUtils.encodeCliArg(statusdir));
         return args;
     }
 }
