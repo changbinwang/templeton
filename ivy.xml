@@ -58,6 +58,8 @@
                 conf="common->master"/>
     <dependency org="commons-codec" name="commons-codec" rev="1.4"
                 conf="common->master"/>
+    <dependency org="org.apache.zookeeper" name="zookeeper" rev="3.3.4"
+                conf="common->master"/>
 
 
     <dependency org="commons-logging" name="commons-logging" rev="1.0.4"
