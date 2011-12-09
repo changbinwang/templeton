@@ -51,6 +51,13 @@
         <td>None</td>
     </tr>  
 
+    <tr><td><strong>define</strong></td>
+        <td>Set a Hive configuration variable using the syntax
+         <code>define=NAME=VALUE</code>.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
     <tr><td><strong>statusdir</strong></td>
         <td>A directory where Templeton will write the status of the
          Hive job.  If provided, it is the caller's responsibility
