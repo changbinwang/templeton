@@ -80,21 +80,24 @@ public class AppConfig extends Configuration {
         "templeton-site.xml"
     };
 
-    public static final String TEMPLETON_JAR_NAME    = "templeton.jar";
-    public static final String STREAMING_JAR_NAME    = "templeton.streaming.jar";
-    public static final String HADOOP_NAME           = "templeton.hadoop";
-    public static final String HCAT_NAME             = "templeton.hcat";
-    public static final String PIG_ARCHIVE_NAME      = "templeton.pig.archive";
-    public static final String PIG_PATH_NAME         = "templeton.pig.path";
-    public static final String HIVE_ARCHIVE_NAME     = "templeton.hive.archive";
-    public static final String HIVE_PATH_NAME        = "templeton.hive.path";
-    public static final String HIVE_PROPS_NAME       = "templeton.hive.properties";
-    public static final String SUDO_NAME             = "templeton.sudo";
-    public static final String EXEC_ENVS_NAME        = "templeton.exec.envs";
-    public static final String EXEC_ENCODING_NAME    = "templeton.exec.encoding";
-    public static final String EXEC_TIMEOUT_NAME     = "templeton.exec.timeout";
-    public static final String EXEC_MAX_PROCS_NAME   = "templeton.exec.max-procs";
-    public static final String EXEC_MAX_BYTES_NAME   = "templeton.exec.max-output-bytes";
+    public static final String EXEC_ENCODING_NAME  = "templeton.exec.encoding";
+    public static final String EXEC_ENVS_NAME      = "templeton.exec.envs";
+    public static final String EXEC_MAX_BYTES_NAME = "templeton.exec.max-output-bytes";
+    public static final String EXEC_MAX_PROCS_NAME = "templeton.exec.max-procs";
+    public static final String EXEC_TIMEOUT_NAME   = "templeton.exec.timeout";
+    public static final String HADOOP_NAME         = "templeton.hadoop";
+    public static final String HCAT_NAME           = "templeton.hcat";
+    public static final String HIVE_ARCHIVE_NAME   = "templeton.hive.archive";
+    public static final String HIVE_PATH_NAME      = "templeton.hive.path";
+    public static final String HIVE_PROPS_NAME     = "templeton.hive.properties";
+    public static final String PIG_ARCHIVE_NAME    = "templeton.pig.archive";
+    public static final String PIG_PATH_NAME       = "templeton.pig.path";
+    public static final String STREAMING_JAR_NAME  = "templeton.streaming.jar";
+    public static final String SUDO_NAME           = "templeton.sudo";
+    public static final String TEMPLETON_JAR_NAME  = "templeton.jar";
+    public static final String ZK_HOSTS            = "templeton.zookeeper.hosts";
+    public static final String ZK_SESSION_TIMEOUT
+        = "templeton.zookeeper.session-timeout";
 
     private static final Log LOG = LogFactory.getLog(AppConfig.class);
 
@@ -183,14 +186,16 @@ public class AppConfig extends Configuration {
         return false;
     }
 
-    public String templetonJar()  { return get(TEMPLETON_JAR_NAME); }
-    public String clusterHadoop() { return get(HADOOP_NAME); }
-    public String clusterHcat()   { return get(HCAT_NAME); }
-    public String pigPath()       { return get(PIG_PATH_NAME); }
-    public String pigArchive()    { return get(PIG_ARCHIVE_NAME); }
-    public String hivePath()      { return get(HIVE_PATH_NAME); }
-    public String hiveArchive()   { return get(HIVE_ARCHIVE_NAME); }
-    public String sudoPath()      { return get(SUDO_NAME); }
+    public String templetonJar()     { return get(TEMPLETON_JAR_NAME); }
+    public String clusterHadoop()    { return get(HADOOP_NAME); }
+    public String clusterHcat()      { return get(HCAT_NAME); }
+    public String pigPath()          { return get(PIG_PATH_NAME); }
+    public String pigArchive()       { return get(PIG_ARCHIVE_NAME); }
+    public String hivePath()         { return get(HIVE_PATH_NAME); }
+    public String hiveArchive()      { return get(HIVE_ARCHIVE_NAME); }
+    public String sudoPath()         { return get(SUDO_NAME); }
+    public String zkHosts()          { return get(ZK_HOSTS); }
+    public int zkSessionTimeout()    { return getInt(ZK_SESSION_TIMEOUT, 30000); }
 
     public String streamingJar() {
         return get(STREAMING_JAR_NAME);

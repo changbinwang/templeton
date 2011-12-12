@@ -118,4 +118,16 @@ limitations under the License.
     <description>The environment variables passed through to sudo.</description>
   </property>
 
+  <property>
+    <name>templeton.zookeeper.hosts</name>
+    <value>127.0.0.1:2181</value>
+    <description>ZooKeeper servers, as comma separated host:port pairs</description>
+  </property>
+
+  <property>
+    <name>templeton.zookeeper.session-timeout</name>
+    <value>30000</value>
+    <description>ZooKeeper session timeout in milliseconds</description>
+  </property>
+
 </configuration>
