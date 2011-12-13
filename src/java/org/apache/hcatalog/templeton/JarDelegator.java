@@ -37,7 +37,7 @@ import org.apache.hcatalog.templeton.tool.TempletonControllerJob;
 public class JarDelegator extends TempletonDelegator {
     public static final String JAR_CLASS = TempletonControllerJob.class.getName();
 
-    public JarDelegator(AppConfig appConf, IExecService execService) {
+    public JarDelegator(AppConfig appConf, ExecService execService) {
         super(appConf, execService);
     }
 

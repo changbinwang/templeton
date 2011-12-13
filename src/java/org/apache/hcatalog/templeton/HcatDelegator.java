@@ -26,7 +26,7 @@ import org.apache.commons.exec.ExecuteException;
  * the backend of the ddl web service.
  */
 public class HcatDelegator extends TempletonDelegator {
-    public HcatDelegator(AppConfig appConf, IExecService execService) {
+    public HcatDelegator(AppConfig appConf, ExecService execService) {
         super(appConf, execService);
     }
 

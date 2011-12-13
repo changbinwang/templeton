@@ -36,7 +36,7 @@ import org.apache.hcatalog.templeton.tool.TempletonStreamJob;
 public class StreamingDelegator extends TempletonDelegator {
      public static final String STREAM_CLASS = TempletonStreamJob.class.getName();
 
-    public StreamingDelegator(AppConfig appConf, IExecService execService) {
+    public StreamingDelegator(AppConfig appConf, ExecService execService) {
         super(appConf, execService);
     }
 

@@ -55,7 +55,14 @@ public class ServerCallback {
 		    while ((line = in.readLine()) != null) {
 		    	//LOG.info(line + "\n");
 		    }
+	        HcatDelegator d = new HcatDelegator(AppConfig.getInstance(), ExecServiceImpl.getInstance());
+	    		ExecBean bean = d.run(System.getenv("USER"),
+	    				"create table if not exists templeton_jobids (jobid STRING, url STRING)" +
+	    				" comment 'The templeton callback table' stored as textfile;", "admin", "777");
+
 		    in.close();
+		} catch (SimpleWebException ex) {
+			throw new CallbackFailedException("Unabled to connect to " + callbackMap.get(jobid));
 		} catch (Exception e) {
 			throw new CallbackFailedException("Unable to connect to " + callbackMap.get(jobid));
 		} finally {
