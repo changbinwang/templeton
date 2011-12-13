@@ -17,15 +17,18 @@
  */
 package org.apache.hcatalog.templeton.test;
 
-import java.io.IOException;
-import junit.framework.TestCase;
 import org.apache.hcatalog.templeton.Server;
 
 /*
  * Test that the server code exists.
  */
-public class TestServer extends TestCase {
-    public void testServerStub() throws IOException {
-        assertNotNull(new Server());
+public class TestServer extends Server {
+	
+	public TestServer() {
+		execService = new TestExecService();
+	}
+    @Override
+    public String getUser() {
+    	return System.getenv("USER");
     }
 }

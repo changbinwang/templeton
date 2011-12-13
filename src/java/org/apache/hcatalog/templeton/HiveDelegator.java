@@ -37,7 +37,7 @@ import org.apache.hcatalog.templeton.tool.TempletonUtils;
 public class HiveDelegator extends TempletonDelegator {
     public static final String JAR_CLASS = TempletonControllerJob.class.getName();
 
-    public HiveDelegator(AppConfig appConf, ExecService execService) {
+    public HiveDelegator(AppConfig appConf, IExecService execService) {
         super(appConf, execService);
     }
 

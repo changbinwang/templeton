@@ -11,11 +11,18 @@ public class ServerCallbackTest {
 	@Test
 	public void test() {
 		ServerCallback.registerCallback("fred", "http://apache.org");
+		ServerCallback.registerCallback("george", "https://www.google.com");
 		ServerCallback.registerCallback("joe", "http://localhost:2345");
 		ServerCallback.registerCallback("wilma", "http://localhost:2345/foo/bar");
 		ServerCallback.registerCallback("betty", "http://localhost:2345/foo/bar?a=something&b=somethingelse");
 		try {
 			ServerCallback.doCallback("fred");
+			assertTrue(true); // We made it.
+		} catch (CallbackFailedException e) {
+			fail("Callback failed: " + e.getMessage());
+		}
+		try {
+			ServerCallback.doCallback("george");
 			assertTrue(true); // We made it.
 		} catch (CallbackFailedException e) {
 			fail("Callback failed: " + e.getMessage());

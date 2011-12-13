@@ -29,7 +29,7 @@ import org.apache.hadoop.security.UserGroupInformation;
  * Fetch the status of a given job id in the queue.
  */
 public class StatusDelegator extends TempletonDelegator {
-    public StatusDelegator(AppConfig appConf, ExecService execService) {
+    public StatusDelegator(AppConfig appConf, IExecService execService) {
         super(appConf, execService);
     }
 

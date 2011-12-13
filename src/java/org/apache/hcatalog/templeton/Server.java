@@ -46,7 +46,7 @@ public class Server {
     public static final String STATUS_MSG
         = "{\"status\": \"ok\", \"version\": \"v1\"}\n";
 
-    private static ExecService execService = ExecService.getInstance();
+    protected static IExecService execService = ExecService.getInstance();
     private static AppConfig appConf = AppConfig.getInstance();
 
     private @Context SecurityContext theSecurityContext;

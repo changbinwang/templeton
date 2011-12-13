@@ -24,9 +24,9 @@ package org.apache.hcatalog.templeton;
  */
 public class TempletonDelegator {
     protected AppConfig appConf;
-    protected ExecService execService;
+    protected IExecService execService;
 
-    public TempletonDelegator(AppConfig appConf, ExecService execService) {
+    public TempletonDelegator(AppConfig appConf, IExecService execService) {
         this.appConf = appConf;
         this.execService = execService;
     }

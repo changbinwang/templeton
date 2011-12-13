@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  * execute programs as non-privileged users on the local box.  See
  * ExecService.run and ExecService.runUnlimited for details.
  */
-public class ExecService {
+public class ExecService implements IExecService {
     private static final Log LOG = LogFactory.getLog(ExecService.class);
     private static AppConfig appConf = AppConfig.getInstance();
 

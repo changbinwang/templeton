@@ -29,7 +29,7 @@ import org.apache.hadoop.security.UserGroupInformation;
  * Delete a job
  */
 public class DeleteDelegator extends TempletonDelegator {
-    public DeleteDelegator(AppConfig appConf, ExecService execService) {
+    public DeleteDelegator(AppConfig appConf, IExecService execService) {
         super(appConf, execService);
     }
 

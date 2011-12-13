@@ -37,7 +37,7 @@ import org.apache.hcatalog.templeton.tool.TempletonUtils;
 public class PigDelegator extends TempletonDelegator {
     public static final String JAR_CLASS = TempletonControllerJob.class.getName();
 
-    public PigDelegator(AppConfig appConf, ExecService execService) {
+    public PigDelegator(AppConfig appConf, IExecService execService) {
         super(appConf, execService);
     }
 
