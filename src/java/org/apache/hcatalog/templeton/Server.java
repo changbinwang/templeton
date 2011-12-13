@@ -166,7 +166,7 @@ public class Server {
     @POST
     @Path("hive.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public EnqueueBean pig(@FormParam("execute") String execute,
+    public EnqueueBean hive(@FormParam("execute") String execute,
                            @FormParam("file") String srcFile,
                            @FormParam("define") List<String> defines,
                            @FormParam("statusdir") String statusdir)
