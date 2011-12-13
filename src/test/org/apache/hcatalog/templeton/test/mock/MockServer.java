@@ -15,17 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.hcatalog.templeton.test;
+package org.apache.hcatalog.templeton.test.mock;
 
 import org.apache.hcatalog.templeton.Server;
 
 /*
  * Test that the server code exists.
  */
-public class TestServer extends Server {
+public class MockServer extends Server {
 	
-	public TestServer() {
-		execService = new TestExecService();
+	public MockServer() {
+		execService = new MockExecService();
 	}
     @Override
     public String getUser() {

@@ -31,6 +31,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,6 +53,8 @@ public class Server {
 
     private @Context SecurityContext theSecurityContext;
 
+    private static final Log LOG = LogFactory.getLog(Server.class);
+
     /**
      * Check the status of this server.
      */
@@ -62,7 +66,7 @@ public class Server {
     }
 
     /**
-     * Exececute an hcat ddl expression on the local box.  It is run
+     * Execute an hcat ddl expression on the local box.  It is run
      * as the authenticated user and rate limited.
      */
     @POST
@@ -70,12 +74,15 @@ public class Server {
     @Produces({MediaType.APPLICATION_JSON})
     public ExecBean ddl(@FormParam("exec") String exec,
                         @FormParam("group") String group,
-                        @FormParam("permissions") String permissions)
+                        @FormParam("permissions") String permissions,
+                        @Context UriInfo info)
         throws NotAuthorizedException, BusyException, BadParam,
                ExecuteException, IOException
     {
         verifyUser();
         verifyParam(exec, "exec");
+        // The calling URI to hit with a callback is info.getBaseUri()
+        LOG.info("Calling url: " + info.getBaseUri());
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.run(getUser(), exec, group, permissions);

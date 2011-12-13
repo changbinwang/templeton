@@ -23,16 +23,18 @@ import junit.framework.TestCase;
 
 import org.apache.hcatalog.templeton.ExecBean;
 import org.apache.hcatalog.templeton.SimpleWebException;
+import org.apache.hcatalog.templeton.test.mock.MockUriInfo;
+import org.apache.hcatalog.templeton.test.mock.MockServer;
 
 /*
  * Test that the server code exists.
  */
 public class ServerTest extends TestCase {
 	
-	TestServer server;
+	MockServer server;
 	
 	public void setUp() {
-		server = new TestServer();
+		server = new MockServer();
 	}
 
     public void testServer() {
@@ -60,9 +62,9 @@ public class ServerTest extends TestCase {
     
     // More tests coming later.
     
-    public void validateDDL(TestServer server, String command, String group, String permissions) 
+    public void validateDDL(MockServer server, String command, String group, String permissions) 
     	throws SimpleWebException, IOException {
-    	ExecBean bean = server.ddl(command, group, permissions);
+    	ExecBean bean = server.ddl(command, group, permissions, new MockUriInfo());
 		assertTrue(bean.stdout.endsWith("bin/hcat"));
 		String tmp = bean.stderr.substring(bean.stderr.indexOf("[") + 1, bean.stderr.indexOf("]"));
 		String[] parts = tmp.split(",");
