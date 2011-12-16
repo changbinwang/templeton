@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
@@ -88,9 +89,7 @@ public class ZookeeperCleanupMonitor implements Watcher {
         try {
             this.zk = zk;
             this.watcher = watcher;
-            this.mynode = mynode;
-            
-            doWatch();
+            this.mynode = mynode;            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -123,6 +122,23 @@ public class ZookeeperCleanupMonitor implements Watcher {
     @Override
     public void process(WatchedEvent event) {
         try {
+            if (event.getState() == KeeperState.Expired) {
+                LOG.error("The Zookeeper connection has expired.");
+                ((ZookeeperCleanupExecutor) watcher).closing();
+                return;
+            }
+                
+            if (event.getState() == KeeperState.AuthFailed) {
+                LOG.error("The Zookeeper authorization failed.");
+                ((ZookeeperCleanupExecutor) watcher).closing();
+                return;
+            }
+            
+            if (event.getState() == KeeperState.Disconnected) {
+                LOG.error("The Zookeeper connection has closed.");
+                ((ZookeeperCleanupExecutor) watcher).closing();
+                return;
+            }
             if (watchnode != null && zk.exists(watchnode, false) == null) {
                 doWatch();
             } 

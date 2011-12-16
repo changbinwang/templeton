@@ -34,6 +34,7 @@ public class ZookeeperCleanupExecutor implements Watcher, Runnable {
             String mynode = zk.create(root + "/" + "n_", new byte[0],
                     Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
             dataMonitor = new ZookeeperCleanupMonitor(zk, mynode, this);
+            dataMonitor.doWatch(); // Start things off.
         } catch (Exception e) {
             System.out.println("Zookeeper connection failed to start");
             e.printStackTrace();
