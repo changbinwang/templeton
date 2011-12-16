@@ -6,7 +6,7 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.ZooDefs.Ids;
 
-class ZookeeperCleanupExecutor implements Watcher, Runnable {
+public class ZookeeperCleanupExecutor implements Watcher, Runnable {
 
     ZookeeperCleanupMonitor dataMonitor = null;
     ZooKeeper zk;
@@ -68,6 +68,7 @@ class ZookeeperCleanupExecutor implements Watcher, Runnable {
      */
     public void closing() {
         synchronized (this) {
+            dataMonitor.done = true;
             notifyAll();
         }
     }
