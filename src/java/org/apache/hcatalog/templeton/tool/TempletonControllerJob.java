@@ -17,9 +17,12 @@
  */
 package org.apache.hcatalog.templeton.tool;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,6 +35,7 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobID;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.hadoop.util.Tool;
@@ -39,6 +43,15 @@ import org.apache.hadoop.util.ToolRunner;
 
 /**
  * A Map Reduce job that will start another job.
+ *
+ * We have a single Mapper job that starts a child MR job.  The parent
+ * monitors the child child job and ends when the child job exits.  In
+ * addition, we
+ *
+ * - write out the parent job id so the caller can record it.
+ * - run a keep alive thread so the job doesn't end.
+ * - Optionally, store the stdout, stderr, and exit value of the child
+ *   in hdfs files.
  */
 public class TempletonControllerJob extends Configured implements Tool {
     static enum ControllerCounters { SIMPLE_COUNTER };
@@ -46,6 +59,10 @@ public class TempletonControllerJob extends Configured implements Tool {
     public static final String COPY_NAME      = "templeton.copy";
     public static final String STATUSDIR_NAME = "templeton.statusdir";
     public static final String JAR_ARGS_NAME  = "templeton.args";
+
+    public static final String STDOUT_FNAME  = "stdout";
+    public static final String STDERR_FNAME  = "stderr";
+    public static final String EXIT_FNAME    = "exit";
 
     public static final int WATCHER_TIMEOUT_SECS = 10;
     public static final int KEEP_ALIVE_MSEC      = 60 * 1000;
@@ -92,8 +109,10 @@ public class TempletonControllerJob extends Configured implements Tool {
             Counter cnt = context.getCounter(ControllerCounters.SIMPLE_COUNTER);
 
             ExecutorService pool = Executors.newCachedThreadPool();
-            executeWatcher(pool, conf, proc.getInputStream(), statusdir, "stdout");
-            executeWatcher(pool, conf, proc.getErrorStream(), statusdir, "stderr");
+            executeWatcher(pool, conf, context.getJobID(),
+                           proc.getInputStream(), statusdir, STDOUT_FNAME);
+            executeWatcher(pool, conf, context.getJobID(),
+                           proc.getErrorStream(), statusdir, STDERR_FNAME);
             KeepAlive keepAlive = startCounterKeepAlive(pool, cnt);
 
             proc.waitFor();
@@ -101,6 +120,10 @@ public class TempletonControllerJob extends Configured implements Tool {
             pool.shutdown();
             if (! pool.awaitTermination(WATCHER_TIMEOUT_SECS, TimeUnit.SECONDS))
                 pool.shutdownNow();
+
+            writeExitValue(conf, proc.exitValue(), statusdir);
+            JobState state = new JobState(context.getJobID().toString(), conf);
+            state.setExitValue(proc.exitValue());
 
             if (proc.exitValue() != 0) {
                 System.err.println("templeton: job failed with exit code "
@@ -110,10 +133,11 @@ public class TempletonControllerJob extends Configured implements Tool {
         }
 
         private void executeWatcher(ExecutorService pool, Configuration conf,
-                                    InputStream in, String statusdir, String name)
+                                    JobID jobid, InputStream in, String statusdir,
+                                    String name)
             throws IOException
         {
-            Watcher w = new Watcher(conf, in, statusdir, name);
+            Watcher w = new Watcher(conf, jobid, in, statusdir, name);
             pool.execute(w);
         }
 
@@ -124,19 +148,38 @@ public class TempletonControllerJob extends Configured implements Tool {
             pool.execute(k);
             return k;
         }
+
+        private void writeExitValue(Configuration conf, int exitValue, String statusdir)
+            throws IOException
+        {
+            if (TempletonUtils.isset(statusdir)) {
+                Path p = new Path(statusdir, EXIT_FNAME);
+                FileSystem fs = p.getFileSystem(conf);
+                OutputStream out = fs.create(p);
+                System.err.println("templeton: Writing exit value "
+                                   + exitValue + " to " + p);
+                PrintWriter writer = new PrintWriter(out);
+                writer.println(exitValue);
+                writer.close();
+            }
+        }
     }
 
     public static class Watcher implements Runnable {
         private InputStream in;
         private OutputStream out;
+        private JobID jobid;
+        private Configuration conf;
 
-        public Watcher(Configuration conf, InputStream in,
+        public Watcher(Configuration conf, JobID jobid, InputStream in,
                        String statusdir, String name)
             throws IOException
         {
+            this.conf = conf;
+            this.jobid = jobid;
             this.in = in;
 
-            if (name.equals("stderr"))
+            if (name.equals(STDERR_FNAME))
                 out = System.err;
             else
                 out = System.out;
@@ -152,10 +195,27 @@ public class TempletonControllerJob extends Configured implements Tool {
         @Override
         public void run() {
             try {
-                byte[] buf = new byte[512];
-                int len = 0;
-                while ((len = in.read(buf)) >= 0)
-                    out.write(buf, 0, len);
+                InputStreamReader isr = new InputStreamReader(in);
+                BufferedReader reader = new BufferedReader(isr);
+                PrintWriter writer = new PrintWriter(out);
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    writer.println(line);
+
+                    String percent = TempletonUtils.extractPercentComplete(line);
+                    if (percent != null) {
+                        JobState state = new JobState(jobid.toString(), conf);
+                        state.setPercentComplete(percent);
+                    }
+
+                    String childid = TempletonUtils.extractChildJobId(line);
+                    if (childid != null) {
+                        JobState state = new JobState(jobid.toString(), conf);
+                        state.setChildId(childid);
+                    }
+                }
+                writer.flush();
             } catch (IOException e) {
                 System.err.println("templeton: execute error: " + e);
             }
@@ -193,10 +253,7 @@ public class TempletonControllerJob extends Configured implements Tool {
         throws IOException, InterruptedException, ClassNotFoundException
     {
         Configuration conf = getConf();
-        conf.set(COPY_NAME, TempletonUtils.decodeCliArg(args[0]));
-        conf.set(STATUSDIR_NAME, TempletonUtils.decodeCliArg(args[1]));
-        String[] childArgs = Arrays.copyOfRange(args, 2, args.length);
-        conf.set(JAR_ARGS_NAME, TempletonUtils.encodeArray(childArgs));
+        conf.set(JAR_ARGS_NAME, TempletonUtils.encodeArray(args));
         Job job = new Job(conf);
         job.setJarByClass(TempletonControllerJob.class);
         job.setJobName("TempletonControllerJob");

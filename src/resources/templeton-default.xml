@@ -30,6 +30,12 @@ limitations under the License.
   </property>
 
   <property>
+    <name>templeton.libjars</name>
+    <value>${env.TEMPLETON_HOME}/build/ivy/lib/templeton/zookeeper-3.3.4.jar</value>
+    <description>Jars to add the the classpath.</description>
+  </property>
+
+  <property>
     <name>templeton.streaming.jar</name>
     <value>${env.HADOOP_PREFIX}/share/hadoop/contrib/streaming/hadoop-streaming-0.20.205.0.jar</value>
     <description>The path to the Hadoop streaming jar file.</description>

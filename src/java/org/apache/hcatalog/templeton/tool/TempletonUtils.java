@@ -67,32 +67,40 @@ public class TempletonUtils {
         Pattern re = Pattern.compile(pat, Pattern.MULTILINE);
 
         Matcher m = re.matcher(stdout);
-        if (! m.find())
-            return null;
-        return m.group(1);
+        if (m.find())
+            return m.group(1);
+        return null;
     }
 
+    public static final Pattern JAR_COMPLETE
+        = Pattern.compile(" map \\d+% reduce \\d+$%");
+    public static final Pattern PIG_COMPLETE = Pattern.compile(" \\d+% complete$");
 
     /**
-     * Encode a command line argument.  We need to allow for empty
-     * arguments.
+     * Extract the percent complete line from Pig or Jar jobs.
      */
-    public static String encodeCliArg(String s) {
-        if (TempletonUtils.isset(s))
-            return "*" + s;
-        else
-            return "*";
+    public static String extractPercentComplete(String line) {
+        Matcher jar = JAR_COMPLETE.matcher(line);
+        if (jar.find())
+            return jar.group().trim();
+
+        Matcher pig = PIG_COMPLETE.matcher(line);
+        if (pig.find())
+            return pig.group().trim();
+
+        return null;
     }
 
+    public static final Pattern JAR_ID  = Pattern.compile(" Running job: (\\S+)$");
+
     /**
-     * Decode a command line argument.  We need to allow for empty
-     * arguments.
+     * Extract the job id from jar jobs.
      */
-    public static String decodeCliArg(String s) {
-        if (s != null && s.startsWith("*"))
-            return s.substring(1);
-        else
-            return s;
+    public static String extractChildJobId(String line) {
+        Matcher m = JAR_ID.matcher(line);
+        if (m.find())
+            return m.group(1);
+        return null;
     }
 
     /**
@@ -105,13 +113,23 @@ public class TempletonUtils {
         String[] escaped = new String[plain.length];
 
         for (int i = 0; i < plain.length; ++i) {
-        	if (plain[i] == null) {
-        		plain[i] = "";
-        	}
+            if (plain[i] == null) {
+                plain[i] = "";
+            }
             escaped[i] = StringUtils.escapeString(plain[i]);
         }
 
         return StringUtils.arrayToString(escaped);
+    }
+
+    /**
+     * Encode a List into a string.
+     */
+    public static String encodeArray(List<String> list) {
+    	if (list == null)
+            return null;
+        String[] array = new String[list.size()];
+        return encodeArray(list.toArray(array));
     }
 
     /**
@@ -130,52 +148,11 @@ public class TempletonUtils {
         return plain;
     }
 
-    /**
-     * Encode an array to be used on the command line.
-     */
-    public static String encodeCliArray(String[] array) {
-        String x = encodeArray(array);
-        return encodeCliArg(x);
-    }
-
-    /**
-     * Encode an array to be used on the command line.
-     */
-    public static String encodeCliArray(List<String> list) {
-    	if (list == null) {
-    		return null;
-    	}
-        String[] array = new String[list.size()];
-        String x = encodeArray(list.toArray(array));
-        return encodeCliArg(x);
-    }
-
-    /**
-     * Encode a string as a one element array to be used on the
-     * command line.
-     */
-    public static String encodeCliArray(String s) {
-        if (s == null)
-            return null;
-
-        String[] array = new String[1];
-        array[0] = s;
-        return encodeCliArray(array);
-    }
-
-    /**
-     * Decode a command line arg into an array of strings.
-     */
-    public static String[] decodeCliArray(String s) {
-        String x = decodeCliArg(s);
-        return decodeArray(x);
-    }
-
     public static String[] hadoopFsListAsArray(String files, Configuration conf)
         throws URISyntaxException, FileNotFoundException, IOException
     {
     	if (files == null || conf == null) {
-    		return null;
+            return null;
     	}
         String[] dirty = files.split(",");
         String[] clean = new String[dirty.length];
@@ -190,7 +167,7 @@ public class TempletonUtils {
         throws URISyntaxException, FileNotFoundException, IOException
     {
     	if (files == null || conf == null) {
-    		return null;
+            return null;
     	}
         return StringUtils.arrayToString(hadoopFsListAsArray(files, conf));
     }
@@ -209,7 +186,7 @@ public class TempletonUtils {
         throws URISyntaxException, FileNotFoundException, IOException
     {
     	if (fname == null || conf == null) {
-    		return null;
+            return null;
     	}
         FileSystem defaultFs = FileSystem.get(conf);
         URI u = new URI(fname);
@@ -221,5 +198,4 @@ public class TempletonUtils {
 
         return p;
     }
-
 }

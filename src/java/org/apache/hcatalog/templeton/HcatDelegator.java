@@ -25,7 +25,7 @@ import org.apache.commons.exec.ExecuteException;
  * Run hcat on the local server using the ExecService.  This is
  * the backend of the ddl web service.
  */
-public class HcatDelegator extends TempletonDelegator {
+public class HcatDelegator extends LauncherDelegator {
     public HcatDelegator(AppConfig appConf, ExecService execService) {
         super(appConf, execService);
     }

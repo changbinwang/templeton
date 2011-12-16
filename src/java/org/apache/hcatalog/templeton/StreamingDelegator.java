@@ -33,7 +33,7 @@ import org.apache.hcatalog.templeton.tool.TempletonStreamJob;
  *
  * This is the backend of the mapreduce/streaming web service.
  */
-public class StreamingDelegator extends TempletonDelegator {
+public class StreamingDelegator extends LauncherDelegator {
      public static final String STREAM_CLASS = TempletonStreamJob.class.getName();
 
     public StreamingDelegator(AppConfig appConf, ExecService execService) {
@@ -83,6 +83,7 @@ public class StreamingDelegator extends TempletonDelegator {
         String id = TempletonUtils.extractJobId(exec.stdout);
         if (id == null)
             throw new QueueException("Unable to get job id", exec);
+        registerJob(id, user, null);
 
         return new EnqueueBean(id, exec);
     }

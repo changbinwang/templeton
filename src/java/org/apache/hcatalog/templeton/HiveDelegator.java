@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.exec.ExecuteException;
-import org.apache.hcatalog.templeton.tool.TempletonControllerJob;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
@@ -34,8 +33,7 @@ import org.apache.hcatalog.templeton.tool.TempletonUtils;
  *
  * This is the backend of the pig web service.
  */
-public class HiveDelegator extends TempletonDelegator {
-    public static final String JAR_CLASS = TempletonControllerJob.class.getName();
+public class HiveDelegator extends LauncherDelegator {
 
     public HiveDelegator(AppConfig appConf, ExecService execService) {
         super(appConf, execService);
@@ -55,6 +53,7 @@ public class HiveDelegator extends TempletonDelegator {
         String id = TempletonUtils.extractJobId(exec.stdout);
         if (id == null)
             throw new QueueException("Unable to get job id", exec);
+        registerJob(id, user, null);
 
         return new EnqueueBean(id, exec);
     }
@@ -99,18 +98,15 @@ public class HiveDelegator extends TempletonDelegator {
     {
         ArrayList<String> args = new ArrayList<String>();
 
-        args.add("jar");
-        args.add(appConf.templetonJar());
-        args.add(JAR_CLASS);
-        args.add("-archives");
-        args.add(appConf.hiveArchive());
-
         ArrayList<String> allFiles = new ArrayList<String>();
         if (TempletonUtils.isset(srcFile))
             allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf));
 
-        args.add(TempletonUtils.encodeCliArray(allFiles));
-        args.add(TempletonUtils.encodeCliArg(statusdir));
+        args.addAll(makeLauncherArgs(appConf, statusdir, allFiles));
+
+        args.add("-archives");
+        args.add(appConf.hiveArchive());
+
         return args;
     }
 }

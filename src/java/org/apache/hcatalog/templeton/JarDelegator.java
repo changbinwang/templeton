@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
-import org.apache.hcatalog.templeton.tool.TempletonControllerJob;
 
 /**
  * Submit a job to the MapReduce queue.  We do this by running the
@@ -34,9 +33,7 @@ import org.apache.hcatalog.templeton.tool.TempletonControllerJob;
  *
  * This is the backend of the mapreduce/jar web service.
  */
-public class JarDelegator extends TempletonDelegator {
-    public static final String JAR_CLASS = TempletonControllerJob.class.getName();
-
+public class JarDelegator extends LauncherDelegator {
     public JarDelegator(AppConfig appConf, ExecService execService) {
         super(appConf, execService);
     }
@@ -58,6 +55,7 @@ public class JarDelegator extends TempletonDelegator {
         String id = TempletonUtils.extractJobId(exec.stdout);
         if (id == null)
             throw new QueueException("Unable to get job id", exec);
+        registerJob(id, user, null);
 
         return new EnqueueBean(id, exec);
     }
@@ -70,12 +68,10 @@ public class JarDelegator extends TempletonDelegator {
     {
         ArrayList<String> args = new ArrayList<String>();
         try {
-            args.add("jar");
-            args.add(appConf.templetonJar());
-            args.add(JAR_CLASS);
-            String fullJar = TempletonUtils.hadoopFsFilename(jar, appConf);
-            args.add(TempletonUtils.encodeCliArray(fullJar));
-            args.add(TempletonUtils.encodeCliArg(statusdir));
+            ArrayList<String> allFiles = new ArrayList();
+            allFiles.add(TempletonUtils.hadoopFsFilename(jar, appConf));
+
+            args.addAll(makeLauncherArgs(appConf, statusdir, allFiles));
             args.add("--");
             args.add(appConf.clusterHadoop());
             args.add("jar");
