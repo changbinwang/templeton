@@ -17,17 +17,18 @@
  */
 package org.apache.hcatalog.templeton;
 
+import com.sun.jersey.spi.container.servlet.WebComponent;
 import java.io.File;
 import java.net.URL;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.VersionInfo;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import com.sun.jersey.spi.container.servlet.WebComponent;
+import org.apache.hcatalog.templeton.tool.JobState;
 
 /**
  * The configuration for Templeton.  This merges the normal Hadoop
@@ -193,6 +194,10 @@ public class AppConfig extends Configuration {
     public String hivePath()         { return get(HIVE_PATH_NAME); }
     public String hiveArchive()      { return get(HIVE_ARCHIVE_NAME); }
     public String sudoPath()         { return get(SUDO_NAME); }
+
+    public String zkHosts()          { return get(JobState.ZK_HOSTS); }
+    public int zkSessionTimeout()    { return getInt(JobState.ZK_SESSION_TIMEOUT,
+                                                     30000); }
 
     public String streamingJar() {
         return get(STREAMING_JAR_NAME);
