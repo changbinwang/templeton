@@ -19,6 +19,8 @@ package org.apache.hcatalog.templeton.tool;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
@@ -90,6 +92,32 @@ public class JobState implements Watcher {
             throw new IOException("Creating " + id, e);
         }
     }
+    
+    public void delete()
+            throws IOException
+        {
+            try {
+                for (String child : zk.getChildren(makeZnode(), false)) {
+                    try {
+                        zk.delete(makeFieldZnode(child), -1);
+                    } catch (Exception e) {
+                        // Other nodes may be trying to delete this at the same time,
+                        // so just log errors and skip them.
+                        System.out.println("Couldn't delete " + makeFieldZnode(child));
+                    }
+                }
+                try {
+                    zk.delete(makeZnode(), -1);
+                } catch (Exception e) {
+                    // Same thing -- might be deleted by other nodes, so just go on.
+                    System.out.println("Couldn't delete " + makeZnode());
+                }
+                
+            } catch (Exception e) {
+                // Error getting children of node -- probably node has been deleted
+                System.out.println("Couldn't get children of " + makeZnode());
+            }
+        }
 
     //
     // Properties
@@ -257,7 +285,7 @@ public class JobState implements Watcher {
                        -1);
         }
     }
-
+    
     /**
      * Make a ZK path to the named field.
      */
@@ -277,5 +305,32 @@ public class JobState implements Watcher {
      */
     @Override
     synchronized public void process(WatchedEvent event) {
+    }
+    
+    /**
+     * Get a JobState object for each currently existing job.  Shouldn't be static
+     * because then we're creating ZooKeeper twice in this file just to make it
+     * static.
+     * 
+     * @param conf
+     * @return
+     * @throws IOException
+     */
+    public ArrayList<JobState> getJobs(Configuration conf) throws IOException {
+        ArrayList<JobState> jobs = new ArrayList<JobState>();
+        try {
+            for (String myid : zk.getChildren(JOB_PATH, false)) {
+                // Separate try/catch for each job, so if it throws an exception
+                // we can just get the next one.
+                try {
+                    jobs.add(new JobState(myid, conf));
+                } catch (Exception e) {
+                    System.out.println("Couldn't read job " + myid);
+                }
+            }
+        } catch (Exception e) {
+            throw new IOException("Can't get children", e);
+        }
+        return jobs;
     }
 }
