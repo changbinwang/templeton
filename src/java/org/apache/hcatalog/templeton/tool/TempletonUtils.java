@@ -95,15 +95,20 @@ public class TempletonUtils {
         return null;
     }
 
-    public static final Pattern JAR_ID  = Pattern.compile(" Running job: (\\S+)$");
+    public static final Pattern JAR_ID = Pattern.compile(" Running job: (\\S+)$");
+    public static final Pattern PIG_ID = Pattern.compile(" HadoopJobId: (\\S+)$");
+    public static final Pattern[] ID_PATTERNS = {JAR_ID, PIG_ID};
 
     /**
      * Extract the job id from jar jobs.
      */
     public static String extractChildJobId(String line) {
-        Matcher m = JAR_ID.matcher(line);
-        if (m.find())
-            return m.group(1);
+        for (Pattern p : ID_PATTERNS) {
+            Matcher m = p.matcher(line);
+            if (m.find())
+                return m.group(1);
+        }
+
         return null;
     }
 

@@ -87,7 +87,7 @@ end
 # Run like rake 'queue[job_201111061521_0018]'
 desc "Run queue status"
 task :queue, :job_id do |t, args|
-  job_id = args[:job_id] || "job_201111091507_0005"
+  job_id = args[:job_id] || "job_201112140012_0069"
   curl("queue/#{job_id}.json?user.name=#{USERNAME}")
 end
 

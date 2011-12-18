@@ -24,6 +24,7 @@ import org.apache.hadoop.mapred.JobStatus;
 import org.apache.hadoop.mapred.JobTracker;
 import org.apache.hadoop.mapred.TempletonJobTracker;
 import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.hcatalog.templeton.tool.JobState;
 
 /**
  * Delete a job
@@ -38,20 +39,25 @@ public class DeleteDelegator extends TempletonDelegator {
     {
         UserGroupInformation ugi = UserGroupInformation.createRemoteUser(user);
         TempletonJobTracker tracker = null;
+        JobState state = null;
         try {
             tracker = new TempletonJobTracker(ugi,
                                               JobTracker.getAddress(appConf),
                                               appConf);
             JobID jobid = JobID.forName(id);
             tracker.killJob(jobid);
-            JobStatus status = tracker.getJobStatus(jobid);
-            JobProfile profile = tracker.getJobProfile(jobid);
-            return new QueueStatusBean(status, profile);
+            state = new JobState(id, appConf);
+            String childid = state.getChildId();
+            if (childid != null)
+                tracker.killJob(JobID.forName(childid));
+            return StatusDelegator.makeStatus(tracker, jobid, state);
         } catch (IllegalStateException e) {
             throw new BadParam(e.getMessage());
         } finally {
             if (tracker != null)
                 tracker.close();
+            if (state != null)
+                state.close();
         }
     }
 }

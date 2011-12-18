@@ -24,6 +24,7 @@ import org.apache.hadoop.mapred.JobStatus;
 import org.apache.hadoop.mapred.JobTracker;
 import org.apache.hadoop.mapred.TempletonJobTracker;
 import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.hcatalog.templeton.tool.JobState;
 
 /**
  * Fetch the status of a given job id in the queue.
@@ -38,19 +39,45 @@ public class StatusDelegator extends TempletonDelegator {
     {
         UserGroupInformation ugi = UserGroupInformation.createRemoteUser(user);
         TempletonJobTracker tracker = null;
+        JobState state = null;
         try {
             tracker = new TempletonJobTracker(ugi,
                                               JobTracker.getAddress(appConf),
                                               appConf);
             JobID jobid = JobID.forName(id);
-            JobStatus status = tracker.getJobStatus(jobid);
-            JobProfile profile = tracker.getJobProfile(jobid);
-            return new QueueStatusBean(status, profile);
+            state = new JobState(id, appConf);
+            return StatusDelegator.makeStatus(tracker, jobid, state);
         } catch (IllegalStateException e) {
             throw new BadParam(e.getMessage());
         } finally {
             if (tracker != null)
                 tracker.close();
+            if (state != null)
+                state.close();
         }
     }
+
+    public static QueueStatusBean makeStatus(TempletonJobTracker tracker,
+                                             JobID jobid,
+                                             String childid,
+                                             JobState state)
+        throws IOException
+    {
+        JobID bestid = jobid;
+        if (childid != null)
+            bestid = JobID.forName(childid);
+
+        JobStatus status = tracker.getJobStatus(bestid);
+        JobProfile profile = tracker.getJobProfile(bestid);
+        return new QueueStatusBean(state, status, profile);
+    }
+
+    public static QueueStatusBean makeStatus(TempletonJobTracker tracker,
+                                             JobID jobid,
+                                             JobState state)
+        throws IOException
+    {
+        return makeStatus(tracker, jobid, state.getChildId(), state);
+    }
+
 }
