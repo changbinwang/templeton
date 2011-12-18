@@ -45,7 +45,9 @@ public class StreamingDelegator extends LauncherDelegator {
                            String mapper, String reducer,
                            List<String> files, List<String> defines,
                            List<String> cmdenvs,
-                           List<String> jarArgs)
+                           List<String> jarArgs,
+                           String callback,
+                           String completedUrl)
         throws NotAuthorizedException, BusyException, QueueException,
         ExecuteException, IOException
     {
@@ -83,7 +85,7 @@ public class StreamingDelegator extends LauncherDelegator {
         String id = TempletonUtils.extractJobId(exec.stdout);
         if (id == null)
             throw new QueueException("Unable to get job id", exec);
-        registerJob(id, user, null);
+        registerJob(id, user, callback);
 
         return new EnqueueBean(id, exec);
     }

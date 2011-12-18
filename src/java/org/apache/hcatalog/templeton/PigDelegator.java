@@ -41,7 +41,7 @@ public class PigDelegator extends LauncherDelegator {
     public EnqueueBean run(String user,
                            String execute, String srcFile,
                            List<String> pigArgs, String otherFiles,
-                           String statusdir, String completedUrl)
+                           String statusdir, String callback, String completedUrl)
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
@@ -55,7 +55,7 @@ public class PigDelegator extends LauncherDelegator {
         String id = TempletonUtils.extractJobId(exec.stdout);
         if (id == null)
             throw new QueueException("Unable to get job id", exec);
-        registerJob(id, user, null);
+        registerJob(id, user, callback);
 
         return new EnqueueBean(id, exec);
     }

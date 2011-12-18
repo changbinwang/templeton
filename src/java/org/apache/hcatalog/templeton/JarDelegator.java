@@ -41,13 +41,13 @@ public class JarDelegator extends LauncherDelegator {
     public EnqueueBean run(String user, String jar, String mainClass,
                            String libjars, String files,
                            List<String> jarArgs, List<String> defines,
-                           String statusdir)
+                           String statusdir, String callback, String completedUrl)
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
         List<String> args = makeArgs(jar, mainClass,
                                      libjars, files, jarArgs, defines,
-                                     statusdir);
+                                     statusdir, completedUrl);
 
         ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, null);
         if (exec.exitcode != 0)
@@ -55,7 +55,7 @@ public class JarDelegator extends LauncherDelegator {
         String id = TempletonUtils.extractJobId(exec.stdout);
         if (id == null)
             throw new QueueException("Unable to get job id", exec);
-        registerJob(id, user, null);
+        registerJob(id, user, callback);
 
         return new EnqueueBean(id, exec);
     }
@@ -63,7 +63,7 @@ public class JarDelegator extends LauncherDelegator {
     private List<String> makeArgs(String jar, String mainClass,
                                   String libjars, String files,
                                   List<String> jarArgs, List<String> defines,
-                                  String statusdir)
+                                  String statusdir, String completedUrl)
         throws BadParam, IOException
     {
         ArrayList<String> args = new ArrayList<String>();
@@ -71,7 +71,7 @@ public class JarDelegator extends LauncherDelegator {
             ArrayList<String> allFiles = new ArrayList();
             allFiles.add(TempletonUtils.hadoopFsFilename(jar, appConf));
 
-            args.addAll(makeLauncherArgs(appConf, statusdir, null, allFiles));
+            args.addAll(makeLauncherArgs(appConf, statusdir, completedUrl, allFiles));
             args.add("--");
             args.add(appConf.clusterHadoop());
             args.add("jar");

@@ -98,7 +98,8 @@ public class Server {
                                           @FormParam("file") List<String> files,
                                           @FormParam("define") List<String> defines,
                                           @FormParam("cmdenv") List<String> cmdenvs,
-                                          @FormParam("arg") List<String> args)
+                                          @FormParam("arg") List<String> args,
+                                          @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
                ExecuteException, IOException
     {
@@ -109,7 +110,7 @@ public class Server {
 
         StreamingDelegator d = new StreamingDelegator(appConf, execService);
         return d.run(getUser(), inputs, output, mapper, reducer,
-                     files, defines, cmdenvs, args);
+                     files, defines, cmdenvs, args, callback, getCompletedUrl());
     }
 
     /**
@@ -124,7 +125,8 @@ public class Server {
                                     @FormParam("files") String files,
                                     @FormParam("arg") List<String> args,
                                     @FormParam("define") List<String> defines,
-                                    @FormParam("statusdir") String statusdir)
+                                    @FormParam("statusdir") String statusdir,
+                                    @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException
     {
@@ -136,7 +138,7 @@ public class Server {
         return d.run(getUser(),
                      jar, mainClass,
                      libjars, files, args,
-                     defines, statusdir);
+                     defines, statusdir, callback, getCompletedUrl());
     }
 
     /**
@@ -149,7 +151,8 @@ public class Server {
                            @FormParam("file") String srcFile,
                            @FormParam("arg") List<String> pigArgs,
                            @FormParam("files") String otherFiles,
-                           @FormParam("statusdir") String statusdir)
+                           @FormParam("statusdir") String statusdir,
+                           @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException
     {
@@ -161,7 +164,7 @@ public class Server {
         return d.run(getUser(),
                      execute, srcFile,
                      pigArgs, otherFiles,
-                     statusdir, getCompletedUrl());
+                     statusdir, callback, getCompletedUrl());
     }
 
     /**
@@ -173,7 +176,8 @@ public class Server {
     public EnqueueBean hive(@FormParam("execute") String execute,
                             @FormParam("file") String srcFile,
                             @FormParam("define") List<String> defines,
-                            @FormParam("statusdir") String statusdir)
+                            @FormParam("statusdir") String statusdir,
+                            @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException
     {
@@ -182,7 +186,8 @@ public class Server {
             throw new BadParam("Either execute or file parameter required");
 
         HiveDelegator d = new HiveDelegator(appConf, execService);
-        return d.run(getUser(), execute, srcFile, defines, statusdir);
+        return d.run(getUser(), execute, srcFile, defines,
+                     statusdir, callback, getCompletedUrl());
     }
 
     /**

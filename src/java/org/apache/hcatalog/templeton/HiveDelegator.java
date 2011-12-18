@@ -41,11 +41,11 @@ public class HiveDelegator extends LauncherDelegator {
 
     public EnqueueBean run(String user,
                            String execute, String srcFile, List<String> defines,
-                           String statusdir)
+                           String statusdir, String callback, String completedUrl)
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
-        List<String> args = makeArgs(execute, srcFile, defines, statusdir);
+        List<String> args = makeArgs(execute, srcFile, defines, statusdir, completedUrl);
 
         ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, null);
         if (exec.exitcode != 0)
@@ -53,18 +53,18 @@ public class HiveDelegator extends LauncherDelegator {
         String id = TempletonUtils.extractJobId(exec.stdout);
         if (id == null)
             throw new QueueException("Unable to get job id", exec);
-        registerJob(id, user, null);
+        registerJob(id, user, callback);
 
         return new EnqueueBean(id, exec);
     }
 
     private List<String> makeArgs(String execute, String srcFile, List<String> defines,
-                                  String statusdir)
+                                  String statusdir, String completedUrl)
         throws BadParam, IOException
     {
         ArrayList<String> args = new ArrayList<String>();
         try {
-            args.addAll(makeBasicArgs(execute, srcFile, statusdir));
+            args.addAll(makeBasicArgs(execute, srcFile, statusdir, completedUrl));
             args.add("--");
             args.add(appConf.hivePath());
             args.add("--service");
@@ -93,7 +93,8 @@ public class HiveDelegator extends LauncherDelegator {
         return args;
     }
 
-    private List<String> makeBasicArgs(String execute, String srcFile, String statusdir)
+    private List<String> makeBasicArgs(String execute, String srcFile,
+                                       String statusdir, String completedUrl)
         throws URISyntaxException, FileNotFoundException, IOException
     {
         ArrayList<String> args = new ArrayList<String>();
@@ -102,7 +103,7 @@ public class HiveDelegator extends LauncherDelegator {
         if (TempletonUtils.isset(srcFile))
             allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf));
 
-        args.addAll(makeLauncherArgs(appConf, statusdir, null, allFiles));
+        args.addAll(makeLauncherArgs(appConf, statusdir, completedUrl, allFiles));
 
         args.add("-archives");
         args.add(appConf.hiveArchive());
