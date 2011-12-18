@@ -18,10 +18,19 @@
 package org.apache.hcatalog.templeton;
 
 /**
- * The callback failed when it tried to reach the callback URL.
+ * CompleteBean - The results of an CompleteDelegator run.
  */
-public class CallbackFailedException extends SimpleWebException {
-    public CallbackFailedException(String msg) {
-        super(400, msg);
+public class CompleteBean {
+    public String status;
+
+    public CompleteBean() {}
+
+    /**
+     * Create a new CompleteBean
+     *
+     * @param status     run status
+     */
+    public CompleteBean(String status) {
+        this.status = status;
     }
 }

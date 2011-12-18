@@ -124,6 +124,8 @@ public class TempletonControllerJob extends Configured implements Tool {
             writeExitValue(conf, proc.exitValue(), statusdir);
             JobState state = new JobState(context.getJobID().toString(), conf);
             state.setExitValue(proc.exitValue());
+            state.setCompleteStatus("done");
+            state.close();
 
             if (proc.exitValue() != 0) {
                 System.err.println("templeton: job failed with exit code "
@@ -202,17 +204,25 @@ public class TempletonControllerJob extends Configured implements Tool {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     writer.println(line);
+                    JobState state = null;
+                    try {
+                        String percent = TempletonUtils.extractPercentComplete(line);
+                        String childid = TempletonUtils.extractChildJobId(line);
 
-                    String percent = TempletonUtils.extractPercentComplete(line);
-                    if (percent != null) {
-                        JobState state = new JobState(jobid.toString(), conf);
-                        state.setPercentComplete(percent);
-                    }
-
-                    String childid = TempletonUtils.extractChildJobId(line);
-                    if (childid != null) {
-                        JobState state = new JobState(jobid.toString(), conf);
-                        state.setChildId(childid);
+                        if (percent != null || childid != null) {
+                            state = new JobState(jobid.toString(), conf);
+                            state.setPercentComplete(percent);
+                            state.setChildId(childid);
+                        }
+                    } catch (IOException e) {
+                        System.err.println("templeton: state error: " + e);
+                    } finally {
+                        if (state != null) {
+                            try {
+                                state.close();
+                            } catch (IOException e) {
+                            }
+                        }
                     }
                 }
                 writer.flush();

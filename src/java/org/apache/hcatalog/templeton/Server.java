@@ -32,7 +32,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
-
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,6 +51,7 @@ public class Server {
     private static AppConfig appConf = AppConfig.getInstance();
 
     private @Context SecurityContext theSecurityContext;
+    private @Context UriInfo theUriInfo;
 
     private static final Log LOG = LogFactory.getLog(Server.class);
 
@@ -74,15 +74,12 @@ public class Server {
     @Produces({MediaType.APPLICATION_JSON})
     public ExecBean ddl(@FormParam("exec") String exec,
                         @FormParam("group") String group,
-                        @FormParam("permissions") String permissions,
-                        @Context UriInfo info)
+                        @FormParam("permissions") String permissions)
         throws NotAuthorizedException, BusyException, BadParam,
                ExecuteException, IOException
     {
         verifyUser();
         verifyParam(exec, "exec");
-        // The calling URI to hit with a callback is info.getBaseUri()
-        LOG.info("Calling url: " + info.getBaseUri());
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.run(getUser(), exec, group, permissions);
@@ -164,7 +161,7 @@ public class Server {
         return d.run(getUser(),
                      execute, srcFile,
                      pigArgs, otherFiles,
-                     statusdir);
+                     statusdir, getCompletedUrl());
     }
 
     /**
@@ -174,9 +171,9 @@ public class Server {
     @Path("hive.json")
     @Produces({MediaType.APPLICATION_JSON})
     public EnqueueBean hive(@FormParam("execute") String execute,
-                           @FormParam("file") String srcFile,
-                           @FormParam("define") List<String> defines,
-                           @FormParam("statusdir") String statusdir)
+                            @FormParam("file") String srcFile,
+                            @FormParam("define") List<String> defines,
+                            @FormParam("statusdir") String statusdir)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException
     {
@@ -221,6 +218,19 @@ public class Server {
     }
 
     /**
+     * Notify on a completed job.
+     */
+    @GET
+    @Path("internal/complete/{jobid}.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public CompleteBean completeJob(@PathParam("jobid") String jobid)
+        throws CallbackFailedException, IOException
+    {
+        CompleteDelegator c = new CompleteDelegator(appConf, execService);
+        return c.run(jobid);
+    }
+
+    /**
      * Verify that we have a valid user.  Throw an exception if invalid.
      */
     public void verifyUser()
@@ -260,5 +270,13 @@ public class Server {
         if (theSecurityContext.getUserPrincipal() == null)
             return null;
         return theSecurityContext.getUserPrincipal().getName();
+    }
+
+    public String getCompletedUrl() {
+        if (theUriInfo == null)
+            return null;
+        if (theUriInfo.getBaseUri() == null)
+            return null;
+        return theUriInfo.getBaseUri() + "v1/internal/complete/$jobId.json";
     }
 }

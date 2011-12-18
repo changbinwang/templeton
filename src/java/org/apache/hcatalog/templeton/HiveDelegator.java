@@ -102,7 +102,7 @@ public class HiveDelegator extends LauncherDelegator {
         if (TempletonUtils.isset(srcFile))
             allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf));
 
-        args.addAll(makeLauncherArgs(appConf, statusdir, allFiles));
+        args.addAll(makeLauncherArgs(appConf, statusdir, null, allFiles));
 
         args.add("-archives");
         args.add(appConf.hiveArchive());

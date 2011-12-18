@@ -19,8 +19,12 @@ package org.apache.hcatalog.templeton.tool;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -197,5 +201,23 @@ public class TempletonUtils {
             throw new FileNotFoundException("File " + fname + " does not exist.");
 
         return p;
+    }
+
+    /**
+     * GET the given url.  Returns the number of bytes received.
+     */
+    public static int fetchUrl(URL url)
+        throws IOException
+    {
+        URLConnection cnx = url.openConnection();
+        InputStream in = cnx.getInputStream();
+
+        byte[] buf = new byte[8192];
+        int total = 0;
+        int len = 0;
+        while ((len = in.read(buf)) >= 0)
+            total += len;
+
+        return total;
     }
 }

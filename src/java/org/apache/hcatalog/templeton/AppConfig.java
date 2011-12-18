@@ -98,6 +98,14 @@ public class AppConfig extends Configuration {
     public static final String SUDO_NAME           = "templeton.sudo";
     public static final String TEMPLETON_JAR_NAME  = "templeton.jar";
 
+    public static final String CALLBACK_INTERVAL_NAME
+        = "templeton.callback.retry.interval";
+    public static final String CALLBACK_RETRY_NAME
+        = "templeton.callback.retry.attempts";
+    public static final String HADOOP_END_INTERVAL_NAME = "job.end.retry.interval";
+    public static final String HADOOP_END_RETRY_NAME    = "job.end.retry.attempts";
+    public static final String HADOOP_END_URL_NAME      = "job.end.notification.url";
+
     private static final Log LOG = LogFactory.getLog(AppConfig.class);
 
     private static volatile AppConfig theSingleton;

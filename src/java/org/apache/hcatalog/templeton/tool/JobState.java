@@ -66,6 +66,21 @@ public class JobState implements Watcher {
     }
 
     /**
+     * Close this ZK connection.
+     */
+    public void close()
+        throws IOException
+    {
+        if (zk != null) {
+            try {
+                zk.close();
+            } catch (InterruptedException e) {
+                throw new IOException("Closing " + id, e);
+            }
+        }
+    }
+
+    /**
      * Create the parent znode for this job state.
      */
     public void create()
@@ -122,6 +137,13 @@ public class JobState implements Watcher {
     //
     // Properties
     //
+
+    /**
+     * This job id.
+     */
+    public String getId() {
+        return id;
+    }
 
     /**
      * The percent complete of a job
@@ -207,6 +229,34 @@ public class JobState implements Watcher {
         setField("callback", callback);
     }
 
+    /**
+     * The status of a job once it is completed.
+     */
+    public String getCompleteStatus()
+        throws IOException
+    {
+        return getField("completed");
+    }
+    public void setCompleteStatus(String complete)
+        throws IOException
+    {
+        setField("completed", complete);
+    }
+
+    /**
+     * The time when the callback was sent.
+     */
+    public Long getNotifiedTime()
+        throws IOException
+    {
+        return getLongField("notified");
+    }
+    public void setNotifiedTime(long notified)
+        throws IOException
+    {
+        setLongField("notified", notified);
+    }
+
     //
     // Helpers
     //
@@ -256,7 +306,7 @@ public class JobState implements Watcher {
     }
 
     /**
-     * Store a string in the ZK store.
+     * Store a string in the ZK store.  Null vals are ignored.
      */
     public void setField(String name, String val)
         throws IOException

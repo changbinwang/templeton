@@ -136,4 +136,16 @@ limitations under the License.
     <description>ZooKeeper session timeout in milliseconds</description>
   </property>
 
+  <property>
+    <name>templeton.callback.retry.interval</name>
+    <value>10000</value>
+    <description>How long to wait between callback retry attempts in milliseconds</description>
+  </property>
+
+  <property>
+    <name>templeton.callback.retry.attempts</name>
+    <value>5</value>
+    <description>How many times to retry the callback</description>
+  </property>
+
 </configuration>

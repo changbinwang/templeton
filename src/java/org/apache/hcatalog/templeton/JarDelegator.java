@@ -71,7 +71,7 @@ public class JarDelegator extends LauncherDelegator {
             ArrayList<String> allFiles = new ArrayList();
             allFiles.add(TempletonUtils.hadoopFsFilename(jar, appConf));
 
-            args.addAll(makeLauncherArgs(appConf, statusdir, allFiles));
+            args.addAll(makeLauncherArgs(appConf, statusdir, null, allFiles));
             args.add("--");
             args.add(appConf.clusterHadoop());
             args.add("jar");

@@ -41,13 +41,13 @@ public class PigDelegator extends LauncherDelegator {
     public EnqueueBean run(String user,
                            String execute, String srcFile,
                            List<String> pigArgs, String otherFiles,
-                           String statusdir)
+                           String statusdir, String completedUrl)
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
         List<String> args = makeArgs(execute,
                                      srcFile, pigArgs,
-                                     otherFiles, statusdir);
+                                     otherFiles, statusdir, completedUrl);
 
         ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, null);
         if (exec.exitcode != 0)
@@ -62,7 +62,7 @@ public class PigDelegator extends LauncherDelegator {
 
     private List<String> makeArgs(String execute, String srcFile,
                                   List<String> pigArgs, String otherFiles,
-                                  String statusdir)
+                                  String statusdir, String completedUrl)
         throws BadParam, IOException
     {
         ArrayList<String> args = new ArrayList<String>();
@@ -75,7 +75,7 @@ public class PigDelegator extends LauncherDelegator {
                 allFiles.addAll(Arrays.asList(ofs));
             }
 
-            args.addAll(makeLauncherArgs(appConf, statusdir, allFiles));
+            args.addAll(makeLauncherArgs(appConf, statusdir, completedUrl, allFiles));
             args.add("-archives");
             args.add(appConf.pigArchive());
 

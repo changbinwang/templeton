@@ -38,13 +38,19 @@ public class LauncherDelegator extends TempletonDelegator {
     public void registerJob(String id, String user, String callback)
         throws IOException
     {
-        JobState state = new JobState(id, appConf);
-        state.setUser(user);
-        state.setCallback(callback);
+        JobState state = null;
+        try {
+            state = new JobState(id, appConf);
+            state.setUser(user);
+            state.setCallback(callback);
+        } finally {
+            if (state != null)
+                state.close();
+        }
     }
 
     public List<String> makeLauncherArgs(AppConfig appConf, String statusdir,
-                                         List<String> copyFiles)
+                                         String completedUrl, List<String> copyFiles)
     {
         ArrayList<String> args = new ArrayList<String>();
 
@@ -54,9 +60,19 @@ public class LauncherDelegator extends TempletonDelegator {
         args.add("-libjars");
         args.add(appConf.libJars());
 
+        // Zk vars
         addDef(args, JobState.ZK_HOSTS, appConf.get(JobState.ZK_HOSTS));
         addDef(args, JobState.ZK_SESSION_TIMEOUT,
                appConf.get(JobState.ZK_SESSION_TIMEOUT));
+
+        // Completion notifier vars
+        addDef(args, AppConfig.HADOOP_END_RETRY_NAME,
+               appConf.get(AppConfig.CALLBACK_RETRY_NAME));
+        addDef(args, AppConfig.HADOOP_END_INTERVAL_NAME,
+               appConf.get(AppConfig.CALLBACK_INTERVAL_NAME));
+        addDef(args, AppConfig.HADOOP_END_URL_NAME, completedUrl);
+
+        // Internal vars
         addDef(args, TempletonControllerJob.STATUSDIR_NAME, statusdir);
         addDef(args, TempletonControllerJob.COPY_NAME,
                TempletonUtils.encodeArray(copyFiles));
