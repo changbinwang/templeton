@@ -19,6 +19,7 @@ package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Date;
 
 import org.apache.hcatalog.templeton.tool.JobState;
@@ -27,23 +28,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * This does periodic cleanup 
+ * This does periodic cleanup
  */
 public class ZookeeperCleanup  {
     protected AppConfig appConf;
-    
+
     // The interval to wake up and check the queue
-    protected static long interval = 1000L * 60L * 60L * 12L; // One hour
-    
+    protected static long interval = 1000L * 60L * 60L * 12L; // 12 hours
+
     // The max age of a task allowed
     protected static long maxage = 1000L * 60L * 60L * 24L * 7L; // One week
-    
+
     // The logger
     private static final Log LOG = LogFactory.getLog(ZookeeperCleanup.class);
-    
+
     // Handle to cancel loop
     private boolean stop = false;
-    
+
     /**
      * Create a cleanup object.  We use the appConfig to configure JobState.
      * @param appConf
@@ -51,42 +52,42 @@ public class ZookeeperCleanup  {
     public ZookeeperCleanup(AppConfig appConf) {
         this.appConf = appConf;
     }
-    
+
     /**
      * Run the cleanup loop.
-     * 
+     *
      * @throws IOException
      */
     public void doCleanup() throws IOException {
-    
         while (!stop) {
             try {
                 LOG.info("Getting children");
-                ArrayList<JobState> states = getChildList();
-                
+                List<JobState> states = getChildList();
+
                 for (JobState state : states) {
                     LOG.info("Checking " + state.makeZnode());
                     checkAndDelete(state);
                 }
-                
+
                 long sleepMillis = (long) (Math.random() * interval);
-                LOG.info("Next execution: " + new Date(new Date().getTime() + sleepMillis));
+                LOG.info("Next execution: " + new Date(new Date().getTime()
+                                                       + sleepMillis));
                 Thread.sleep(sleepMillis);
-                
+
             } catch (Exception e) {
                 throw new IOException("Cleanup failed: " + e.getMessage(), e);
             }
         }
-        
+
     }
-    
+
     /**
      * Get the list of jobs from JobState
-     * 
+     *
      * @return
      * @throws IOException
      */
-    public ArrayList<JobState> getChildList() {
+    public List<JobState> getChildList() {
         JobState js;
         try {
             js = new JobState("", appConf);
@@ -96,7 +97,7 @@ public class ZookeeperCleanup  {
         }
         return new ArrayList<JobState>();
     }
-    
+
     /**
      * Check to see if a job is more than maxage old, and delete it if so.
      * @param state
@@ -115,18 +116,18 @@ public class ZookeeperCleanup  {
             // next one.
         }
     }
-    
+
     // Handle to stop this process from the outside if needed.
     public void stop() {
         stop = true;
     }
-    
+
     public static void main(String[] args) {
-    	ZookeeperCleanup zc = new ZookeeperCleanup(AppConfig.getInstance());
-    	try {
-    	    zc.doCleanup();
-    	} catch (Exception e) {
-    	    LOG.error(e.getMessage());
-    	}
+        ZookeeperCleanup zc = new ZookeeperCleanup(AppConfig.getInstance());
+        try {
+            zc.doCleanup();
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+        }
     }
 }
