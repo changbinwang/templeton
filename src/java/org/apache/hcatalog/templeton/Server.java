@@ -137,8 +137,8 @@ public class Server {
         JarDelegator d = new JarDelegator(appConf, execService);
         return d.run(getUser(),
                      jar, mainClass,
-                     libjars, files, args,
-                     defines, statusdir, callback, getCompletedUrl());
+                     libjars, files, args, defines,
+                     statusdir, callback, getCompletedUrl());
     }
 
     /**
@@ -246,8 +246,8 @@ public class Server {
     public CompleteBean completeJob(@PathParam("jobid") String jobid)
         throws CallbackFailedException, IOException
     {
-        CompleteDelegator c = new CompleteDelegator(appConf, execService);
-        return c.run(jobid);
+        CompleteDelegator d = new CompleteDelegator(appConf, execService);
+        return d.run(jobid);
     }
 
     /**

@@ -23,19 +23,15 @@ import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
-import org.apache.hcatalog.templeton.tool.TempletonStreamJob;
 
 /**
  * Submit a streaming job to the MapReduce queue.  We do this by
  * running the hadoop executable on the local server using the
- * ExecService.  This allows us to easily verify that the user
- * identity is being securely used.
+ * ExecService.  Really just a front end to the JarDelegator.
  *
  * This is the backend of the mapreduce/streaming web service.
  */
 public class StreamingDelegator extends LauncherDelegator {
-     public static final String STREAM_CLASS = TempletonStreamJob.class.getName();
-
     public StreamingDelegator(AppConfig appConf, ExecService execService) {
         super(appConf, execService);
     }
@@ -48,15 +44,29 @@ public class StreamingDelegator extends LauncherDelegator {
                            List<String> jarArgs,
                            String callback,
                            String completedUrl)
-        throws NotAuthorizedException, BusyException, QueueException,
+        throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
+        List<String> args = makeArgs(inputs, output, mapper, reducer,
+                                     files, defines, cmdenvs, jarArgs);
+
+        JarDelegator d = new JarDelegator(appConf, execService);
+        return d.run(user,
+                     appConf.streamingJar(), null,
+                     null, null, args, defines,
+                     null, callback, completedUrl);
+    }
+
+    private List<String> makeArgs(List<String> inputs,
+                                  String output,
+                                  String mapper,
+                                  String reducer,
+                                  List<String> files,
+                                  List<String> defines,
+                                  List<String> cmdenvs,
+                                  List<String> jarArgs)
+    {
         ArrayList<String> args = new ArrayList<String>();
-        args.add("jar");
-        args.add(appConf.templetonJar());
-        args.add(STREAM_CLASS);
-        args.add("-libjars");
-        args.add(appConf.streamingJar());
         for (String input : inputs) {
             args.add("-input");
             args.add(input);
@@ -76,17 +86,6 @@ public class StreamingDelegator extends LauncherDelegator {
             args.add("-cmdenv" + e);
         args.addAll(jarArgs);
 
-        HashMap<String, String> env = new HashMap<String, String>();
-        env.put("HADOOP_CLASSPATH", appConf.streamingJar());
-
-        ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, env);
-        if (exec.exitcode != 0)
-            throw new QueueException("invalid exit code", exec);
-        String id = TempletonUtils.extractJobId(exec.stdout);
-        if (id == null)
-            throw new QueueException("Unable to get job id", exec);
-        registerJob(id, user, callback);
-
-        return new EnqueueBean(id, exec);
+        return args;
     }
 }

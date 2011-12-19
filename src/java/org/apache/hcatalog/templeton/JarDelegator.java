@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
