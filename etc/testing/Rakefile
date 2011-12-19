@@ -84,6 +84,20 @@ task :hive do
        "-d", "execute=#{CGI.escape script}")
 end
 
+desc "Prepare the hive table"
+task :hive_prepare do
+  script = "create table FOO(id INT, bar STRING) stored as rcfile;"
+  curl("hive.json",
+       *USER,
+       "-d", "execute=#{CGI.escape script}")
+
+  script = "LOAD DATA LOCAL INPATH '#{Dir.pwd}/etc/testing/pokes.data' " +
+    "OVERWRITE INTO TABLE pokes;"
+  curl("hive.json",
+       *USER,
+       "-d", "execute=#{CGI.escape script}")
+end
+
 # Run like rake 'queue[job_201111061521_0018]'
 desc "Run queue status"
 task :queue, :job_id do |t, args|
