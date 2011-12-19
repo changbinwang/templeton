@@ -81,6 +81,15 @@ public class TempletonJobTracker {
     }
 
     /**
+     * Get all the jobs submitted.
+     */
+    public JobStatus[] getAllJobs()
+        throws IOException
+    {
+        return cnx.getAllJobs();
+    }
+
+    /**
      * Close the connection to the Job Tracker.
      */
     public void close() {

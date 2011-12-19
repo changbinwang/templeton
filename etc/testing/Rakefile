@@ -98,6 +98,12 @@ task :queue_delete, :job_id do |t, args|
   curl("queue/#{job_id}.json?user.name=#{USERNAME}", "-X", "DELETE")
 end
 
+desc "Run queue list"
+task :queue_list do
+  curl("queue.json?user.name=#{USERNAME}")
+end
+
+
 def curl(cmd, *opts)
   args =["curl", "-s",  *opts, "#{SERVER}/#{cmd}"]
   quoted = args.map {|x| quote(x)}.join(" ");

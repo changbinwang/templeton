@@ -58,7 +58,6 @@ public class CompleteDelegator extends TempletonDelegator {
     public CompleteBean run(String id)
         throws CallbackFailedException, IOException
     {
-        System.err.println("--- CompleteDelegator " + id);
         if (id == null)
             acceptWithError("No jobid given");
 

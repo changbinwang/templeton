@@ -223,6 +223,21 @@ public class Server {
     }
 
     /**
+     * Return all the known job ids for this user.
+     */
+    @GET
+    @Path("queue.json")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<String> showQueueList()
+        throws NotAuthorizedException, BadParam, IOException
+    {
+        verifyUser();
+
+        ListDelegator d = new ListDelegator(appConf, execService);
+        return d.run(getUser());
+    }
+
+    /**
      * Notify on a completed job.
      */
     @GET
