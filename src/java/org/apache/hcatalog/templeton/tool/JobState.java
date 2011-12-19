@@ -40,7 +40,7 @@ import org.apache.zookeeper.ZooKeeper;
  * If a field is not set, null is returned for that field.  All fields
  * are encoded as utf-8 strings.
  */
-public class JobState implements Watcher {
+public class JobState {
     public static final String JOB_ROOT = "/templeton-hadoop";
     public static final String JOB_PATH = JOB_ROOT + "/jobs";
 
@@ -53,11 +53,42 @@ public class JobState implements Watcher {
     private String id;
     private ZooKeeper zk;
 
-    public JobState(String id, String zkHosts, int zkSessionTimeout)
+    /**
+     * Open a ZooKeeper connection for the JobState.
+     */
+    public static ZooKeeper zkOpen(String zkHosts, int zkSessionTimeout)
+        throws IOException
+    {
+        return new ZooKeeper(zkHosts,
+                             zkSessionTimeout,
+                             new Watcher() {
+                                 @Override
+                                 synchronized public void process(WatchedEvent event) {
+                                 }
+                             });
+    }
+
+    /**
+     * Open a ZooKeeper connection for the JobState.
+     */
+    public static ZooKeeper zkOpen(Configuration conf)
+        throws IOException
+    {
+        return zkOpen(conf.get(ZK_HOSTS),
+                      conf.getInt(ZK_SESSION_TIMEOUT, 30000));
+    }
+
+    public JobState(String id, ZooKeeper zk)
         throws IOException
     {
         this.id = id;
-        zk = new ZooKeeper(zkHosts, zkSessionTimeout, this);
+        this.zk = zk;
+    }
+
+    public JobState(String id, String zkHosts, int zkSessionTimeout)
+        throws IOException
+    {
+        this(id, zkOpen(zkHosts, zkSessionTimeout));
     }
 
     public JobState(String id, Configuration conf)
@@ -354,9 +385,6 @@ public class JobState implements Watcher {
     /**
      * The ZK watcher.  A no op.
      */
-    @Override
-    synchronized public void process(WatchedEvent event) {
-    }
 
     /**
      * Get a JobState object for each currently existing job.  Shouldn't be static
