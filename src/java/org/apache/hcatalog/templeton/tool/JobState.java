@@ -131,8 +131,12 @@ public class JobState {
             }
             if (zk.exists(makeZnode(), false) == null)
                 throw new IOException("Unable to create " + makeZnode());
-            if (wasCreated)
+            if (wasCreated) {
+                long time = System.currentTimeMillis();
                 setCreated(System.currentTimeMillis());
+                JobTracker jt = new JobTracker(id, zk, false);
+                jt.create(time);
+            }
         } catch (KeeperException e) {
             throw new IOException("Creating " + id, e);
         } catch (InterruptedException e) {
@@ -159,7 +163,6 @@ public class JobState {
                 // Same thing -- might be deleted by other nodes, so just go on.
                 System.out.println("Couldn't delete " + makeZnode());
             }
-
         } catch (Exception e) {
             // Error getting children of node -- probably node has been deleted
             System.out.println("Couldn't get children of " + makeZnode());
@@ -381,31 +384,25 @@ public class JobState {
     public String makeZnode() {
         return JOB_PATH + "/" + id;
     }
-
+    
     /**
      * The ZK watcher.  A no op.
      */
 
     /**
-     * Get a JobState object for each currently existing job.  Shouldn't be static
-     * because then we're creating ZooKeeper twice in this file just to make it
-     * static.
+     * Get an id for each currently existing job, which can be used to create
+     * a JobState object.  
      *
      * @param conf
      * @return
      * @throws IOException
      */
-    public List<JobState> getJobs(Configuration conf) throws IOException {
-        ArrayList<JobState> jobs = new ArrayList<JobState>();
+    public static List<String> getJobs(Configuration conf) throws IOException {
+        ArrayList<String> jobs = new ArrayList<String>();
         try {
+            ZooKeeper zk = zkOpen(conf);
             for (String myid : zk.getChildren(JOB_PATH, false)) {
-                // Separate try/catch for each job, so if it throws an exception
-                // we can just get the next one.
-                try {
-                    jobs.add(new JobState(myid, conf));
-                } catch (Exception e) {
-                    System.out.println("Couldn't read job " + myid);
-                }
+                jobs.add(myid);
             }
         } catch (Exception e) {
             throw new IOException("Can't get children", e);

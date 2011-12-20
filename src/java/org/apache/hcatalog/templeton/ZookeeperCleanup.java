@@ -19,10 +19,13 @@ package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Date;
 
 import org.apache.hcatalog.templeton.tool.JobState;
+import org.apache.hcatalog.templeton.tool.JobTracker;
+import org.apache.zookeeper.ZooKeeper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,11 +36,14 @@ import org.apache.commons.logging.LogFactory;
 public class ZookeeperCleanup  {
     protected AppConfig appConf;
 
-    // The interval to wake up and check the queue
-    protected static long interval = 1000L * 60L * 60L * 12L; // 12 hours
-
-    // The max age of a task allowed
-    protected static long maxage = 1000L * 60L * 60L * 24L * 7L; // One week
+    // The interval to wake up and check the queue            
+    public static final String ZK_CLEANUP_INTERVAL = "templeton.zookeeper.cleanup.interval"; // 12 hours
+    
+    // The max age of a task allowed    
+    public static final String ZK_CLEANUP_MAX_AGE = "templeton.zookeeper.cleanup.maxage"; // ~ 1 week
+    
+    protected static long interval = 1000L * 60L * 60L * 12L;
+    protected static long maxage = 1000L * 60L * 60L * 24L * 7L;
 
     // The logger
     private static final Log LOG = LogFactory.getLog(ZookeeperCleanup.class);
@@ -51,6 +57,8 @@ public class ZookeeperCleanup  {
      */
     public ZookeeperCleanup(AppConfig appConf) {
         this.appConf = appConf;
+        interval = appConf.getLong(ZK_CLEANUP_INTERVAL, interval);
+        maxage = appConf.getLong(ZK_CLEANUP_MAX_AGE, maxage);
     }
 
     /**
@@ -58,23 +66,34 @@ public class ZookeeperCleanup  {
      *
      * @throws IOException
      */
-    public void doCleanup() throws IOException {
+    public void doCleanup() throws IOException {        
         while (!stop) {
             try {
-                LOG.info("Getting children");
-                List<JobState> states = getChildList();
-
-                for (JobState state : states) {
-                    LOG.info("Checking " + state.makeZnode());
-                    checkAndDelete(state);
+                // Put each check in a separate try/catch, so if that particular
+                // cycle fails, it'll try again on the next cycle.
+                try {
+                    LOG.info("Getting children");
+                    ZooKeeper zk = JobState.zkOpen(AppConfig.getInstance());
+    
+                    List<String> nodes = getChildList(zk);
+    
+                    for (String node : nodes) {
+                        LOG.info("Checking " + node);
+                        checkAndDelete(node, zk);
+                    }
+                    
+                    zk.close();
+                } catch (Exception e) {
+                    LOG.error("Cleanup cycle failed: " + e.getMessage());
                 }
-
+                
                 long sleepMillis = (long) (Math.random() * interval);
                 LOG.info("Next execution: " + new Date(new Date().getTime()
                                                        + sleepMillis));
                 Thread.sleep(sleepMillis);
 
             } catch (Exception e) {
+                // If sleep fails, we should exit now before things get worse.
                 throw new IOException("Cleanup failed: " + e.getMessage(), e);
             }
         }
@@ -87,31 +106,35 @@ public class ZookeeperCleanup  {
      * @return
      * @throws IOException
      */
-    public List<JobState> getChildList() {
-        JobState js;
+    public List<String> getChildList(ZooKeeper zk) {
         try {
-            js = new JobState("", appConf);
-            return js.getJobs(appConf);
+            List<String> jobs = JobTracker.getTrackingJobs(appConf, zk);
+            Collections.sort(jobs);
+            return jobs;
         } catch (IOException e) {
             LOG.info("No jobs to check.");
         }
-        return new ArrayList<JobState>();
+        return new ArrayList<String>();
     }
 
     /**
      * Check to see if a job is more than maxage old, and delete it if so.
      * @param state
      */
-    public void checkAndDelete(JobState state) {
+    public void checkAndDelete(String node, ZooKeeper zk) {
         try {
+            JobTracker tracker = new JobTracker(node, zk, true);
             long now = new Date().getTime();
-            long then = state.getCreated();
+            long then = tracker.getDateCreated();
             if (now - then > maxage) {
-                LOG.info("Deleting " + state.makeZnode());
+                LOG.info("Deleting " + tracker.getJobID());
+                JobState state = new JobState(tracker.getJobID(), zk);
                 state.delete();
+                tracker.delete();
             }
         } catch (Exception e) {
-            LOG.info("checkAndDelete failed for " + state.makeZnode());
+            e.printStackTrace();
+            LOG.info("checkAndDelete failed for " + node);
             // We don't throw a new exception for this -- just keep going with the
             // next one.
         }
@@ -130,4 +153,5 @@ public class ZookeeperCleanup  {
             LOG.error(e.getMessage());
         }
     }
+
 }

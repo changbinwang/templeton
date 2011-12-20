@@ -148,4 +148,19 @@ limitations under the License.
     <description>How many times to retry the callback</description>
   </property>
 
+
+  <property>
+    <name>templeton.zookeeper.cleanup.interval</name>
+    <value>43200000</value>
+    <description>The maximum delay between a thread's cleanup checks</description>
+  </property>
+
+  <property>
+    <name>templeton.zookeeper.cleanup.maxage</name>
+    <value>604800000</value>
+    <description>The maximum age of a templeton job</description>
+  </property>
+
+
+
 </configuration>

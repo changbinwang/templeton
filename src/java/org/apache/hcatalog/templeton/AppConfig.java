@@ -203,6 +203,10 @@ public class AppConfig extends Configuration {
     public String hiveArchive()      { return get(HIVE_ARCHIVE_NAME); }
     public String sudoPath()         { return get(SUDO_NAME); }
 
+    public long zkCleanupInterval()  { return getLong(ZookeeperCleanup.ZK_CLEANUP_INTERVAL,
+                                                     (1000L * 60L * 60L * 12L)); }
+    public long zkMaxAge()           { return getLong(ZookeeperCleanup.ZK_CLEANUP_MAX_AGE,
+                                                     (1000L * 60L * 60L * 24L * 7L)); }
     public String zkHosts()          { return get(JobState.ZK_HOSTS); }
     public int zkSessionTimeout()    { return getInt(JobState.ZK_SESSION_TIMEOUT,
                                                      30000); }
