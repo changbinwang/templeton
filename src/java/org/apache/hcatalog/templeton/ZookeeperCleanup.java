@@ -76,7 +76,7 @@ public class ZookeeperCleanup  {
                 try {
                     LOG.info("Getting children");
                     zk = JobState.zkOpen(AppConfig.getInstance());
-    
+                        
                     nodes = getChildList(zk);
     
                     for (String node : nodes) {
