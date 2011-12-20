@@ -48,10 +48,11 @@ See http://forrest.apache.org/docs/linking.html for more info
      <index label="Resource List" href="resources.html" />
      <index label="status" href="status.html" />
      <index label="ddl" href="ddl.html" />
-     <index label="pig" href="pig.html" />
      <index label="mapreduce/streaming" href="mapreducestreaming.html" />
      <index label="mapreduce/jar" href="mapreducejar.html" />
+     <index label="pig" href="pig.html" />
      <index label="hive" href="hive.html" />
+     <index label="queue" href="queuelist.html" />
      <index label="GET queue/:jobid" href="queue.html" />
      <index label="DELETE queue/:jobid" href="queuedelete.html" />
     </index>

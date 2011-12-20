@@ -31,17 +31,20 @@
      <tr><td><a href="ddl.html">ddl</a></td>
          <td>Performs an HCatalog DDL command.</td></tr>
 
-     <tr><td><a href="pig.html">pig</a></td>
-         <td>Creates and queues Pig jobs.</td></tr>
-
      <tr><td><a href="mapreducestreaming.html">mapreduce/streaming</a></td>
          <td>Creates and queues Hadoop streaming MapReduce jobs.</td></tr>
 
      <tr><td><a href="mapreducejar.html">mapreduce/jar</a></td>
          <td>Creates and queues standard Hadoop MapReduce jobs.</td></tr>
 
+     <tr><td><a href="pig.html">pig</a></td>
+         <td>Creates and queues Pig jobs.</td></tr>
+
      <tr><td><a href="hive.html">hive</a></td>
          <td>Runs Hive queries and commands.</td></tr>
+
+     <tr><td><a href="queuelist.html">queue</a></td>
+         <td>Returns a list of all jobids registered for the user.</td></tr>
 
      <tr><td><a href="queue.html">GET queue/:jobid</a></td>
          <td>Returns the status of a job given its ID.</td></tr>
