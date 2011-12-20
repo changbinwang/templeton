@@ -66,25 +66,38 @@ public class ZookeeperCleanup  {
      *
      * @throws IOException
      */
-    public void doCleanup() throws IOException {        
+    public void doCleanup() throws IOException {   
+        ZooKeeper zk = null;
+        List<String> nodes = null;
         while (!stop) {
             try {
                 // Put each check in a separate try/catch, so if that particular
                 // cycle fails, it'll try again on the next cycle.
                 try {
                     LOG.info("Getting children");
-                    ZooKeeper zk = JobState.zkOpen(AppConfig.getInstance());
+                    zk = JobState.zkOpen(AppConfig.getInstance());
     
-                    List<String> nodes = getChildList(zk);
+                    nodes = getChildList(zk);
     
                     for (String node : nodes) {
                         LOG.info("Checking " + node);
-                        checkAndDelete(node, zk);
+                        boolean deleted = checkAndDelete(node, zk);
+                        if (!deleted) {
+                            break;
+                        }
                     }
                     
                     zk.close();
                 } catch (Exception e) {
                     LOG.error("Cleanup cycle failed: " + e.getMessage());
+                } finally {
+                    if (zk != null) {
+                        try {
+                            zk.close();
+                        } catch (InterruptedException e) {
+                            // We're trying to exit anyway, just ignore.
+                        }
+                    }
                 }
                 
                 long sleepMillis = (long) (Math.random() * interval);
@@ -95,7 +108,7 @@ public class ZookeeperCleanup  {
             } catch (Exception e) {
                 // If sleep fails, we should exit now before things get worse.
                 throw new IOException("Cleanup failed: " + e.getMessage(), e);
-            }
+            } 
         }
 
     }
@@ -121,7 +134,7 @@ public class ZookeeperCleanup  {
      * Check to see if a job is more than maxage old, and delete it if so.
      * @param state
      */
-    public void checkAndDelete(String node, ZooKeeper zk) {
+    public boolean checkAndDelete(String node, ZooKeeper zk) {
         try {
             JobTracker tracker = new JobTracker(node, zk, true);
             long now = new Date().getTime();
@@ -131,12 +144,15 @@ public class ZookeeperCleanup  {
                 JobState state = new JobState(tracker.getJobID(), zk);
                 state.delete();
                 tracker.delete();
-            }
+                return true;
+            } 
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
             LOG.info("checkAndDelete failed for " + node);
             // We don't throw a new exception for this -- just keep going with the
             // next one.
+            return true;
         }
     }
 
