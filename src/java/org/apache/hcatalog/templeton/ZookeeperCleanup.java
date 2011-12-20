@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * This does periodic cleanup
  */
-public class ZookeeperCleanup  {
+public class ZookeeperCleanup extends Thread {
     protected AppConfig appConf;
 
     // The interval to wake up and check the queue            
@@ -50,15 +50,35 @@ public class ZookeeperCleanup  {
 
     // Handle to cancel loop
     private boolean stop = false;
+    
+    // The instance
+    private static ZookeeperCleanup thisclass = null;
+    
+    // Whether the cycle is running
+    private static boolean isRunning = false;
 
     /**
      * Create a cleanup object.  We use the appConfig to configure JobState.
      * @param appConf
      */
-    public ZookeeperCleanup(AppConfig appConf) {
+    private ZookeeperCleanup(AppConfig appConf) {
         this.appConf = appConf;
         interval = appConf.getLong(ZK_CLEANUP_INTERVAL, interval);
         maxage = appConf.getLong(ZK_CLEANUP_MAX_AGE, maxage);
+    }
+    
+    public static ZookeeperCleanup getInstance(AppConfig appConf) {
+        if (thisclass != null) {
+            return thisclass;
+        }
+        thisclass = new ZookeeperCleanup(appConf);
+        return thisclass;
+    }
+    
+    public static void startInstance(AppConfig appConf) throws IOException {
+        if (!isRunning) {
+            getInstance(appConf).start();
+        }
     }
 
     /**
@@ -66,9 +86,10 @@ public class ZookeeperCleanup  {
      *
      * @throws IOException
      */
-    public void doCleanup() throws IOException {   
+    public void run() {   
         ZooKeeper zk = null;
         List<String> nodes = null;
+        isRunning = true;
         while (!stop) {
             try {
                 // Put each check in a separate try/catch, so if that particular
@@ -107,10 +128,11 @@ public class ZookeeperCleanup  {
 
             } catch (Exception e) {
                 // If sleep fails, we should exit now before things get worse.
-                throw new IOException("Cleanup failed: " + e.getMessage(), e);
-            } 
+                isRunning = false;
+                LOG.error("Cleanup failed: " + e.getMessage(), e);
+            }
         }
-
+        isRunning = false;
     }
 
     /**
@@ -157,14 +179,13 @@ public class ZookeeperCleanup  {
     }
 
     // Handle to stop this process from the outside if needed.
-    public void stop() {
+    public void exit() {
         stop = true;
     }
 
     public static void main(String[] args) {
-        ZookeeperCleanup zc = new ZookeeperCleanup(AppConfig.getInstance());
         try {
-            zc.doCleanup();
+            ZookeeperCleanup.startInstance(AppConfig.getInstance());
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }

@@ -19,7 +19,6 @@ package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
 import java.util.List;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -27,7 +26,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
@@ -35,7 +33,6 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hdfs.web.AuthFilter;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.security.authentication.client.PseudoAuthenticator;
 
@@ -55,6 +52,15 @@ public class Server {
 
     private static final Log LOG = LogFactory.getLog(Server.class);
 
+    static {
+        try {
+            ZookeeperCleanup.startInstance(AppConfig.getInstance());
+        } catch (IOException e) {
+            // If cleanup isn't running, should the server run?
+            LOG.error("ZookeeperCleanup failed to start: " + e.getMessage());
+        }
+    }
+    
     /**
      * Check the status of this server.
      */
