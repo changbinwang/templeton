@@ -36,11 +36,13 @@ public class TrivialExecService {
         return theSingleton;
     }
 
-    public Process run(List<String> cmd)
+    public Process run(List<String> cmd, List<String> removeEnv)
         throws IOException
     {
         System.err.println("templeton: starting " + cmd);
         ProcessBuilder pb = new ProcessBuilder(cmd);
+        for (String key : removeEnv)
+            pb.environment().remove(key);
         return pb.start();
     }
 

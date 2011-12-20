@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -80,7 +81,9 @@ public class TempletonControllerJob extends Configured implements Tool {
             String[] jarArgs
                 = TempletonUtils.decodeArray(conf.get(JAR_ARGS_NAME));
 
-            return execService.run(Arrays.asList(jarArgs));
+            ArrayList<String> removeEnv = new ArrayList<String>();
+            removeEnv.add("HADOOP_ROOT_LOGGER");
+            return execService.run(Arrays.asList(jarArgs), removeEnv);
         }
 
         private void copyLocal(String var, Configuration conf)
