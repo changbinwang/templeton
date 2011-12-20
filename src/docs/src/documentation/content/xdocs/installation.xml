@@ -36,6 +36,7 @@
    <li><a href="http://ant.apache.org/">Ant</a>, version 1.8 or higher</li>
    <li><a href="http://tomcat.apache.org/">Tomcat</a>, version 7.0 or higher</li>
    <li><a href="http://hadoop.apache.org/">Hadoop</a>, version 0.20.205.0</li>
+   <li><a href="http://zookeeper.apache.org/">ZooKeeper</a></li>
    <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>,
    <ul>
     <li>To use the ddl resource, HCatalog must be installed in
