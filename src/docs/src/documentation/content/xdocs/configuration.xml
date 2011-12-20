@@ -66,9 +66,15 @@ ${env.PIG_HOME}/bin/pig
   </tr>
 
   <tr>
+    <td><strong>templeton.libjars</strong></td>
+    <td><code>${env.TEMPLETON_HOME}/build/ivy/lib/templeton/zookeeper-3.3.4.jar</code></td>
+    <td>Jars to add to the classpath.</td>
+  </tr>
+
+  <tr>
     <td><strong>templeton.streaming.jar</strong></td>
-    <td><code>${env.HADOOP_PREFIX}/share/hadoop/contrib/streaming/hadoop-streaming-0.20.205.0.jar</code></td>
-    <td>The path to the Hadoop streaming jar file.</td>
+    <td><code>hdfs:///user/templeton/hadoop-streaming.jar</code></td>
+    <td>The hdfs path to the Hadoop streaming jar file.</td>
   </tr>
 
   <tr>
@@ -152,6 +158,42 @@ hive.metastore.sasl.enabled=false</code></td>
     <td><strong>templeton.exec.envs</strong></td>
     <td><code>HADOOP_PREFIX,HADOOP_HOME,JAVA_HOME</code></td>
     <td>The environment variables passed through to sudo.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.zookeeper.hosts</strong></td>
+    <td><code>127.0.0.1:2181</code></td>
+    <td>ZooKeeper servers, as comma separated host:port pairs</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.zookeeper.session-timeout</strong></td>
+    <td><code>30000</code></td>
+    <td>ZooKeeper session timeout in milliseconds</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.callback.retry.interval</strong></td>
+    <td><code>10000</code></td>
+    <td>How long to wait between callback retry attempts in milliseconds</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.callback.retry.attempts</strong></td>
+    <td><code>5</code></td>
+    <td>How many times to retry the callback</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.zookeeper.cleanup.interval</strong></td>
+    <td><code>43200000</code></td>
+    <td>The maximum delay between a thread's cleanup checks</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.zookeeper.cleanup.maxage</strong></td>
+    <td><code>604800000</code></td>
+    <td>The maximum age of a templeton job</td>
   </tr>
 
   </table>
