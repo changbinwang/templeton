@@ -22,7 +22,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hcatalog.templeton.JobStateTracker;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
@@ -49,6 +52,8 @@ public class JobState {
         = "templeton.zookeeper.session-timeout";
 
     public static final String ENCODING = "UTF-8";
+
+    private static final Log LOG = LogFactory.getLog(JobState.class);
 
     private String id;
     private ZooKeeper zk;
@@ -129,13 +134,19 @@ public class JobState {
                 } catch (KeeperException.NodeExistsException e) {
                 }
             }
+            if (wasCreated) {
+                try {
+                    JobStateTracker jt = new JobStateTracker(id, zk, false);
+                    jt.create();
+                } catch (Exception e) {
+                    // If we couldn't create the tracker node, don't create the main node.
+                    zk.delete(makeZnode(), -1);
+                }
+            }
             if (zk.exists(makeZnode(), false) == null)
                 throw new IOException("Unable to create " + makeZnode());
             if (wasCreated) {
-                long time = System.currentTimeMillis();
                 setCreated(System.currentTimeMillis());
-                JobTracker jt = new JobTracker(id, zk, false);
-                jt.create(time);
             }
         } catch (KeeperException e) {
             throw new IOException("Creating " + id, e);
@@ -154,18 +165,18 @@ public class JobState {
                 } catch (Exception e) {
                     // Other nodes may be trying to delete this at the same time,
                     // so just log errors and skip them.
-                    System.out.println("Couldn't delete " + makeFieldZnode(child));
+                    LOG.info("Couldn't delete " + makeFieldZnode(child));
                 }
             }
             try {
                 zk.delete(makeZnode(), -1);
             } catch (Exception e) {
                 // Same thing -- might be deleted by other nodes, so just go on.
-                System.out.println("Couldn't delete " + makeZnode());
+                LOG.info("Couldn't delete " + makeZnode());
             }
         } catch (Exception e) {
             // Error getting children of node -- probably node has been deleted
-            System.out.println("Couldn't get children of " + makeZnode());
+            LOG.info("Couldn't get children of " + makeZnode());
         }
     }
 
@@ -309,7 +320,7 @@ public class JobState {
             try {
                 return new Long(s);
             } catch (NumberFormatException e) {
-                System.err.println("templeton: bug " + name + " " + s + " : "+ e);
+                LOG.error("templeton: bug " + name + " " + s + " : "+ e);
                 return null;
             }
         }

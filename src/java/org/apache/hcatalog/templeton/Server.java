@@ -54,7 +54,7 @@ public class Server {
 
     static {
         try {
-            ZookeeperCleanup.startInstance(AppConfig.getInstance());
+            ZooKeeperCleanup.startInstance(AppConfig.getInstance());
         } catch (IOException e) {
             // If cleanup isn't running, should the server run?
             LOG.error("ZookeeperCleanup failed to start: " + e.getMessage());
