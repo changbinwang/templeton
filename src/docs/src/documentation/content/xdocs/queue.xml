@@ -66,6 +66,35 @@
             JobProfile</a>) for more information.
 </td>
     </tr>
+
+    <tr><td><strong>id</strong></td>
+        <td>The job ID.</td>
+    </tr>
+
+    <tr><td><strong>parentid</strong></td>
+        <td>The parent job id.</td>
+    </tr>
+
+    <tr><td><strong>percentComplete</strong></td>
+        <td>The job completion percentage, for example "75% complete".</td>
+    </tr>
+
+    <tr><td><strong>exitValue</strong></td>
+        <td>The job's exit value.</td>
+    </tr>
+
+    <tr><td><strong>user</strong></td>
+        <td>User name of the job creator.</td>
+    </tr>
+
+    <tr><td><strong>callback</strong></td>
+        <td>The callback URL, if any.</td>
+    </tr>
+
+    <tr><td><strong>completed</strong></td>
+        <td>A string representing completed status, for example "done".</td>
+    </tr>
+
     </table>
  </section> 
 
@@ -74,40 +103,47 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/queue/job_201111111311_0008.json?user.name=ctdean'
+% curl 'http://www.myserver.com/templeton/v1/queue/job_201112212038_0003.json?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>
 <source>
 {
  "status": {
-            "startTime": 1321046803361,
+            "startTime": 1324529476131,
             "username": "ctdean",
             "jobID": {
-                      "jtIdentifier": "201111111311",
-                      "id": 8
+                      "jtIdentifier": "201112212038",
+                      "id": 4
                      },
-            "jobACLs": { 
+            "jobACLs": {
                        },
             "schedulingInfo": "NA",
             "failureInfo": "NA",
-            "jobId": "job_201111111311_0008",
+            "jobId": "job_201112212038_0004",
             "jobPriority": "NORMAL",
             "runState": 2,
             "jobComplete": true
            },
  "profile": {
-             "url": "http://localhost:50030/jobdetails.jsp?jobid=job_201111111311_0008",
-             "user": "ctdean",
+             "url": "http://localhost:50030/jobdetails.jsp?jobid=job_201112212038_0004",
              "jobID": {
-                       "jtIdentifier": "201111111311",
-                       "id": 8
+                       "jtIdentifier": "201112212038",
+                        "id": 4
                       },
+             "user": "ctdean",
              "queueName": "default",
-             "jobFile": "hdfs://localhost:9000/tmp/hadoop-ctdean/mapred/staging/ctdean/.staging/job_201111111311_0008/job.xml",
-             "jobName": "streamjob2396312251369831644.jar",
-             "jobId": "job_201111111311_0008"
-            }
+             "jobFile": "hdfs://localhost:9000/tmp/hadoop-ctdean/mapred/staging/ctdean/.staging/job_201112212038_0004/job.xml",
+             "jobName": "PigLatin:DefaultJobName",
+             "jobId": "job_201112212038_0004"
+            },
+ "id": "job_201112212038_0004",
+ "parentId": "job_201112212038_0003",
+ "percentComplete": "100% complete",
+ "exitValue": 0,
+ "user": "ctdean",
+ "callback": null,
+ "completed": "done"
 }
 </source>
   </section>

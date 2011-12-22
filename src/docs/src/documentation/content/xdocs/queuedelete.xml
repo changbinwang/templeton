@@ -66,6 +66,35 @@
             JobProfile</a>) for more information.
 </td>
     </tr>
+
+    <tr><td><strong>id</strong></td>
+        <td>The job ID.</td>
+    </tr>
+
+    <tr><td><strong>parentid</strong></td>
+        <td>The parent job id.</td>
+    </tr>
+
+    <tr><td><strong>percentComplete</strong></td>
+        <td>The job completion percentage, for example "75% complete".</td>
+    </tr>
+
+    <tr><td><strong>exitValue</strong></td>
+        <td>The job's exit value.</td>
+    </tr>
+
+    <tr><td><strong>user</strong></td>
+        <td>User name of the job creator.</td>
+    </tr>
+
+    <tr><td><strong>callback</strong></td>
+        <td>The callback URL, if any.</td>
+    </tr>
+
+    <tr><td><strong>completed</strong></td>
+        <td>A string representing completed status, for example "done".</td>
+    </tr>
+
     </table>
  </section> 
 
@@ -109,6 +138,13 @@
              "jobName": "streamjob3322518350676530377.jar",
              "jobId": "job_201111111311_0009"
             }
+ "id": "job_201111111311_0009",
+ "parentId": "job_201111111311_0008",
+ "percentComplete": "10% complete",
+ "exitValue": 0,
+ "user": "ctdean",
+ "callback": null,
+ "completed": "false"
 }
 </source>
 <p><strong>Note:</strong> The job is not immediately deleted, therefore the 
