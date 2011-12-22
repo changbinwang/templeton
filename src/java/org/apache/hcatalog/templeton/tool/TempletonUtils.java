@@ -77,7 +77,7 @@ public class TempletonUtils {
     }
 
     public static final Pattern JAR_COMPLETE
-        = Pattern.compile(" map \\d+%  reduce \\d+%$");
+        = Pattern.compile(" map \\d+%\\s+reduce \\d+%$");
     public static final Pattern PIG_COMPLETE = Pattern.compile(" \\d+% complete$");
 
     /**
