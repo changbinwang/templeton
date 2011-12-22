@@ -60,10 +60,8 @@
    <p><strong>JSON Output</strong></p>
 <source>
 {
- "ids": {
-            "jobId": "job_201111111311_0008",
-            "jobId": "job_201111111311_0012"
-        }
+ "job_201111111311_0008",
+ "job_201111111311_0012"
 }
 </source>
   </section>
