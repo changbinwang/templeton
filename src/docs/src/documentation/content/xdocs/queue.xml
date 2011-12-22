@@ -71,7 +71,7 @@
         <td>The job ID.</td>
     </tr>
 
-    <tr><td><strong>parentid</strong></td>
+    <tr><td><strong>parentId</strong></td>
         <td>The parent job id.</td>
     </tr>
 

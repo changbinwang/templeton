@@ -37,7 +37,7 @@
    <li><a href="http://tomcat.apache.org/">Tomcat</a>, version 7.0 or higher</li>
    <li><a href="http://hadoop.apache.org/">Hadoop</a>, version 0.20.205.0</li>
    <li><a href="http://zookeeper.apache.org/">ZooKeeper</a>.  (Be sure to review
-    and update the zookeeper related <a href="configuration.html">templeton 
+    and update the ZooKeeper related <a href="configuration.html">Templeton 
     configuration</a> as required.)</li>
    <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>,
    <ul>
@@ -85,6 +85,9 @@
   <ol>
   <li>Ensure that the required related installations and environment 
       variables are in place.</li>
+  <li>Review the <a href="configuration.html">Templeton configuration</a> 
+      and update it as required. In particular ensure that 
+      site specific component installation locations are accurate.</li>
   <li>Start Tomcat.</li>
   <li>Build and install the Templeton war file using <code>ant install-war</code>
       from <code>$TEMPLETON_HOME</code>.  The Tomcat webapps directory must be writable.</li>
