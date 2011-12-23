@@ -19,10 +19,8 @@ package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.exec.ExecuteException;
-import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
  * Submit a streaming job to the MapReduce queue.  We do this by
@@ -45,7 +43,7 @@ public class StreamingDelegator extends LauncherDelegator {
                            String callback,
                            String completedUrl)
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
-        ExecuteException, IOException
+        ExecuteException, IOException, InterruptedException
     {
         List<String> args = makeArgs(inputs, output, mapper, reducer,
                                      files, defines, cmdenvs, jarArgs);

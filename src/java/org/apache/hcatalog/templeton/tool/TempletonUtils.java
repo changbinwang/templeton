@@ -157,8 +157,8 @@ public class TempletonUtils {
         return plain;
     }
 
-    public static String[] hadoopFsListAsArray(String files, Configuration conf)
-        throws URISyntaxException, FileNotFoundException, IOException
+    public static String[] hadoopFsListAsArray(String files, Configuration conf, String user)
+        throws URISyntaxException, FileNotFoundException, IOException, InterruptedException
     {
     	if (files == null || conf == null) {
             return null;
@@ -167,37 +167,37 @@ public class TempletonUtils {
         String[] clean = new String[dirty.length];
 
         for (int i = 0; i < dirty.length; ++i)
-            clean[i] = hadoopFsFilename(dirty[i], conf);
+            clean[i] = hadoopFsFilename(dirty[i], conf, user);
 
         return clean;
     }
 
-    public static String hadoopFsListAsString(String files, Configuration conf)
-        throws URISyntaxException, FileNotFoundException, IOException
+    public static String hadoopFsListAsString(String files, Configuration conf, String user)
+        throws URISyntaxException, FileNotFoundException, IOException, InterruptedException
     {
     	if (files == null || conf == null) {
             return null;
     	}
-        return StringUtils.arrayToString(hadoopFsListAsArray(files, conf));
+        return StringUtils.arrayToString(hadoopFsListAsArray(files, conf, user));
     }
 
-    public static String hadoopFsFilename(String fname, Configuration conf)
-        throws URISyntaxException, FileNotFoundException, IOException
+    public static String hadoopFsFilename(String fname, Configuration conf, String user)
+        throws URISyntaxException, FileNotFoundException, IOException, InterruptedException
     {
-        Path p = hadoopFsPath(fname, conf);
+        Path p = hadoopFsPath(fname, conf, user);
         if (p == null)
             return null;
         else
             return p.toString();
     }
 
-    public static Path hadoopFsPath(String fname, Configuration conf)
-        throws URISyntaxException, FileNotFoundException, IOException
+    public static Path hadoopFsPath(String fname, Configuration conf, String user)
+        throws URISyntaxException, FileNotFoundException, IOException, InterruptedException
     {
     	if (fname == null || conf == null) {
             return null;
     	}
-        FileSystem defaultFs = FileSystem.get(conf);
+        FileSystem defaultFs = FileSystem.get(new URI(fname), conf, user);
         URI u = new URI(fname);
         Path p = new Path(u).makeQualified(defaultFs);
 

@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
@@ -43,7 +42,7 @@ public class HiveDelegator extends LauncherDelegator {
                            String execute, String srcFile, List<String> defines,
                            String statusdir, String callback, String completedUrl)
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
-        ExecuteException, IOException
+        ExecuteException, IOException, InterruptedException 
     {
         runAs = user;
         List<String> args = makeArgs(execute, srcFile, defines, statusdir, completedUrl);
@@ -61,7 +60,7 @@ public class HiveDelegator extends LauncherDelegator {
 
     private List<String> makeArgs(String execute, String srcFile, List<String> defines,
                                   String statusdir, String completedUrl)
-        throws BadParam, IOException
+        throws BadParam, IOException, InterruptedException
     {
         ArrayList<String> args = new ArrayList<String>();
         try {
@@ -83,7 +82,7 @@ public class HiveDelegator extends LauncherDelegator {
                 args.add(execute);
             } else if (TempletonUtils.isset(srcFile)) {
                 args.add("-f");
-                args.add(TempletonUtils.hadoopFsPath(srcFile, appConf).getName());
+                args.add(TempletonUtils.hadoopFsPath(srcFile, appConf, runAs).getName());
             }
         } catch (FileNotFoundException e) {
             throw new BadParam(e.getMessage());
@@ -96,13 +95,13 @@ public class HiveDelegator extends LauncherDelegator {
 
     private List<String> makeBasicArgs(String execute, String srcFile,
                                        String statusdir, String completedUrl)
-        throws URISyntaxException, FileNotFoundException, IOException
+        throws URISyntaxException, FileNotFoundException, IOException, InterruptedException
     {
         ArrayList<String> args = new ArrayList<String>();
 
         ArrayList<String> allFiles = new ArrayList<String>();
         if (TempletonUtils.isset(srcFile))
-            allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf));
+            allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf, runAs));
 
         args.addAll(makeLauncherArgs(appConf, statusdir, completedUrl, allFiles));
 

@@ -107,7 +107,7 @@ public class Server {
                                           @FormParam("arg") List<String> args,
                                           @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
-               ExecuteException, IOException
+               ExecuteException, IOException, InterruptedException
     {
         verifyUser();
         verifyParam(inputs, "input");
@@ -134,7 +134,7 @@ public class Server {
                                     @FormParam("statusdir") String statusdir,
                                     @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
-        ExecuteException, IOException
+        ExecuteException, IOException, InterruptedException
     {
         verifyUser();
         verifyParam(jar, "jar");
@@ -160,7 +160,7 @@ public class Server {
                            @FormParam("statusdir") String statusdir,
                            @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
-        ExecuteException, IOException
+        ExecuteException, IOException, InterruptedException
     {
         verifyUser();
         if (execute == null && srcFile == null)
@@ -185,7 +185,7 @@ public class Server {
                             @FormParam("statusdir") String statusdir,
                             @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
-        ExecuteException, IOException
+        ExecuteException, IOException, InterruptedException
     {
         verifyUser();
         if (execute == null && srcFile == null)
