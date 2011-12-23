@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -73,7 +75,7 @@ public class TempletonControllerJob extends Configured implements Tool {
     public static class LaunchMapper
         extends Mapper<NullWritable, NullWritable, Text, Text>
     {
-        protected Process startJob(Context context)
+        protected Process startJob(Context context, String user)
             throws IOException, InterruptedException
         {
             Configuration conf = context.getConfiguration();
@@ -83,7 +85,9 @@ public class TempletonControllerJob extends Configured implements Tool {
 
             ArrayList<String> removeEnv = new ArrayList<String>();
             removeEnv.add("HADOOP_ROOT_LOGGER");
-            return execService.run(Arrays.asList(jarArgs), removeEnv);
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("HADOOP_OPTS", "-Duser.name=" + user);
+            return execService.run(Arrays.asList(jarArgs), removeEnv, map);
         }
 
         private void copyLocal(String var, Configuration conf)
@@ -105,9 +109,12 @@ public class TempletonControllerJob extends Configured implements Tool {
         public void run(Context context)
             throws IOException, InterruptedException
         {
-            Process proc = startJob(context);
 
             Configuration conf = context.getConfiguration();
+            JobState state = new JobState(context.getJobID().toString(), conf);
+            
+            Process proc = startJob(context, state.getUser());
+            
             String statusdir = conf.get(STATUSDIR_NAME);
             Counter cnt = context.getCounter(ControllerCounters.SIMPLE_COUNTER);
 
@@ -125,7 +132,6 @@ public class TempletonControllerJob extends Configured implements Tool {
                 pool.shutdownNow();
 
             writeExitValue(conf, proc.exitValue(), statusdir);
-            JobState state = new JobState(context.getJobID().toString(), conf);
             state.setExitValue(proc.exitValue());
             state.setCompleteStatus("done");
             state.close();

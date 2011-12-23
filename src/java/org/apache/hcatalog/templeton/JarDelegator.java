@@ -46,6 +46,7 @@ public class JarDelegator extends LauncherDelegator {
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
+        runAs = user;
         List<String> args = makeArgs(jar, mainClass,
                                      libjars, files, jarArgs, defines,
                                      statusdir, completedUrl);

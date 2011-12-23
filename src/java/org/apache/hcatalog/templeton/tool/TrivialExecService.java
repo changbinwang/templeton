@@ -19,9 +19,10 @@ package org.apache.hcatalog.templeton.tool;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Execute a local program.  This is a singelton service that will
+ * Execute a local program.  This is a singleton service that will
  * execute a programs on the local box.
  */
 public class TrivialExecService {
@@ -36,13 +37,15 @@ public class TrivialExecService {
         return theSingleton;
     }
 
-    public Process run(List<String> cmd, List<String> removeEnv)
+    public Process run(List<String> cmd, List<String> removeEnv, 
+            Map<String, String> environmentVariables)
         throws IOException
     {
         System.err.println("templeton: starting " + cmd);
         ProcessBuilder pb = new ProcessBuilder(cmd);
         for (String key : removeEnv)
             pb.environment().remove(key);
+        pb.environment().putAll(environmentVariables);
         return pb.start();
     }
 

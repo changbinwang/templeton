@@ -45,6 +45,7 @@ public class HiveDelegator extends LauncherDelegator {
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
+        runAs = user;
         List<String> args = makeArgs(execute, srcFile, defines, statusdir, completedUrl);
 
         ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, null);

@@ -45,6 +45,7 @@ public class PigDelegator extends LauncherDelegator {
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
         ExecuteException, IOException
     {
+        runAs = user;
         List<String> args = makeArgs(execute,
                                      srcFile, pigArgs,
                                      otherFiles, statusdir, completedUrl);

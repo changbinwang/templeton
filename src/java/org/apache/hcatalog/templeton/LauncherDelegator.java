@@ -30,6 +30,7 @@ import org.apache.hcatalog.templeton.tool.TempletonUtils;
  */
 public class LauncherDelegator extends TempletonDelegator {
     public static final String JAR_CLASS = TempletonControllerJob.class.getName();
+    protected String runAs = null;
 
     public LauncherDelegator(AppConfig appConf, ExecService execService) {
         super(appConf, execService);
@@ -60,6 +61,9 @@ public class LauncherDelegator extends TempletonDelegator {
         args.add("-libjars");
         args.add(appConf.libJars());
 
+        // Set user
+        addDef(args, "user.name", runAs);
+        
         // Zk vars
         addDef(args, JobState.ZK_HOSTS, appConf.get(JobState.ZK_HOSTS));
         addDef(args, JobState.ZK_SESSION_TIMEOUT,
