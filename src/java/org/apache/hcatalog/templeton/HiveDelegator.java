@@ -45,7 +45,8 @@ public class HiveDelegator extends LauncherDelegator {
         ExecuteException, IOException, InterruptedException 
     {
         runAs = user;
-        List<String> args = makeArgs(execute, srcFile, defines, statusdir, completedUrl);
+        List<String> args = makeArgs(execute, srcFile, defines, statusdir, 
+                completedUrl);
 
         ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, null);
         if (exec.exitcode != 0)
@@ -58,8 +59,8 @@ public class HiveDelegator extends LauncherDelegator {
         return new EnqueueBean(id, exec);
     }
 
-    private List<String> makeArgs(String execute, String srcFile, List<String> defines,
-                                  String statusdir, String completedUrl)
+    private List<String> makeArgs(String execute, String srcFile, 
+            List<String> defines, String statusdir, String completedUrl)
         throws BadParam, IOException, InterruptedException
     {
         ArrayList<String> args = new ArrayList<String>();
@@ -82,7 +83,8 @@ public class HiveDelegator extends LauncherDelegator {
                 args.add(execute);
             } else if (TempletonUtils.isset(srcFile)) {
                 args.add("-f");
-                args.add(TempletonUtils.hadoopFsPath(srcFile, appConf, runAs).getName());
+                args.add(TempletonUtils.hadoopFsPath(srcFile, appConf, runAs)
+                        .getName());
             }
         } catch (FileNotFoundException e) {
             throw new BadParam(e.getMessage());
@@ -95,13 +97,15 @@ public class HiveDelegator extends LauncherDelegator {
 
     private List<String> makeBasicArgs(String execute, String srcFile,
                                        String statusdir, String completedUrl)
-        throws URISyntaxException, FileNotFoundException, IOException, InterruptedException
+        throws URISyntaxException, FileNotFoundException, IOException, 
+        InterruptedException
     {
         ArrayList<String> args = new ArrayList<String>();
 
         ArrayList<String> allFiles = new ArrayList<String>();
         if (TempletonUtils.isset(srcFile))
-            allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf, runAs));
+            allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf, 
+                    runAs));
 
         args.addAll(makeLauncherArgs(appConf, statusdir, completedUrl, allFiles));
 

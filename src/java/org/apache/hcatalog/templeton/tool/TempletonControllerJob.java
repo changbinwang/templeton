@@ -113,7 +113,7 @@ public class TempletonControllerJob extends Configured implements Tool {
             Configuration conf = context.getConfiguration();
             JobState state = new JobState(context.getJobID().toString(), conf);
             
-            Process proc = startJob(context, state.getUser());
+            Process proc = startJob(context, conf.get("user.name"));
             
             String statusdir = conf.get(STATUSDIR_NAME);
             Counter cnt = context.getCounter(ControllerCounters.SIMPLE_COUNTER);

@@ -50,7 +50,8 @@ public class PigDelegator extends LauncherDelegator {
                                      srcFile, pigArgs,
                                      otherFiles, statusdir, completedUrl);
 
-        ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, null);
+        ExecBean exec = execService.run
+                (user, appConf.clusterHadoop(), args, null);
         if (exec.exitcode != 0)
             throw new QueueException("invalid exit code", exec);
         String id = TempletonUtils.extractJobId(exec.stdout);
@@ -70,13 +71,16 @@ public class PigDelegator extends LauncherDelegator {
         try {
             ArrayList<String> allFiles = new ArrayList<String>();
             if (TempletonUtils.isset(srcFile))
-                allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf, runAs));
+                allFiles.add(TempletonUtils.hadoopFsFilename
+                        (srcFile, appConf, runAs));
             if (TempletonUtils.isset(otherFiles)) {
-                String[] ofs = TempletonUtils.hadoopFsListAsArray(otherFiles, appConf, runAs);
+                String[] ofs = TempletonUtils.hadoopFsListAsArray
+                        (otherFiles, appConf, runAs);
                 allFiles.addAll(Arrays.asList(ofs));
             }
 
-            args.addAll(makeLauncherArgs(appConf, statusdir, completedUrl, allFiles));
+            args.addAll(makeLauncherArgs
+                    (appConf, statusdir, completedUrl, allFiles));
             args.add("-archives");
             args.add(appConf.pigArchive());
 
@@ -87,7 +91,8 @@ public class PigDelegator extends LauncherDelegator {
                 args.add(execute);
             } else if (TempletonUtils.isset(srcFile)) {
                 args.add("-file");
-                args.add(TempletonUtils.hadoopFsPath(srcFile, appConf, runAs).getName());
+                args.add(TempletonUtils.hadoopFsPath(srcFile, appConf, runAs)
+                        .getName());
             }
             args.addAll(pigArgs);
         } catch (FileNotFoundException e) {

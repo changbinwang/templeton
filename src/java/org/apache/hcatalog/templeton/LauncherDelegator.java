@@ -51,7 +51,8 @@ public class LauncherDelegator extends TempletonDelegator {
     }
 
     public List<String> makeLauncherArgs(AppConfig appConf, String statusdir,
-                                         String completedUrl, List<String> copyFiles)
+                                         String completedUrl, 
+                                         List<String> copyFiles)
     {
         ArrayList<String> args = new ArrayList<String>();
 
