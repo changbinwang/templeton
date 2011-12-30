@@ -28,7 +28,7 @@
     <p>Performs an <a href="http://incubator.apache.org/hcatalog/docs/r0.2.0/cli.html">
         HCatalog DDL</a> command.  The command is executed immediately upon request.
         Responses are limited to 1MB.  For requests which may return longer results
-        consider using the <a href="hive.html">Hive resoure</a> as an alternative.</p>
+        consider using the <a href="hive.html">Hive resource</a> as an alternative.</p>
   </section>
 
   <section>
