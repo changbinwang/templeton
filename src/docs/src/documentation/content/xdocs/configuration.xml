@@ -30,7 +30,7 @@
   <ol>
    <li><strong>templeton-default.xml</strong> - All the configuration variables 
     that Templeton needs. This file sets the defaults that ship with Templeton and 
-    should only be changed by the Templeton developers.</li>
+    should only be changed by Templeton developers.</li>
 
    <li><strong>templeton-dist.xml</strong> - The (possibly empty) configuration 
     file that can set variables for a particular distribution, such as an RPM file.</li>

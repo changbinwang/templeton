@@ -25,7 +25,7 @@
   <body>
   <section>
    <title>Description</title>
-    <p>Return a list of all job ids registered to the user.</p>
+    <p>Return a list of all job IDs registered to the user.</p>
   </section>
 
   <section>
@@ -44,7 +44,7 @@
     <table>
     <tr><th>Name</th><th>Description</th></tr>   
     <tr><td><strong>ids</strong></td>
-        <td>A list of all job ids registered to the user.</td>
+        <td>A list of all job IDs registered to the user.</td>
     </tr>
     </table>
  </section> 

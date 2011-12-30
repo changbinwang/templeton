@@ -40,7 +40,7 @@
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
     
     <tr><td><strong>:jobid</strong></td>
-        <td>The job ID to check. This is the ID received when then
+        <td>The job ID to check. This is the ID received when the
          job was created.</td>
         <td>Required</td>
         <td>None</td>
@@ -72,7 +72,7 @@
     </tr>
 
     <tr><td><strong>parentId</strong></td>
-        <td>The parent job id.</td>
+        <td>The parent job ID.</td>
     </tr>
 
     <tr><td><strong>percentComplete</strong></td>

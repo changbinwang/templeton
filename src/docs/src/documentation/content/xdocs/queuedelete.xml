@@ -40,7 +40,7 @@
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
     
     <tr><td><strong>:jobid</strong></td>
-        <td>The job ID to delete. This is the ID received when then job
+        <td>The job ID to delete. This is the ID received when the job
          job was created.</td>
         <td>Required</td>
         <td>None</td>
@@ -72,7 +72,7 @@
     </tr>
 
     <tr><td><strong>parentId</strong></td>
-        <td>The parent job id.</td>
+        <td>The parent job ID.</td>
     </tr>
 
     <tr><td><strong>percentComplete</strong></td>
@@ -148,7 +148,7 @@
 }
 </source>
 <p><strong>Note:</strong> The job is not immediately deleted, therefore the 
-   information returned may not reflect deletion, like in our example.  
+   information returned may not reflect deletion, as in our example.  
    Use <a href="queue.html"><code>GET queue/:jobid</code></a>
    to monitor the job and confirm that it is eventually deleted.</p>
   </section>

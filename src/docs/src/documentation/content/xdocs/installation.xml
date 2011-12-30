@@ -143,7 +143,7 @@ runner ALL=(%hadoop) NOPASSWD: command1[,command2, ...]
       this is done as follows:
 <source>
 cd /usr/local/hcat
-tar cf /tmp/hive.tar
+tar cf /tmp/hive.tar .
 </source>
   </li>
   <li>Place <code>hive.tar</code> into the cache.
@@ -155,7 +155,7 @@ hadoop fs -put /tmp/hive.tar /user/templeton/hive.tar
   <li>Create <code>pig.tar</code>:
 <source>
 cd /usr/local/pig
-tar cf /tmp/pig.tar
+tar cf /tmp/pig.tar .
 </source>
   </li>
   <li>Place <code>pig.tar</code> into the cache.

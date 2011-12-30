@@ -54,7 +54,7 @@
     </tr>
 
     <tr><td><strong>libjars</strong></td>
-        <td>Comma seperated jar files to include in the classpath.</td>
+        <td>Comma separated jar files to include in the classpath.</td>
         <td>Optional</td>
         <td>None</td>
     </tr
@@ -88,8 +88,8 @@
 
     <tr><td><strong>callback</strong></td>
         <td>Define a URL to be called upon job completion. You may embed a specific
-         job id into this URL using <code>$jobId</code>.  This tag
-         will be replaced in the callback URL with this job's job id.</td>
+         job ID into this URL using <code>$jobId</code>.  This tag
+         will be replaced in the callback URL with this job's job ID.</td>
         <td>Optional</td>
         <td>None</td>
     </tr>
@@ -102,7 +102,7 @@
       <tr><th>Name</th><th>Description</th></tr>   
     
       <tr><td><strong>id</strong></td>
-        <td>A string containing the job id similar to "job_201110132141_0001".</td>
+        <td>A string containing the job ID similar to "job_201110132141_0001".</td>
       </tr>
 
       <tr><td><strong>info</strong></td>
