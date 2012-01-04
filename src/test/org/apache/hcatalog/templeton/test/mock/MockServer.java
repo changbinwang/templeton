@@ -23,12 +23,12 @@ import org.apache.hcatalog.templeton.Server;
  * Test that the server code exists.
  */
 public class MockServer extends Server {
-	
-	public MockServer() {
-		execService = new MockExecService();
-	}
+    public MockServer() {
+        execService = new MockExecService();
+    }
+
     @Override
     public String getUser() {
-    	return System.getenv("USER");
+        return System.getenv("USER");
     }
 }

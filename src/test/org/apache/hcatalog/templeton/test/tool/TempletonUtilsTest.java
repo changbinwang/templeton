@@ -83,7 +83,8 @@ public class TempletonUtilsTest {
         tmp[2] = "peter,lisa,, barney";
         assertEquals("fred,,peter" +
                      StringUtils.ESCAPE_CHAR + ",lisa" + StringUtils.ESCAPE_CHAR + "," +
-                     StringUtils.ESCAPE_CHAR + ", barney", TempletonUtils.encodeArray(tmp));
+                     StringUtils.ESCAPE_CHAR + ", barney",
+                     TempletonUtils.encodeArray(tmp));
     }
 
     @Test

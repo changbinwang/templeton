@@ -139,7 +139,8 @@ public class JobState {
                     JobStateTracker jt = new JobStateTracker(id, zk, false);
                     jt.create();
                 } catch (Exception e) {
-                    // If we couldn't create the tracker node, don't create the main node.
+                    // If we couldn't create the tracker node, don't
+                    // create the main node.
                     zk.delete(makeZnode(), -1);
                 }
             }
@@ -395,14 +396,14 @@ public class JobState {
     public String makeZnode() {
         return JOB_PATH + "/" + id;
     }
-    
+
     /**
      * The ZK watcher.  A no op.
      */
 
     /**
      * Get an id for each currently existing job, which can be used to create
-     * a JobState object.  
+     * a JobState object.
      *
      * @param conf
      * @return

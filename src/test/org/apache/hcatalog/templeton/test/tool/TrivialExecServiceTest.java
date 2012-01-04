@@ -28,41 +28,41 @@ import org.junit.Test;
 
 public class TrivialExecServiceTest {
 
-	@Test
-	public void test() {
-		ArrayList<String> list = new ArrayList<String>();
-		list.add("echo");
-		list.add("success");
-		BufferedReader out = null;
-		BufferedReader err = null;
-		try {
-			Process process = TrivialExecService.getInstance().run(list);
-			out = new BufferedReader(new InputStreamReader(
-					process.getInputStream()));
-			err = new BufferedReader(new InputStreamReader(
-					process.getErrorStream()));
-			assertEquals("success", out.readLine());
-			out.close();
-			String line;
-			while ((line = err.readLine()) != null) {
-				fail(line);
-			}
-			process.waitFor();
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Process caused exception.");
-		} finally {
-			try {
-				out.close();
-			} catch (Exception ex) {
-				// Whatever.
-			}
-			try {
-				err.close();
-			} catch (Exception ex) {
-				// Whatever
-			}
-		}
-	}
+    @Test
+    public void test() {
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("echo");
+        list.add("success");
+        BufferedReader out = null;
+        BufferedReader err = null;
+        try {
+            Process process = TrivialExecService.getInstance().run(list);
+            out = new BufferedReader(new InputStreamReader(
+                                         process.getInputStream()));
+            err = new BufferedReader(new InputStreamReader(
+                                         process.getErrorStream()));
+            assertEquals("success", out.readLine());
+            out.close();
+            String line;
+            while ((line = err.readLine()) != null) {
+                fail(line);
+            }
+            process.waitFor();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Process caused exception.");
+        } finally {
+            try {
+                out.close();
+            } catch (Exception ex) {
+                // Whatever.
+            }
+            try {
+                err.close();
+            } catch (Exception ex) {
+                // Whatever
+            }
+        }
+    }
 
 }

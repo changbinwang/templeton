@@ -157,8 +157,10 @@ public class TempletonUtils {
         return plain;
     }
 
-    public static String[] hadoopFsListAsArray(String files, Configuration conf, String user)
-        throws URISyntaxException, FileNotFoundException, IOException, InterruptedException
+    public static String[] hadoopFsListAsArray(String files, Configuration conf,
+                                               String user)
+        throws URISyntaxException, FileNotFoundException, IOException,
+        InterruptedException
     {
     	if (files == null || conf == null) {
             return null;
@@ -172,8 +174,10 @@ public class TempletonUtils {
         return clean;
     }
 
-    public static String hadoopFsListAsString(String files, Configuration conf, String user)
-        throws URISyntaxException, FileNotFoundException, IOException, InterruptedException
+    public static String hadoopFsListAsString(String files, Configuration conf,
+                                              String user)
+        throws URISyntaxException, FileNotFoundException, IOException,
+        InterruptedException
     {
     	if (files == null || conf == null) {
             return null;
@@ -182,7 +186,8 @@ public class TempletonUtils {
     }
 
     public static String hadoopFsFilename(String fname, Configuration conf, String user)
-        throws URISyntaxException, FileNotFoundException, IOException, InterruptedException
+        throws URISyntaxException, FileNotFoundException, IOException,
+        InterruptedException
     {
         Path p = hadoopFsPath(fname, conf, user);
         if (p == null)
@@ -192,7 +197,8 @@ public class TempletonUtils {
     }
 
     public static Path hadoopFsPath(String fname, Configuration conf, String user)
-        throws URISyntaxException, FileNotFoundException, IOException, InterruptedException
+        throws URISyntaxException, FileNotFoundException, IOException,
+        InterruptedException
     {
     	if (fname == null || conf == null) {
             return null;

@@ -38,35 +38,35 @@ public class ServerTest extends TestCase {
     }
 
     public void testServer() {
-    	assertNotNull(server);
+        assertNotNull(server);
     }
 
     public void testStatus() {
-    	assertTrue(server.status().indexOf("\"ok\"") > -1);
+        assertTrue(server.status().indexOf("\"ok\"") > -1);
     }
 
     public void testDDL() {
-    	try {
+        try {
             validateDDL(server, "show tables", "admin", "777");
             validateDDL(server, "", "", "");
             validateDDL(server, "show tables", "", "");
             validateDDL(server, "show tables", "admin", "");
-    	} catch (SimpleWebException swe) {
+        } catch (SimpleWebException swe) {
             swe.printStackTrace();
             fail("ddl execution caused a failure");
-    	} catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             fail("ddl execution caused a failure");
-    	}
+        }
     }
 
     // More tests coming later.
 
     public void validateDDL(MockServer server, String command, String group,
                             String permissions)
-    	throws SimpleWebException, IOException
+        throws SimpleWebException, IOException
     {
-    	ExecBean bean = server.ddl(command, group, permissions);
+        ExecBean bean = server.ddl(command, group, permissions);
         assertTrue(bean.stdout.endsWith("bin/hcat"));
         String tmp = bean.stderr.substring(bean.stderr.indexOf("[") + 1,
                                            bean.stderr.indexOf("]"));
