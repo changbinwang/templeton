@@ -22,12 +22,11 @@ import static org.junit.Assert.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-
+import java.util.HashMap;
 import org.apache.hcatalog.templeton.tool.TrivialExecService;
 import org.junit.Test;
 
 public class TrivialExecServiceTest {
-
     @Test
     public void test() {
         ArrayList<String> list = new ArrayList<String>();
@@ -36,7 +35,10 @@ public class TrivialExecServiceTest {
         BufferedReader out = null;
         BufferedReader err = null;
         try {
-            Process process = TrivialExecService.getInstance().run(list);
+            Process process = TrivialExecService.getInstance()
+                .run(list,
+                     new ArrayList<String>(),
+                     new HashMap<String, String>());
             out = new BufferedReader(new InputStreamReader(
                                          process.getInputStream()));
             err = new BufferedReader(new InputStreamReader(
@@ -64,5 +66,4 @@ public class TrivialExecServiceTest {
             }
         }
     }
-
 }
