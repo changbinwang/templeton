@@ -86,6 +86,7 @@ public class PigDelegator extends LauncherDelegator {
 
             args.add("--");
             args.add(appConf.pigPath());
+            args.addAll(pigArgs);
             if (TempletonUtils.isset(execute)) {
                 args.add("-execute");
                 args.add(execute);
@@ -94,7 +95,6 @@ public class PigDelegator extends LauncherDelegator {
                 args.add(TempletonUtils.hadoopFsPath(srcFile, appConf, runAs)
                         .getName());
             }
-            args.addAll(pigArgs);
         } catch (FileNotFoundException e) {
             throw new BadParam(e.getMessage());
         } catch (URISyntaxException e) {
