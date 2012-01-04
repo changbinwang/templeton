@@ -72,6 +72,7 @@ EOS
 
   curl("pig.json",
        *USER,
+       #"-d", "arg=-secretDebugCmd",
        "-d", "execute=#{CGI.escape script}")
 end
 
