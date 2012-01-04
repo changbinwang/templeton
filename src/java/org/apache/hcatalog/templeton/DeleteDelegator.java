@@ -44,12 +44,14 @@ public class DeleteDelegator extends TempletonDelegator {
             tracker = new TempletonJobTracker(ugi,
                                               JobTracker.getAddress(appConf),
                                               appConf);
-            JobID jobid = JobID.forName(id);
+            JobID jobid = StatusDelegator.StringToJobID(id);
+            if (jobid == null)
+                throw new BadParam("Invalid jobid: " + id);
             tracker.killJob(jobid);
             state = new JobState(id, appConf);
             String childid = state.getChildId();
             if (childid != null)
-                tracker.killJob(JobID.forName(childid));
+                tracker.killJob(StatusDelegator.StringToJobID(childid));
             return StatusDelegator.makeStatus(tracker, jobid, state);
         } catch (IllegalStateException e) {
             throw new BadParam(e.getMessage());

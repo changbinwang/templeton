@@ -18,6 +18,8 @@
 package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.mapred.JobID;
 import org.apache.hadoop.mapred.JobProfile;
 import org.apache.hadoop.mapred.JobStatus;
@@ -30,6 +32,8 @@ import org.apache.hcatalog.templeton.tool.JobState;
  * Fetch the status of a given job id in the queue.
  */
 public class StatusDelegator extends TempletonDelegator {
+    private static final Log LOG = LogFactory.getLog(StatusDelegator.class);
+
     public StatusDelegator(AppConfig appConf, ExecService execService) {
         super(appConf, execService);
     }
@@ -44,7 +48,9 @@ public class StatusDelegator extends TempletonDelegator {
             tracker = new TempletonJobTracker(ugi,
                                               JobTracker.getAddress(appConf),
                                               appConf);
-            JobID jobid = JobID.forName(id);
+            JobID jobid = StatusDelegator.StringToJobID(id);
+            if (jobid == null)
+                throw new BadParam("Invalid jobid: " + id);
             state = new JobState(id, appConf);
             return StatusDelegator.makeStatus(tracker, jobid, state);
         } catch (IllegalStateException e) {
@@ -61,23 +67,48 @@ public class StatusDelegator extends TempletonDelegator {
                                              JobID jobid,
                                              String childid,
                                              JobState state)
-        throws IOException
+        throws BadParam, IOException
     {
         JobID bestid = jobid;
         if (childid != null)
-            bestid = JobID.forName(childid);
+            bestid = StatusDelegator.StringToJobID(childid);
 
         JobStatus status = tracker.getJobStatus(bestid);
         JobProfile profile = tracker.getJobProfile(bestid);
+
+        if (status == null || profile == null) {
+            if (bestid != jobid) { // Corrupt childid, retry.
+                LOG.error("Corrupt child id " + childid + " for " + jobid);
+                bestid = jobid;
+                status = tracker.getJobStatus(bestid);
+                profile = tracker.getJobProfile(bestid);
+            }
+        }
+
+        if (status == null || profile == null) // No such job.
+            throw new BadParam("Could not find job " + bestid);
+
         return new QueueStatusBean(state, status, profile);
     }
 
     public static QueueStatusBean makeStatus(TempletonJobTracker tracker,
                                              JobID jobid,
                                              JobState state)
-        throws IOException
+        throws BadParam, IOException
     {
         return makeStatus(tracker, jobid, state.getChildId(), state);
     }
 
+    /**
+     * A version of JobID.forName with our app specific error handling.
+     */
+    public static JobID StringToJobID(String id)
+        throws BadParam
+    {
+        try {
+            return JobID.forName(id);
+        } catch (IllegalArgumentException e) {
+            throw new BadParam(e.getMessage());
+        }
+    }
 }
