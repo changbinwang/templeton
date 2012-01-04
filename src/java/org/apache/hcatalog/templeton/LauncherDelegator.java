@@ -51,7 +51,7 @@ public class LauncherDelegator extends TempletonDelegator {
     }
 
     public List<String> makeLauncherArgs(AppConfig appConf, String statusdir,
-                                         String completedUrl, 
+                                         String completedUrl,
                                          List<String> copyFiles)
     {
         ArrayList<String> args = new ArrayList<String>();
@@ -64,7 +64,7 @@ public class LauncherDelegator extends TempletonDelegator {
 
         // Set user
         addDef(args, "user.name", runAs);
-        
+
         // Zk vars
         addDef(args, JobState.ZK_HOSTS, appConf.get(JobState.ZK_HOSTS));
         addDef(args, JobState.ZK_SESSION_TIMEOUT,
