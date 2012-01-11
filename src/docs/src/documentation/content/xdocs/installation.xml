@@ -55,27 +55,10 @@
   </section>
 
   <section>
-  <title>Environment variables</title>
+  <title>Environment variable</title>
   <table>
-  <tr><th>Variable</th><th>Value</th></tr>
-  <tr><td><code>HADOOP_PREFIX</code></td>
-      <td>Set to the location of your Hadoop install</td>
-  </tr>
-  <tr><td><code>HCAT_PREFIX</code></td>
-      <td>Set to the location of your HCatalog install</td>
-  </tr>
-  <tr><td><code>CATALINA_HOME</code></td>
-      <td>Set to the location of your Tomcat install</td>
-  </tr>
-
   <tr><td><code>TEMPLETON_HOME</code></td>
       <td>Set to the Templeton directory</td>
-  </tr>
-
-  <tr><td><code>TEMPLETON_JAR</code></td>
-      <td>Set to the location of the Templeton jar file. 
-          After a build the location will be 
-          <code>$TEMPLETON_HOME/build/templeton/templeton-0.1.0.jar.</code></td>
   </tr>
   </table>
   </section>
@@ -84,7 +67,7 @@
   <title>Procedure</title>
   <ol>
   <li>Ensure that the required related installations and environment 
-      variables are in place.</li>
+      variable are in place.</li>
   <li>Review the <a href="configuration.html">Templeton configuration</a> 
       and update it as required. In particular ensure that 
       site specific component installation locations are accurate.</li>

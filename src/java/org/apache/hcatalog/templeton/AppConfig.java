@@ -87,6 +87,7 @@ public class AppConfig extends Configuration {
     public static final String EXEC_MAX_PROCS_NAME = "templeton.exec.max-procs";
     public static final String EXEC_TIMEOUT_NAME   = "templeton.exec.timeout";
     public static final String HADOOP_NAME         = "templeton.hadoop";
+    public static final String HADOOP_CONF_DIR     = "templeton.hadoop.conf.dir";
     public static final String HCAT_NAME           = "templeton.hcat";
     public static final String HIVE_ARCHIVE_NAME   = "templeton.hive.archive";
     public static final String HIVE_PATH_NAME      = "templeton.hive.path";
@@ -128,14 +129,14 @@ public class AppConfig extends Configuration {
         for (Map.Entry<String, String> e : System.getenv().entrySet())
             set("env." + e.getKey(), e.getValue());
 
-        String hadoopConfDir = getHadoopConfDir();
-        for (String fname : HADOOP_CONF_FILENAMES)
-            loadOneFileConfig(hadoopConfDir, fname);
-
         String templetonDir = getTempletonDir();
         for (String fname : TEMPLETON_CONF_FILENAMES)
             if (! loadOneClasspathConfig(fname))
                 loadOneFileConfig(templetonDir, fname);
+
+        String hadoopConfDir = getHadoopConfDir();
+        for (String fname : HADOOP_CONF_FILENAMES)
+            loadOneFileConfig(hadoopConfDir, fname);
 
         // What a horrible place to do this.  Needs to move into the
         // logging config file.
@@ -144,26 +145,8 @@ public class AppConfig extends Configuration {
             filterLogger.setLevel(Level.SEVERE);
     }
 
-    public static String getHadoopPrefix() {
-        for (String var : HADOOP_PREFIX_VARS) {
-            String x = System.getenv(var);
-            if (x != null)
-                return x;
-        }
-        return null;
-    }
-
-
-    public static String getHadoopConfDir() {
-        String x = System.getenv("HADOOP_CONF_DIR");
-        if (x != null)
-            return x;
-
-        String prefix = getHadoopPrefix();
-        if (prefix != null)
-            return new File(prefix, "conf").getAbsolutePath();
-
-        return null;
+    public String getHadoopConfDir() {
+        return get(HADOOP_CONF_DIR);
     }
 
     public static String getTempletonDir() {
@@ -186,7 +169,7 @@ public class AppConfig extends Configuration {
         URL x = getResource(fname);
         if (x != null) {
             addResource(x);
-            LOG.info("loaded config from classpath  " + x);
+            LOG.info("loaded config from classpath " + x);
             return true;
         }
 

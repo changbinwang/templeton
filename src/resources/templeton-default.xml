@@ -24,6 +24,12 @@ limitations under the License.
 <configuration>
 
   <property>
+    <name>templeton.hadoop.conf.dir</name>
+    <value>${env.HADOOP_CONF_DIR}</value>
+    <description>The path to the Hadoop configuration.</description>
+  </property>
+
+  <property>
     <name>templeton.jar</name>
     <value>${env.TEMPLETON_HOME}/build/templeton/templeton-0.1.0-dev.jar</value>
     <description>The path to the Templeton jar file.</description>
