@@ -45,6 +45,7 @@ task :streaming do
        *USER,
        "-d", "input=mydata",
        "-d", "output=myoutput-#{stamp}",
+       "-d", "statusdir=status-#{stamp}",
        "-d", "mapper=/bin/cat",
        "-d", "reducer=/usr/bin/wc -w")
 end

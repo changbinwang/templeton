@@ -40,6 +40,7 @@ public class StreamingDelegator extends LauncherDelegator {
                            List<String> files, List<String> defines,
                            List<String> cmdenvs,
                            List<String> jarArgs,
+                           String statusdir,
                            String callback,
                            String completedUrl)
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
@@ -52,7 +53,7 @@ public class StreamingDelegator extends LauncherDelegator {
         return d.run(user,
                      appConf.streamingJar(), null,
                      null, null, args, defines,
-                     null, callback, completedUrl);
+                     statusdir, callback, completedUrl);
     }
 
     private List<String> makeArgs(List<String> inputs,

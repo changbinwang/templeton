@@ -60,7 +60,7 @@ public class Server {
             LOG.error("ZookeeperCleanup failed to start: " + e.getMessage());
         }
     }
-    
+
     /**
      * Check the status of this server.
      */
@@ -105,6 +105,7 @@ public class Server {
                                           @FormParam("define") List<String> defines,
                                           @FormParam("cmdenv") List<String> cmdenvs,
                                           @FormParam("arg") List<String> args,
+                                          @FormParam("statusdir") String statusdir,
                                           @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
                ExecuteException, IOException, InterruptedException
@@ -116,7 +117,8 @@ public class Server {
 
         StreamingDelegator d = new StreamingDelegator(appConf, execService);
         return d.run(getUser(), inputs, output, mapper, reducer,
-                     files, defines, cmdenvs, args, callback, getCompletedUrl());
+                     files, defines, cmdenvs, args,
+                     statusdir, callback, getCompletedUrl());
     }
 
     /**
