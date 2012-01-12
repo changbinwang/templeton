@@ -7,7 +7,7 @@ Install
 =======
 
 Templeton is deep in the middle of development and doesn't have a
-smooth install procedure.  As such, it should only be installed expert
+smooth install procedure.  As such, it should only be installed by expert
 developers.
 
 To install Templeton, read the installation section in the Templeton
