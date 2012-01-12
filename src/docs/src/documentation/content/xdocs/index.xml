@@ -81,12 +81,11 @@
       <title>WebHDFS and Code Push</title>
       <p>Data and code that are used by Templeton resources must first be placed in 
          Hadoop.  The current version of Templeton does not attempt to integrate or replace
-         existing web interfaces which can perform this task, like 
+         existing web interfaces that can perform this task, like 
          <a href="http://hadoop.apache.org/common/docs/r1.0.0/webhdfs.html">WebHDFS</a>.  
          (Integration of these functions in some way, perhaps forwarding, is planned for 
-         a future release.) This guide will sometimes refer to using WebHDFS to push 
-         code or data into Hadoop, but in all cases 
-         you can do this in whatever manner is most convienient for you.</p>
+         a future release.) When placing files into HDFS is required you can use
+         whatever method is most convienient for you.</p>
    </section>
 
    <section>

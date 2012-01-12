@@ -26,8 +26,9 @@
   <section>
   <title>Introduction </title> 
   <p>Templeton is deep in the middle of development and does not yet have a smooth 
-     install procedure. As such, this version of Templeton should only be installed expert
-     developers.</p>
+     install procedure. It is also designed to connect together services that are 
+     not normally connected and therefore has a complex configuration.  As such, 
+     this version of Templeton should only be installed by expert developers.</p>
   </section>
 
   <section>
@@ -50,22 +51,20 @@
     Hadoop Distributed Cache.</li>
   </ul>
   </section>
-
-  <section>
-  <title>Environment variable</title>
-  <p>The <code>TEMPELTON_HOME</code> environment variable should be set to the base 
-   directory of your Templeton installation.  This is used by Templeton to locate the 
-   Templeton configuration.</p>
-  </section>
  
   <section>
   <title>Procedure</title>
   <ol>
-  <li>Ensure that the required related installations and environment 
-      variable are in place.</li>
+  <li>Ensure that the required related installations are in place.</li>
+  <li>Set the <code>TEMPLETON_HOME</code> environment variable to the base of the
+      Templeton installation.  This is used to find the Templeton 
+      configuration.</li>
   <li>Review the <a href="configuration.html">Templeton configuration</a> 
-      and update it as required. In particular ensure that 
-      site specific component installation locations are accurate.</li>
+      and update <code>templeton-site.xml</code> as required. Ensure that 
+      site specific component installation locations are accurate, especially
+      the Hadoop configuration path.  Configuration variables that use a filesystem
+      path try to have reasonable defaults, but it's always safe to specify a full 
+      and complete path.</li>
   <li>Start Tomcat.</li>
   <li>Build and install the Templeton war file using <code>ant install-war</code>
       from <code>$TEMPLETON_HOME</code>.  The Tomcat webapps directory must be writable.</li>
@@ -144,7 +143,7 @@ hadoop fs -put /tmp/pig.tar /user/templeton/pig.tar
   </li>
   <li>Place <code>hadoop-streaming.jar</code> into the cache.
 <source>
-hadoop fs -put hadoop-streaming.jar /user/templeton/pig.tar
+hadoop fs -put hadoop-streaming.jar /user/templeton/hadoop-streaming.jar
 </source>
   </li>
   </ol>

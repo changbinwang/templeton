@@ -23,7 +23,9 @@
   </header>
   <body>
   <p>The configuration for Templeton merges the normal Hadoop configuration with 
-     the Templeton specific variables.</p>  
+     the Templeton specific variables.  Because Templeton is designed to connect services
+     that are not normally connected, the configuration is more complex than might be
+     desirable.</p>  
 
   <p>The Templeton specific configuration is split into three layers:</p>
 
@@ -46,13 +48,17 @@
      <code>CLASSPATH</code> and then looks in the directory specified in the 
      <code>TEMPLETON_HOME</code> environment variable.</p>
 
-  <p>In addition the configuration files may access the special environment variable 
+  <p>Configuration files may access the special environment variable 
      <code>env</code> for all environment variables. For example, the pig executable 
      could be specified using:</p>
 
 <source>
 ${env.PIG_HOME}/bin/pig
 </source>
+
+  <p>Configuration variables that use a filesystem path try to have reasonable defaults.
+     However, it's always safe to specify the full and complete path if there is any
+     uncertainty.</p>
 
   <section>
   <title>Variables</title>
