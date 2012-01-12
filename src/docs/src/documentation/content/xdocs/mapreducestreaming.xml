@@ -93,6 +93,14 @@
         <td>None</td>
     </tr>
 
+    <tr><td><strong>statusdir</strong></td>
+        <td>A directory where Templeton will write the status of the
+         Map Reduce job.  If provided, it is the caller's responsibility
+         to remove this directory when done.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
     <tr><td><strong>callback</strong></td>
         <td>Define a URL to be called upon job completion. You may embed a specific
          job ID into this URL using <code>$jobId</code>.  This tag
