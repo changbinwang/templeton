@@ -39,28 +39,23 @@
    <li><a href="http://zookeeper.apache.org/">ZooKeeper</a>.  (Be sure to review
     and update the ZooKeeper related <a href="configuration.html">Templeton 
     configuration</a> as required.)</li>
-   <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>,
-   <ul>
-    <li>To use the ddl resource, HCatalog must be installed in
-        <code>/usr/local/hcat/bin/hcat</code></li>
-    <li>To use the hive resource, see instructions 
-        <a href="installation.html#Hadoop+Distributed+Cache">below</a> 
-        for placing HCatalog into the Hadoop distributed cache.</li>
-   </ul>
-   </li>
-   <li><a href="http://pig.apache.org/">Pig</a>, see instructions 
-       <a href="installation.html#Hadoop+Distributed+Cache">below</a>
-       for placing Pig into the Hadoop distributed cache.</li>
+   <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>, To use the 
+    ddl resource, HCatalog must be installed in 
+    <code>/usr/local/hcat/bin/hcat</code></li>
+   <li><a href="installation.html#Hadoop+Distributed+Cache">Hadoop Distributed Cache</a>,
+    To use the <a href="http://hive.apache.org/">Hive</a>, 
+    <a href="http://pig.apache.org/">Pig</a>, or 
+    <a href="http://hadoop.apache.org/common/docs/r1.0.0/streaming.html">hadoop/streaming</a> 
+    resources, see instructions below for placing the required files in the 
+    Hadoop Distributed Cache.</li>
   </ul>
   </section>
 
   <section>
   <title>Environment variable</title>
-  <table>
-  <tr><td><code>TEMPLETON_HOME</code></td>
-      <td>Set to the Templeton directory</td>
-  </tr>
-  </table>
+  <p>The <code>TEMPELTON_HOME</code> environment variable should be set to the base 
+   directory of your Templeton installation.  This is used by Templeton to locate the 
+   Templeton configuration.</p>
   </section>
  
   <section>
@@ -114,12 +109,13 @@ runner ALL=(%hadoop) NOPASSWD: command1[,command2, ...]
 
   <section>
   <title>Hadoop Distributed Cache</title>
-  <p>To avoid the installation of Pig and Hive everywhere on the cluster, 
-     Templeton gathers a version of Pig or Hive from the 
-     <a href="http://hadoop.apache.org/common/docs/current/mapred_tutorial.html#DistributedCache">
-     Hadoop distributed cache</a> whenever those resources are invoked. To install the 
-     required components in the locations specificed by the default configuration, 
-     follow these steps:</p>
+  <p>Templeton requires some files be accessible on the 
+  <a href="http://hadoop.apache.org/common/docs/current/mapred_tutorial.html#DistributedCache">
+   Hadoop distributed cache</a>.  For example, to avoid the installation of Pig and Hive 
+   everywhere on the cluster, Templeton gathers a version of Pig or Hive from the 
+   Hadoop distributed cache whenever those resources are invoked. To install the 
+   required components in the locations specificed by the default configuration, 
+   follow these steps:</p>
   
   <ol>
   <li>Create <code>hive.tar</code>.  If you installed HCatalog as noted above, this 
@@ -146,10 +142,15 @@ tar cf /tmp/pig.tar .
 hadoop fs -put /tmp/pig.tar /user/templeton/pig.tar
 </source>
   </li>
+  <li>Place <code>hadoop-streaming.jar</code> into the cache.
+<source>
+hadoop fs -put hadoop-streaming.jar /user/templeton/pig.tar
+</source>
+  </li>
   </ol>
 
-  <p>The location of these archives (tar files) in the cache, and the location 
-     of the installations inside the archives can be specified using the following 
+  <p>The location of these files in the cache, and the location 
+     of the installations inside the archives, can be specified using the following 
      Templeton configuration variables.  (See the 
      <a href="configuration.html">Configuration</a> documentation for more information
      on changing Templeton configuration parameters.)</p> 
@@ -179,6 +180,12 @@ hadoop fs -put /tmp/pig.tar /user/templeton/pig.tar
     <td><strong>templeton.hive.path</strong></td>
     <td><code>hive.tar/bin/hive</code></td>
     <td>The path to the Hive executable.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.streaming.jar</strong></td>
+    <td><code>hdfs:///user/templeton/hadoop-streaming.jar</code></td>
+    <td>The path to the Hadoop streaming jar file.</td>
   </tr>
   </table>
   </section>
