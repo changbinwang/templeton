@@ -345,7 +345,41 @@
   <!-- Install war file for testing                                       -->
   <!-- ================================================================== -->
   <target name="install-war" depends="war">
+    <copy todir="${basedir}/lib">
+      <fileset dir="${ivy.lib.dir}" > 
+	<include name="${ivy.lib.dir}/zookeeper*jar"/>
+      </fileset>
+    </copy>
+    <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${basedir}" />
     <copy file="${build.dir}/${ant.project.name}.war"
           todir="${env.CATALINA_HOME}/webapps/" />
   </target>
+  <!-- ================================================================== -->
+  <!-- Copy config to template config                                     -->
+  <!-- ================================================================== -->
+  <target name="copy-conf-template">
+    <copy file="${resources.dir}/templeton-default.xml"
+	  tofile="${build.dir}/templeton-site.xml.template" />
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Create a tar file                                                  -->
+  <!-- ================================================================== -->
+  <target name="tar" depends="war,copy-conf-template">
+    <tar compression="gzip" longfile="gnu" destfile="${build.dir}/${final.name}.tar.gz">
+      <tarfileset dir="${build.dir}" mode="664">
+        <include name="${ant.project.name}.war" />
+        <include name="templeton-site.xml.template" />
+      </tarfileset>
+
+      <tarfileset dir="${build.dir}/${ant.project.name}" mode="664">
+        <include name="${templeton.jar}" />
+      </tarfileset>
+
+      <tarfileset dir="${ivy.lib.dir}" mode="664" prefix="lib">
+        <include name="zookeeper*jar" />
+      </tarfileset>
+    </tar>
+  </target>
+
 </project>

@@ -31,13 +31,13 @@ limitations under the License.
 
   <property>
     <name>templeton.jar</name>
-    <value>${env.TEMPLETON_HOME}/build/templeton/templeton-0.1.0-dev.jar</value>
+    <value>${env.TEMPLETON_HOME}/templeton-0.1.0-dev.jar</value>
     <description>The path to the Templeton jar file.</description>
   </property>
 
   <property>
     <name>templeton.libjars</name>
-    <value>${env.TEMPLETON_HOME}/build/ivy/lib/templeton/zookeeper-3.3.4.jar</value>
+    <value>${env.TEMPLETON_HOME}/lib/zookeeper-3.3.4.jar</value>
     <description>Jars to add the the classpath.</description>
   </property>
 
