@@ -347,7 +347,7 @@
   <target name="install-war" depends="war">
     <copy todir="${basedir}/lib">
       <fileset dir="${ivy.lib.dir}" > 
-	<include name="${ivy.lib.dir}/zookeeper*jar"/>
+        <include name="${ivy.lib.dir}/zookeeper*jar"/>
       </fileset>
     </copy>
     <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${basedir}" />
@@ -359,7 +359,7 @@
   <!-- ================================================================== -->
   <target name="copy-conf-template">
     <copy file="${resources.dir}/templeton-default.xml"
-	  tofile="${build.dir}/templeton-site.xml.template" />
+          tofile="${build.dir}/templeton-site.xml.template" />
   </target>
 
   <!-- ================================================================== -->

@@ -2,4 +2,5 @@
 /build
 /foo.log
 /ivy/ivy-2.2.0.jar
+/templeton-*.jar
 /templeton-site.xml
