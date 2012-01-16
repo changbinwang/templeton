@@ -297,8 +297,14 @@
     <delete dir="${build.dir}" />
   </target>
 
+  <!-- Clean up files copied locally by install-war command -->
+  <target name="install-war-local-clean" description="Cleanup build">
+    <delete dir="${basedir}/lib" />
+    <delete file="${basedir}/${templeton.jar}" />
+  </target>
+
   <!-- Clean up children -->
-  <target name="clean" depends="clean-builds" description="Cleanup all build artifacts">
+  <target name="clean" depends="clean-builds,install-war-local-clean" description="Cleanup all build artifacts">
     <delete dir="${artifacts.dir}" />
   </target>
 
@@ -347,7 +353,7 @@
   <target name="install-war" depends="war">
     <copy todir="${basedir}/lib">
       <fileset dir="${ivy.lib.dir}" > 
-	<include name="${ivy.lib.dir}/zookeeper*jar"/>
+	<include name="zookeeper*jar"/>
       </fileset>
     </copy>
     <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${basedir}" />
