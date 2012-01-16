@@ -20,6 +20,10 @@ package org.apache.hcatalog.templeton;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import org.apache.commons.exec.ExecuteException;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.util.StringUtils;
 import org.apache.hcatalog.templeton.tool.JobState;
 import org.apache.hcatalog.templeton.tool.TempletonControllerJob;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
@@ -50,6 +54,32 @@ public class LauncherDelegator extends TempletonDelegator {
         }
     }
 
+    /**
+     * Enqueue the TempletonControllerJob by running the hadoop
+     * executable.
+     */
+    public EnqueueBean enqueueController(String user, String callback,
+                                         List<String> args)
+        throws NotAuthorizedException, BusyException, ExecuteException,
+               IOException, QueueException
+    {
+        // Setup the hadoop vars to specify the user.
+        Map<String, String> env = TempletonUtils.hadoopUserEnv(user, null);
+
+        // Run the job
+        ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, env);
+
+        // Return the job info
+        if (exec.exitcode != 0)
+            throw new QueueException("invalid exit code", exec);
+        String id = TempletonUtils.extractJobId(exec.stdout);
+        if (id == null)
+            throw new QueueException("Unable to get job id", exec);
+        registerJob(id, user, callback);
+
+        return new EnqueueBean(id, exec);
+    }
+
     public List<String> makeLauncherArgs(AppConfig appConf, String statusdir,
                                          String completedUrl,
                                          List<String> copyFiles)
@@ -61,6 +91,7 @@ public class LauncherDelegator extends TempletonDelegator {
         args.add(JAR_CLASS);
         args.add("-libjars");
         args.add(appConf.libJars());
+        addCacheFiles(args, appConf);
 
         // Set user
         addDef(args, "user.name", runAs);
@@ -81,14 +112,50 @@ public class LauncherDelegator extends TempletonDelegator {
         addDef(args, TempletonControllerJob.STATUSDIR_NAME, statusdir);
         addDef(args, TempletonControllerJob.COPY_NAME,
                TempletonUtils.encodeArray(copyFiles));
+        addDef(args, TempletonControllerJob.OVERRIDE_CLASSPATH,
+               makeOverrideClasspath(appConf));
 
         return args;
     }
 
+    /**
+     * Add files to the Distributed Cache for the controller job.
+     */
+    public static void addCacheFiles(List<String> args, AppConfig appConf) {
+        String overrides = appConf.overrideJarsString();
+        if (overrides != null) {
+            args.add("-files");
+            args.add(overrides);
+        }
+    }
+
+    /**
+     * Create the override classpath, which will be added to
+     * HADOOP_CLASSPATH at runtime by the controller job.
+     */
+    public static String makeOverrideClasspath(AppConfig appConf) {
+        String[] overrides = appConf.overrideJars();
+        if (overrides == null)
+            return null;
+
+        ArrayList<String> cp = new ArrayList();
+        for (String fname : overrides) {
+            Path p = new Path(fname);
+            cp.add(p.getName());
+        }
+        return StringUtils.join(":", cp);
+    }
+
+
+    /**
+     * Add a Hadoop command line definition to args if the value is
+     * not null.
+     */
     public static void addDef(List<String> args, String name, String val) {
         if (val != null) {
             args.add("-D");
             args.add(name + "=" + val);
         }
     }
+
 }

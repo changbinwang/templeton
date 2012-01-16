@@ -98,6 +98,7 @@ public class AppConfig extends Configuration {
     public static final String STREAMING_JAR_NAME  = "templeton.streaming.jar";
     public static final String SUDO_NAME           = "templeton.sudo";
     public static final String TEMPLETON_JAR_NAME  = "templeton.jar";
+    public static final String OVERRIDE_JARS_NAME  = "templeton.override.jars";
 
     public static final String CALLBACK_INTERVAL_NAME
         = "templeton.callback.retry.interval";
@@ -185,6 +186,14 @@ public class AppConfig extends Configuration {
     public String hivePath()         { return get(HIVE_PATH_NAME); }
     public String hiveArchive()      { return get(HIVE_ARCHIVE_NAME); }
     public String sudoPath()         { return get(SUDO_NAME); }
+    public String streamingJar()     { return get(STREAMING_JAR_NAME); }
+
+    public String[] overrideJars() {
+        return getStrings(OVERRIDE_JARS_NAME);
+    }
+    public String overrideJarsString() {
+        return get(OVERRIDE_JARS_NAME);
+    }
 
     public long zkCleanupInterval()  {
         return getLong(ZooKeeperCleanup.ZK_CLEANUP_INTERVAL,
@@ -195,8 +204,4 @@ public class AppConfig extends Configuration {
     public String zkHosts()          { return get(JobState.ZK_HOSTS); }
     public int zkSessionTimeout()    { return getInt(JobState.ZK_SESSION_TIMEOUT,
                                                      30000); }
-
-    public String streamingJar() {
-        return get(STREAMING_JAR_NAME);
-    }
 }

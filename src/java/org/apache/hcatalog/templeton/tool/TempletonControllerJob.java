@@ -62,6 +62,7 @@ public class TempletonControllerJob extends Configured implements Tool {
     public static final String COPY_NAME      = "templeton.copy";
     public static final String STATUSDIR_NAME = "templeton.statusdir";
     public static final String JAR_ARGS_NAME  = "templeton.args";
+    public static final String OVERRIDE_CLASSPATH = "templeton.override-classpath";
 
     public static final String STDOUT_FNAME  = "stdout";
     public static final String STDERR_FNAME  = "stderr";
@@ -75,7 +76,8 @@ public class TempletonControllerJob extends Configured implements Tool {
     public static class LaunchMapper
         extends Mapper<NullWritable, NullWritable, Text, Text>
     {
-        protected Process startJob(Context context, String user)
+        protected Process startJob(Context context, String user,
+                                   String overrideClasspath)
             throws IOException, InterruptedException
         {
             Configuration conf = context.getConfiguration();
@@ -85,9 +87,10 @@ public class TempletonControllerJob extends Configured implements Tool {
 
             ArrayList<String> removeEnv = new ArrayList<String>();
             removeEnv.add("HADOOP_ROOT_LOGGER");
-            Map<String, String> map = new HashMap<String, String>();
-            map.put("HADOOP_OPTS", "-Duser.name=" + user);
-            return execService.run(Arrays.asList(jarArgs), removeEnv, map);
+            Map<String, String> env = TempletonUtils.hadoopUserEnv(user,
+                                                                   overrideClasspath);
+
+            return execService.run(Arrays.asList(jarArgs), removeEnv, env);
         }
 
         private void copyLocal(String var, Configuration conf)
@@ -112,9 +115,11 @@ public class TempletonControllerJob extends Configured implements Tool {
 
             Configuration conf = context.getConfiguration();
             JobState state = new JobState(context.getJobID().toString(), conf);
-            
-            Process proc = startJob(context, conf.get("user.name"));
-            
+
+            Process proc = startJob(context,
+                                    conf.get("user.name"),
+                                    conf.get(OVERRIDE_CLASSPATH));
+
             String statusdir = conf.get(STATUSDIR_NAME);
             Counter cnt = context.getCounter(ControllerCounters.SIMPLE_COUNTER);
 

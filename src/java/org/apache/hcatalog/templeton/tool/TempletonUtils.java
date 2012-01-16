@@ -25,7 +25,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.hadoop.conf.Configuration;
@@ -231,4 +233,26 @@ public class TempletonUtils {
 
         return total;
     }
+
+    /**
+     * Set the environment variables to specify the hadoop user.
+     */
+    public static Map<String, String> hadoopUserEnv(String user,
+                                                    String overrideClasspath)
+    {
+        HashMap<String, String> env = new HashMap<String, String>();
+        env.put("HADOOP_USER", user);
+
+        if (overrideClasspath != null) {
+            env.put("HADOOP_USER_CLASSPATH_FIRST", "true");
+            String cur = System.getenv("HADOOP_CLASSPATH");
+            if (TempletonUtils.isset(cur))
+                overrideClasspath = overrideClasspath + ":" + cur;
+            env.put("HADOOP_CLASSPATH", overrideClasspath);
+        }
+
+        return env;
+    }
+
+
 }

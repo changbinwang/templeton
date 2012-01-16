@@ -28,7 +28,6 @@ import org.apache.hadoop.mapred.JobProfile;
 import org.apache.hadoop.mapred.JobStatus;
 import org.apache.hadoop.mapred.JobTracker;
 import org.apache.hadoop.mapred.TempletonJobTracker;
-import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hcatalog.templeton.tool.JobState;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 

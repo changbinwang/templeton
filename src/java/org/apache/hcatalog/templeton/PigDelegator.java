@@ -50,16 +50,7 @@ public class PigDelegator extends LauncherDelegator {
                                      srcFile, pigArgs,
                                      otherFiles, statusdir, completedUrl);
 
-        ExecBean exec = execService.run
-                (user, appConf.clusterHadoop(), args, null);
-        if (exec.exitcode != 0)
-            throw new QueueException("invalid exit code", exec);
-        String id = TempletonUtils.extractJobId(exec.stdout);
-        if (id == null)
-            throw new QueueException("Unable to get job id", exec);
-        registerJob(id, user, callback);
-
-        return new EnqueueBean(id, exec);
+        return enqueueController(user, callback, args);
     }
 
     private List<String> makeArgs(String execute, String srcFile,

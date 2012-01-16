@@ -42,24 +42,16 @@ public class HiveDelegator extends LauncherDelegator {
                            String execute, String srcFile, List<String> defines,
                            String statusdir, String callback, String completedUrl)
         throws NotAuthorizedException, BadParam, BusyException, QueueException,
-        ExecuteException, IOException, InterruptedException 
+        ExecuteException, IOException, InterruptedException
     {
         runAs = user;
-        List<String> args = makeArgs(execute, srcFile, defines, statusdir, 
+        List<String> args = makeArgs(execute, srcFile, defines, statusdir,
                 completedUrl);
 
-        ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, null);
-        if (exec.exitcode != 0)
-            throw new QueueException("invalid exit code", exec);
-        String id = TempletonUtils.extractJobId(exec.stdout);
-        if (id == null)
-            throw new QueueException("Unable to get job id", exec);
-        registerJob(id, user, callback);
-
-        return new EnqueueBean(id, exec);
+        return enqueueController(user, callback, args);
     }
 
-    private List<String> makeArgs(String execute, String srcFile, 
+    private List<String> makeArgs(String execute, String srcFile,
             List<String> defines, String statusdir, String completedUrl)
         throws BadParam, IOException, InterruptedException
     {
@@ -97,14 +89,14 @@ public class HiveDelegator extends LauncherDelegator {
 
     private List<String> makeBasicArgs(String execute, String srcFile,
                                        String statusdir, String completedUrl)
-        throws URISyntaxException, FileNotFoundException, IOException, 
+        throws URISyntaxException, FileNotFoundException, IOException,
         InterruptedException
     {
         ArrayList<String> args = new ArrayList<String>();
 
         ArrayList<String> allFiles = new ArrayList<String>();
         if (TempletonUtils.isset(srcFile))
-            allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf, 
+            allFiles.add(TempletonUtils.hadoopFsFilename(srcFile, appConf,
                     runAs));
 
         args.addAll(makeLauncherArgs(appConf, statusdir, completedUrl, allFiles));
