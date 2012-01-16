@@ -19,7 +19,7 @@
 
 <document>
   <header>
-    <title>Configuration </title>
+    <title>Configuration</title>
   </header>
   <body>
   <p>The configuration for Templeton merges the normal Hadoop configuration with 
