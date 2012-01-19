@@ -32,13 +32,16 @@
   <ol>
    <li><strong>templeton-default.xml</strong> - All the configuration variables 
     that Templeton needs. This file sets the defaults that ship with Templeton and 
-    should only be changed by Templeton developers.</li>
+    should only be changed by Templeton developers. Do not copy this file and/or 
+    change it to maintain local installation settings.</li>
 
    <li><strong>templeton-dist.xml</strong> - The (possibly empty) configuration 
     file that can set variables for a particular distribution, such as an RPM file.</li>
 
    <li><strong>templeton-site.xml</strong> - The (possibly empty) configuration 
-    file in which the system administrator can set variables for their Hadoop cluster.</li>
+    file in which the system administrator can set variables for their Hadoop cluster.
+    Create this file and maintain entries in it for configuration variables 
+    that require you to override default values based on your local installation.</li>
   </ol>
 
   <p>The configuration files are loaded in this order with later files overriding 
@@ -73,14 +76,21 @@ ${env.PIG_HOME}/bin/pig
 
   <tr>
     <td><strong>templeton.jar</strong></td>
-    <td><code>${env.TEMPLETON_HOME}/build/templeton/templeton-0.1.0-dev.jar</code></td>
+    <td><code>${env.TEMPLETON_HOME}/templeton/templeton-0.1.0-dev.jar</code></td>
     <td>The path to the Templeton jar file.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.libjars</strong></td>
-    <td><code>${env.TEMPLETON_HOME}/build/ivy/lib/templeton/zookeeper-3.3.4.jar</code></td>
+    <td><code>${env.TEMPLETON_HOME}/lib/zookeeper-3.3.4.jar</code></td>
     <td>Jars to add to the classpath.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.override.jars</strong></td>
+    <td></td>
+    <td>Jars to add to the HADOOP_CLASSPATH for all Map Reduce jobs.
+        These jars must exist on HDFS.</td>
   </tr>
 
   <tr>

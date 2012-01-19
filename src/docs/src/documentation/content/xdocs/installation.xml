@@ -39,11 +39,11 @@
    <li><a href="http://hadoop.apache.org/">Hadoop</a>, version 0.20.205.0</li>
    <li><a href="http://zookeeper.apache.org/">ZooKeeper</a>.  (Be sure to review
     and update the ZooKeeper related <a href="configuration.html">Templeton 
-    configuration</a> as required.)</li>
-   <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>, To use the 
-    ddl resource, HCatalog must be installed in 
-    <code>/usr/local/hcat/bin/hcat</code></li>
-   <li><a href="installation.html#Hadoop+Distributed+Cache">Hadoop Distributed Cache</a>,
+    configuration</a>.)</li>
+   <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>. Required to use the 
+    ddl resource.  (Be sure to review and update the related
+    <a href="configuration.html">Templeton configuration</a>.)</li>
+   <li><a href="installation.html#Hadoop+Distributed+Cache">Hadoop Distributed Cache</a>.
     To use the <a href="http://hive.apache.org/">Hive</a>, 
     <a href="http://pig.apache.org/">Pig</a>, or 
     <a href="http://hadoop.apache.org/common/docs/r1.0.0/streaming.html">hadoop/streaming</a> 
@@ -60,14 +60,15 @@
       Templeton installation.  This is used to find the Templeton 
       configuration.</li>
   <li>Review the <a href="configuration.html">Templeton configuration</a> 
-      and update <code>templeton-site.xml</code> as required. Ensure that 
+      and update or create <code>templeton-site.xml</code> as required. Ensure that 
       site specific component installation locations are accurate, especially
       the Hadoop configuration path.  Configuration variables that use a filesystem
       path try to have reasonable defaults, but it's always safe to specify a full 
       and complete path.</li>
   <li>Start Tomcat.</li>
-  <li>Build and install the Templeton war file using <code>ant install-war</code>
-      from <code>$TEMPLETON_HOME</code>.  The Tomcat webapps directory must be writable.</li>
+  <li>Build the Templeton war file using <code>ant war</code>
+      from <code>$TEMPLETON_HOME</code>.  Copy the Templeton war file to the Tomcat
+      webapps directory.</li>
   <li>Check that your local install works.  Assuming that Tomcat is running
       on port 8080, the following command would give output similar to that shown. 
 <source>
@@ -141,9 +142,11 @@ tar cf /tmp/pig.tar .
 hadoop fs -put /tmp/pig.tar /user/templeton/pig.tar
 </source>
   </li>
-  <li>Place <code>hadoop-streaming.jar</code> into the cache.
+  <li>Place <code>hadoop-streaming.jar</code> into the cache. For example, use the 
+  following command, substituting your path to the jar for the one below.
 <source>
-hadoop fs -put hadoop-streaming.jar /user/templeton/hadoop-streaming.jar
+hadoop fs -put $HADOOP_PREFIX/hadoop-0.20.205.0/contrib/streaming/hadoop-streaming-0.20.205.0.jar \ 
+ /user/templeton/hadoop-streaming.jar
 </source>
   </li>
   </ol>

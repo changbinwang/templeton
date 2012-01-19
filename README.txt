@@ -16,7 +16,7 @@ manual.
 Documentation
 =============
 
-wholesite.pdf is a pre-built, pdf version of the Templeton manual.
+templeton_docs.pdf is a pre-built, pdf version of the Templeton manual.
 
 To build the Templeton documentation fresh from the source, run forrest in the 
 src/docs directory.  This will create src/docs/build/site which will contain 
