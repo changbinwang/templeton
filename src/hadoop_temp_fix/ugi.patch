@@ -1,0 +1,35 @@
+Index: src/core/org/apache/hadoop/security/UserGroupInformation.java
+===================================================================
+--- src/core/org/apache/hadoop/security/UserGroupInformation.java	(revision 1214675)
++++ src/core/org/apache/hadoop/security/UserGroupInformation.java	(working copy)
+@@ -42,9 +42,9 @@
+ import javax.security.auth.kerberos.KerberosPrincipal;
+ import javax.security.auth.kerberos.KerberosTicket;
+ import javax.security.auth.login.AppConfigurationEntry;
++import javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag;
+ import javax.security.auth.login.LoginContext;
+ import javax.security.auth.login.LoginException;
+-import javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag;
+ import javax.security.auth.spi.LoginModule;
+ 
+ import org.apache.commons.logging.Log;
+@@ -914,6 +914,9 @@
+    * @return the user's name up to the first '/' or '@'.
+    */
+   public String getShortUserName() {
++    if(System.getenv().get("HADOOP_USER") != null){
++      return System.getenv().get("HADOOP_USER");
++    }
+     for (User p: subject.getPrincipals(User.class)) {
+       return p.getShortName();
+     }
+@@ -925,6 +928,9 @@
+    * @return the user's full principal name.
+    */
+   public String getUserName() {
++    if(System.getenv().get("HADOOP_USER") != null){
++      return System.getenv().get("HADOOP_USER");
++    }
+     return user.getName();
+   }
+ 
