@@ -65,7 +65,8 @@
       the Hadoop configuration path.  Configuration variables that use a filesystem
       path try to have reasonable defaults, but it's always safe to specify a full 
       and complete path.</li>
-  <li>Start Tomcat.</li>
+  <li>Start Tomcat.  (Note: The Tomcat server needs to be restarted after any 
+      configuration change.)</li>
   <li>Build the Templeton war file using <code>ant war</code>
       from <code>$TEMPLETON_HOME</code>.  Copy the Templeton war file to the Tomcat
       webapps directory.</li>
