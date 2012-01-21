@@ -43,7 +43,7 @@ limitations under the License.
 
   <property>
     <name>templeton.override.jars</name>
-    <value></value> 
+    <value>hdfs:///user/templeton/ugi.jar</value> 
     <description>
         Jars to add the the HADOOP_CLASSPATH for all Map Reduce jobs.
         This is a list of jars that must exist on hdfs that are added

@@ -385,6 +385,11 @@
       <tarfileset dir="${ivy.lib.dir}" mode="664" prefix="lib">
         <include name="zookeeper*jar" />
       </tarfileset>
+      <tarfileset dir="${basedir}/src/hadoop_temp_fix" mode="664" >
+        <include name="ugi.jar" />
+      </tarfileset>
+
+
     </tar>
   </target>
 
