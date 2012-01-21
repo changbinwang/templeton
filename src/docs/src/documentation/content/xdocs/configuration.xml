@@ -33,7 +33,9 @@
    <li><strong>templeton-default.xml</strong> - All the configuration variables 
     that Templeton needs. This file sets the defaults that ship with Templeton and 
     should only be changed by Templeton developers. Do not copy this file and/or 
-    change it to maintain local installation settings.</li>
+    change it to maintain local installation settings. Because templeton-default.xml
+    is present in the Templeton war file, editing a local copy of it will not change the
+    configuration.</li>
 
    <li><strong>templeton-dist.xml</strong> - The (possibly empty) configuration 
     file that can set variables for a particular distribution, such as an RPM file.</li>
@@ -46,6 +48,9 @@
 
   <p>The configuration files are loaded in this order with later files overriding 
      earlier ones.</p>
+
+  <p>Note: the Tomcat server will require restart after any change to the Templeton 
+     configuration.</p>
 
   <p>To find the configuration files, Templeton first attempts to load a file from the 
      <code>CLASSPATH</code> and then looks in the directory specified in the 
