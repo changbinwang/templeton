@@ -110,6 +110,31 @@ sub writeTempletonSiteXml {
     ':9933,hive.metastore.sasl.enabled=false,hive.metastore.execute.setugi=true</value>
     <description>Properties to set when running hive.</description>
   </property>
+
+  <property>
+    <name>templeton.hive.archive</name>
+    <value>hdfs:///user/templeton/hcatalog-0.3.0.tar.gz</value>
+    <description>The path to the Hive archive.</description>
+  </property>
+
+  <property>
+    <name>templeton.hive.path</name>
+    <value>hcatalog-0.3.0.tar.gz/hcatalog-0.3.0/bin/hive</value>
+    <description>The path to the Hive executable.</description>
+  </property>
+
+  <property>
+    <name>templeton.pig.archive</name>
+    <value>hdfs:///user/templeton/pig-0.9.2.tar.gz</value>
+    <description>The path to the Pig archive.</description>
+  </property>
+
+  <property>
+    <name>templeton.pig.path</name>
+    <value>pig-0.9.2.tar.gz/pig-0.9.2/bin/pig</value>
+    <description>The path to the Pig executable.</description>
+  </property>
+
 </configuration>
 ';
     close CFH or die $!;
