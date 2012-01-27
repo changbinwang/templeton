@@ -58,38 +58,28 @@ sleep 3;
 #get templeton git repo, build and install
 system("mkdir -p $templeton_src") == 0 or die "could not create dir $templeton_src: $!";
 chdir  "$templeton_src"  or die "could not change directory to  $templeton_src  : $!";
-system ('git clone  git@github.com:kyluka/templeton.git')  == 0 or die "could not clone templeton git repo";
+system ('git clone  git@github.com:hortonworks/templeton.git')  == 0 or die "could not clone templeton git repo";
 chdir 'templeton' or die 'could not change dir : $!';
 
-#tomcat should have shutdown by now, try starting it
-system ("$TOMCAT_HOME/bin/startup.sh") == 0 or die 'tomcat startup failed';
-sleep 3;
 
 #put a templeton-site.xml in $TEMPLETON_HOME with zookeeper hostname
 writeTempletonSiteXml();
 system ('ant install-war') == 0 or die "templeton build failed";
 
+#tomcat should have shutdown by now, try starting it
+system ("$TOMCAT_HOME/bin/startup.sh") == 0 or die 'tomcat startup failed';
+sleep 3;
 
-#get templeton test repo
-my $templeton_test = "$TESTDIR/templeton_test";
-system("mkdir -p $templeton_test") == 0 or die "could not create dir $templeton_test: $!";
-chdir  "$templeton_test"  or die "could not change directory to  $templeton_test  : $!";
-system('git clone git@github.com:hortonworks/quality-release.git') == 0 or die "could not clone templeton test repo";
-my $tdir = "$templeton_test/quality-release/";
-chdir $tdir or die "could not change dir $tdir : $!";
-system('git checkout templeton') == 0 or die "could not checkout templeton branch";
-
-
-$tdir = "$templeton_test/quality-release/test/e2e/templeton";
+my $tdir = "$templeton_src/templeton/src/test/e2e/templeton";
 chdir $tdir or die "could not change dir $tdir : $!";
 
 #copy input files
 system("hadoop fs -rmr $TEST_INP_DIR");
-system("hadoop fs -copyFromLocal $templeton_test/quality-release/test/e2e/templeton/inpdir $TEST_INP_DIR") == 0 or die "failed to copy input dir : $!";
+system("hadoop fs -copyFromLocal $tdir/inpdir $TEST_INP_DIR") == 0 or die "failed to copy input dir : $!";
 system("hadoop fs -chmod -R 777 $TEST_INP_DIR")  == 0 or die "failed to set input dir permissions : $!";
 
 #start tests
-system ("ant test -Dinpdir.hdfs=$TEST_INP_DIR  -Duser.name=$TEST_USER -Dharness.webhdfs.url=$WEBHDFS_URL -Dharness.templeton.url=$TEMPLETON_URL") == 0 or die "templeton tests failed";
+system ("ant test -Dinpdir.hdfs=$TEST_INP_DIR  -Dtest.user.name=$TEST_USER -Dharness.webhdfs.url=$WEBHDFS_URL -Dharness.templeton.url=$TEMPLETON_URL") == 0 or die "templeton tests failed";
 
 
 #############################
@@ -111,6 +101,14 @@ sub writeTempletonSiteXml {
  $zookeeper_host .
 '</value>
     <description>ZooKeeper servers, as comma separated host:port pairs</description>
+  </property>
+
+  <property>
+    <name>templeton.hive.properties</name>
+    <value>hive.metastore.local=false,hive.metastore.uris=thrift://' .
+    $host .
+    ':9933,hive.metastore.sasl.enabled=false,hive.metastore.execute.setugi=true</value>
+    <description>Properties to set when running hive.</description>
   </property>
 </configuration>
 ';
