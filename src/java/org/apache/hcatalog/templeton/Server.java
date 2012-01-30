@@ -81,10 +81,8 @@ public class Server {
     @GET
     @Path("")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response requestFormats() {
-        return Response
-                .status(200)
-                .entity(REQUEST_FORMATS_MSG).build();
+    public String requestFormats() {
+        return REQUEST_FORMATS_MSG;
     }
 
     /**
@@ -93,10 +91,8 @@ public class Server {
     @GET
     @Path("status")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response status() {
-        return Response
-                .status(200)
-                .entity(STATUS_MSG).build();
+    public String status() {
+        return STATUS_MSG;
     }
 
     /**
@@ -105,10 +101,8 @@ public class Server {
     @GET
     @Path("version")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response version() {
-        return Response
-                .status(200)
-                .entity(VERSION_MSG).build();
+    public String version() {
+        return VERSION_MSG;
     }
 
     /**
@@ -134,55 +128,48 @@ public class Server {
     @GET
     @Path("database")
     @Produces("application/json")
-    public Response getDatabases(@QueryParam("filter-by") String filterBy)
+    public String getDatabases(@QueryParam("filter-by") String filterBy)
             throws NotAuthorizedException, BusyException,
             BadParam, ExecuteException, IOException {
-        String resp = (SHOW_DATABASES_MSG + " filterBy = " + filterBy);
-        return Response
-                .status(200)
-                .entity(resp).build();
-
+        String filterByString = filterBy;
+        if(filterByString == null) {
+            filterByString = "*";
+        }
+        return (SHOW_DATABASES_MSG + " filterBy = " + filterByString);
     }
 
     @GET
     @Path("database/{database-name}")
     @Produces("application/json")
-    public Response getDatabase(@PathParam("database-name")String dbName)
+    public String getDatabase(@PathParam("database-name")String dbName)
             throws NotAuthorizedException, BusyException,
             BadParam, ExecuteException, IOException {
-        String resp = (DESCRIBE_DATABASE_MSG + "db-name = " + dbName);
-        return Response
-                .status(200)
-                .entity(resp).build();
-
+        return (DESCRIBE_DATABASE_MSG + "db-name = " + dbName);
     }
 
     @GET
     @Path("database/{database-name}/table")
     @Produces("application/json")
-    public Response getTables(@PathParam("database-name")String dbName,
+    public String getTables(@PathParam("database-name")String dbName,
                               @QueryParam("filter-by") String filterBy)
             throws NotAuthorizedException, BusyException,
             BadParam, ExecuteException, IOException {
-        String resp = (SHOW_TABLES_MSG + "db-name = " + dbName + " filterBy = " + filterBy);
-        return Response
-                .status(200)
-                .entity(resp).build();
-
+        String filterByString = filterBy;
+        if(filterByString == null) {
+            filterByString = "*";
+        }
+        return (SHOW_TABLES_MSG + "db-name = " + dbName + " filterBy = " + filterByString);
     }
 
     @GET
     @Path("database/{database-name}/table/{table-name}")
     @Produces("application/json")
-    public Response getTable(@PathParam("database-name")String dbName,
+    public String getTable(@PathParam("database-name")String dbName,
                              @PathParam("table-name")String tblName)
             throws NotAuthorizedException, BusyException,
             BadParam, ExecuteException, IOException {
-        String resp = (DESCRIBE_TABLE_MSG + "database-name = " + dbName +
+        return (DESCRIBE_TABLE_MSG + "database-name = " + dbName +
                          " table-name = " + tblName);
-        return Response
-                .status(200)
-                .entity(resp).build();
 
     }
 
