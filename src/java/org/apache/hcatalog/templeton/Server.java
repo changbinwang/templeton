@@ -19,14 +19,9 @@ package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
 import java.util.List;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
@@ -41,8 +36,27 @@ import org.apache.hadoop.security.authentication.client.PseudoAuthenticator;
  */
 @Path("/v1")
 public class Server {
+
+    public static final String REQUEST_FORMATS_MSG
+            = "{[\"application/json\"]}\n";
+
     public static final String STATUS_MSG
         = "{\"status\": \"ok\", \"version\": \"v1\"}\n";
+
+    public static final String VERSION_MSG
+            = "{\"supported-versions\": [\"v1\"], \"version\": \"v1\"}\n";
+
+    public static final String SHOW_DATABASES_MSG
+            = "SHOW DATABASES ";
+
+    public static final String DESCRIBE_DATABASE_MSG
+            = "DESCRIBE_DATABASE ";
+
+    public static final String SHOW_TABLES_MSG
+            = "SHOW TABLES ";
+
+    public static final String DESCRIBE_TABLE_MSG
+            = "DESCRIBE_TABLE ";
 
     protected static ExecService execService = ExecServiceImpl.getInstance();
     private static AppConfig appConf = AppConfig.getInstance();
@@ -62,13 +76,33 @@ public class Server {
     }
 
     /**
+     * Check the supported request formats of this server.
+     */
+    @GET
+    @Path("")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String requestFormats() {
+        return REQUEST_FORMATS_MSG;
+    }
+
+    /**
      * Check the status of this server.
      */
     @GET
-    @Path("status.json")
+    @Path("status")
     @Produces({MediaType.APPLICATION_JSON})
     public String status() {
         return STATUS_MSG;
+    }
+
+    /**
+     * Check the version(s) supported by this server.
+     */
+    @GET
+    @Path("version")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String version() {
+        return VERSION_MSG;
     }
 
     /**
@@ -89,6 +123,54 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.run(getUser(), exec, group, permissions);
+    }
+
+    @GET
+    @Path("database")
+    @Produces("application/json")
+    public String getDatabases(@QueryParam("filter-by") String filterBy)
+            throws NotAuthorizedException, BusyException,
+            BadParam, ExecuteException, IOException {
+        String filterByString = filterBy;
+        if(filterByString == null) {
+            filterByString = "*";
+        }
+        return (SHOW_DATABASES_MSG + " filterBy = " + filterByString);
+    }
+
+    @GET
+    @Path("database/{database-name}")
+    @Produces("application/json")
+    public String getDatabase(@PathParam("database-name")String dbName)
+            throws NotAuthorizedException, BusyException,
+            BadParam, ExecuteException, IOException {
+        return (DESCRIBE_DATABASE_MSG + "db-name = " + dbName);
+    }
+
+    @GET
+    @Path("database/{database-name}/table")
+    @Produces("application/json")
+    public String getTables(@PathParam("database-name")String dbName,
+                              @QueryParam("filter-by") String filterBy)
+            throws NotAuthorizedException, BusyException,
+            BadParam, ExecuteException, IOException {
+        String filterByString = filterBy;
+        if(filterByString == null) {
+            filterByString = "*";
+        }
+        return (SHOW_TABLES_MSG + "db-name = " + dbName + " filterBy = " + filterByString);
+    }
+
+    @GET
+    @Path("database/{database-name}/table/{table-name}")
+    @Produces("application/json")
+    public String getTable(@PathParam("database-name")String dbName,
+                             @PathParam("table-name")String tblName)
+            throws NotAuthorizedException, BusyException,
+            BadParam, ExecuteException, IOException {
+        return (DESCRIBE_TABLE_MSG + "database-name = " + dbName +
+                         " table-name = " + tblName);
+
     }
 
     /**
