@@ -122,7 +122,7 @@ public class Server {
         verifyParam(exec, "exec");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.run(getUser(), exec, group, permissions);
+        return d.run(exec, group, permissions);
     }
 
     @GET
