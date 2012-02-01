@@ -97,6 +97,10 @@
   <property name="package.pid.dir" value="/var/run/templeton"/>
   <property name="package.var.dir" value="/var/lib/templeton"/>
   <property name="package.share.dir" value="/share/templeton/${module}"/>
+  <property name="package.buildroot" value="/tmp/templeton_package_build_${user.name}"/>
+  <property name="package.build.dir" value="/tmp/templeton_package_build_${user.name}/BUILD"/>
+
+
 
   <!-- rats properties -->
   <property name="rat.reporting.classname" value="rat.Report"/>
@@ -371,7 +375,7 @@
   <!-- ================================================================== -->
   <!-- Create a tar file                                                  -->
   <!-- ================================================================== -->
-  <target name="tar" depends="war,copy-conf-template">
+  <target name="tar" depends="docs,war,copy-conf-template">
     <tar compression="gzip" longfile="gnu" destfile="${build.dir}/${final.name}.tar.gz">
       <tarfileset dir="${build.dir}" mode="664">
         <include name="${ant.project.name}.war" />
@@ -385,6 +389,13 @@
       <tarfileset dir="${ivy.lib.dir}" mode="664" prefix="lib">
         <include name="zookeeper*jar" />
       </tarfileset>
+
+      <tarfileset dir="${build.docs}/" mode="664" prefix="docs">
+	<exclude name="webapp/**" />
+	<exclude name="tmp/**" />
+      </tarfileset>
+
+
       <tarfileset dir="${basedir}/src/hadoop_temp_fix" mode="664" >
         <include name="ugi.jar" />
       </tarfileset>
@@ -392,5 +403,42 @@
 
     </tar>
   </target>
+
+  <target name="rpm" depends="tar" description="Make rpm package">
+    <mkdir dir="${package.buildroot}/BUILD" />
+    <mkdir dir="${package.buildroot}/RPMS" />
+    <mkdir dir="${package.buildroot}/SRPMS" />
+    <mkdir dir="${package.buildroot}/SOURCES" />
+    <mkdir dir="${package.buildroot}/SPECS" />
+    <copy todir="${package.buildroot}/SOURCES">
+      <fileset dir="${build.dir}">
+        <include name="${final.name}.tar.gz" />
+      </fileset>
+    </copy>
+    <copy file="${src.dir}/packages/rpm/spec/templeton.spec" todir="${package.buildroot}/SPECS">
+      <filterchain>
+        <replacetokens>
+          <token key="final.name" value="${final.name}" />
+          <token key="version" value="${templeton.version}" />
+          <token key="package.release" value="${package.release}" />
+          <token key="package.build.dir" value="${package.build.dir}" />
+          <token key="package.prefix" value="${package.prefix}" />
+          <token key="package.conf.dir" value="${package.conf.dir}" />
+          <token key="package.log.dir" value="${package.log.dir}" />
+        </replacetokens>
+      </filterchain>
+    </copy>
+    <rpm specFile="pig.spec" command="-bb --target ${os.arch}" topDir="${package.buildroot}" cleanBuildDir="true" failOnError="true"/>
+    <copy todir="${build.dir}/" flatten="true">
+      <fileset dir="${package.buildroot}/RPMS">
+        <include name="**/${name}*.rpm" />
+      </fileset>
+      <fileset dir="${package.buildroot}/SRPMS">
+        <include name="**/${name}*.rpm" />
+      </fileset>
+    </copy>
+    <delete dir="${package.buildroot}" quiet="true" verbose="false"/>
+  </target>
+
 
 </project>
