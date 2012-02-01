@@ -28,7 +28,7 @@ import org.apache.hcatalog.templeton.NotAuthorizedException;
 
 public class MockExecService implements ExecService {
 
-    public ExecBean run(String user, String program, List<String> args,
+    public ExecBean run(String program, List<String> args,
                         Map<String, String> env) {
         ExecBean bean = new ExecBean();
         bean.stdout = program;
@@ -37,7 +37,7 @@ public class MockExecService implements ExecService {
     }
 
     @Override
-    public ExecBean runUnlimited(String user, String program,
+    public ExecBean runUnlimited(String program,
                                  List<String> args, Map<String, String> env)
         throws NotAuthorizedException, ExecuteException, IOException {
         ExecBean bean = new ExecBean();

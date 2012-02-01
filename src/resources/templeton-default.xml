@@ -100,12 +100,6 @@ limitations under the License.
   </property>
 
   <property>
-    <name>templeton.sudo</name>
-    <value>/usr/bin/sudo</value>
-    <description>The path to the sudo program.</description>
-  </property>
-
-  <property>
     <name>templeton.exec.encoding</name>
     <value>UTF-8</value>
     <description>The encoding of the stdout and stderr data.</description>
@@ -137,7 +131,7 @@ limitations under the License.
   <property>
     <name>templeton.exec.envs</name>
     <value>HADOOP_PREFIX,HADOOP_HOME,JAVA_HOME</value>
-    <description>The environment variables passed through to sudo.</description>
+    <description>The environment variables passed through to exec.</description>
   </property>
 
   <property>

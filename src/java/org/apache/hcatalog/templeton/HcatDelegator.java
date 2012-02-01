@@ -30,7 +30,7 @@ public class HcatDelegator extends LauncherDelegator {
         super(appConf, execService);
     }
 
-    public ExecBean run(String user, String exec, String group, String permissions)
+    public ExecBean run(String exec, String group, String permissions)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
         ArrayList<String> args = new ArrayList<String>();
@@ -45,6 +45,6 @@ public class HcatDelegator extends LauncherDelegator {
             args.add(permissions);
         }
 
-        return execService.run(user, appConf.clusterHcat(), args, null);
+        return execService.run(appConf.clusterHcat(), args, null);
     }
 }
