@@ -30,7 +30,7 @@ import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
  * The helper class for all the Templeton delegator classes that
- * launch child jobs using sudo.
+ * launch child jobs.
  */
 public class LauncherDelegator extends TempletonDelegator {
     public static final String JAR_CLASS = TempletonControllerJob.class.getName();

@@ -33,7 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Execute a local program.  This is a singelton service that will
+ * Execute a local program.  This is a singleton service that will
  * execute programs as non-privileged users on the local box.  See
  * ExecService.run and ExecService.runUnlimited for details.
  */
@@ -114,11 +114,11 @@ public class ExecServiceImpl implements ExecService {
         ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
         executor.setWatchdog(watchdog);
 
-        CommandLine cmd = makeCommandLine(user, program, args, env);
+        CommandLine cmd = makeCommandLine(user, program, args);
 
         LOG.info("Running: " + cmd);
         ExecBean res = new ExecBean();
-        res.exitcode = executor.execute(cmd);
+        res.exitcode = executor.execute(cmd, execEnv(env));
         String enc = appConf.get(AppConfig.EXEC_ENCODING_NAME);
         res.stdout = outStream.toString(enc);
         res.stderr = errStream.toString(enc);
@@ -126,21 +126,12 @@ public class ExecServiceImpl implements ExecService {
         return res;
     }
 
-    private CommandLine makeCommandLine(String user, String program, List<String> args,
-                                        Map<String, String> env)
+    private CommandLine makeCommandLine(String user, String program, 
+    		List<String> args)
         throws NotAuthorizedException, IOException
     {
         String path = validateProgram(program);
-
-        CommandLine cmd = new CommandLine(new File(appConf.sudoPath()));
-        cmd.addArgument("-u");
-        cmd.addArgument(user);
-
-        for (Map.Entry entry : sudoEnv(env).entrySet()) {
-            cmd.addArgument(entry.getKey() + "=" + entry.getValue());
-        }
-
-        cmd.addArgument(path);
+        CommandLine cmd = new CommandLine(path);
         if (args != null)
             for (String arg : args)
                 cmd.addArgument(arg, false);
@@ -149,17 +140,19 @@ public class ExecServiceImpl implements ExecService {
     }
 
     /**
-     * Build the environment used for all sudo calls.
+     * Build the environment used for all exec calls.
      *
      * @return The environment variables.
      */
-    public Map<String, String> sudoEnv(Map<String, String> env) {
+    public Map<String, String> execEnv(Map<String, String> env) {
         HashMap<String, String> res = new HashMap<String, String>();
 
         for (String key : appConf.getStrings(AppConfig.EXEC_ENVS_NAME)) {
             String val = System.getenv(key);
-            if (val != null)
+            if (val != null) {
+            	LOG.info("Put " + key + " / " + val);
                 res.put(key, val);
+            }
         }
         if (env != null)
             res.putAll(env);

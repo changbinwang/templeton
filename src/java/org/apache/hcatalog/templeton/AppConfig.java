@@ -96,7 +96,6 @@ public class AppConfig extends Configuration {
     public static final String PIG_ARCHIVE_NAME    = "templeton.pig.archive";
     public static final String PIG_PATH_NAME       = "templeton.pig.path";
     public static final String STREAMING_JAR_NAME  = "templeton.streaming.jar";
-    public static final String SUDO_NAME           = "templeton.sudo";
     public static final String TEMPLETON_JAR_NAME  = "templeton.jar";
     public static final String OVERRIDE_JARS_NAME  = "templeton.override.jars";
 
@@ -185,7 +184,6 @@ public class AppConfig extends Configuration {
     public String pigArchive()       { return get(PIG_ARCHIVE_NAME); }
     public String hivePath()         { return get(HIVE_PATH_NAME); }
     public String hiveArchive()      { return get(HIVE_ARCHIVE_NAME); }
-    public String sudoPath()         { return get(SUDO_NAME); }
     public String streamingJar()     { return get(STREAMING_JAR_NAME); }
 
     public String[] overrideJars() {
