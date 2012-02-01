@@ -150,7 +150,6 @@ public class ExecServiceImpl implements ExecService {
         for (String key : appConf.getStrings(AppConfig.EXEC_ENVS_NAME)) {
             String val = System.getenv(key);
             if (val != null) {
-            	LOG.info("Put " + key + " / " + val);
                 res.put(key, val);
             }
         }
