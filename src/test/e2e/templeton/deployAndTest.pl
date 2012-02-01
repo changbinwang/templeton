@@ -33,6 +33,17 @@ if(! defined $ENV{'HADOOP_PREFIX'}){
     $ENV{'HADOOP_PREFIX'}='/usr/';
 }
 
+my $host = `hostname` ;
+chomp $host;
+
+if(! defined $ENV{'ZOOKEEPER_HOST'}){
+    $ENV{'ZOOKEEPER_HOST'} =  $host . ':2181';
+}
+
+if(! defined $ENV{'METASTORE_HOST'}){
+    $ENV{'METASTORE_HOST'} =  $host . ':9933';
+}
+
 print STDERR "##################################################################\n";
 print STDERR "Using the following settings for environment variables\n" .
     " (Set them to override the default values) \n" .
@@ -40,7 +51,9 @@ print STDERR "Using the following settings for environment variables\n" .
     "TEMPLETON_URL : $TEMPLETON_URL \n" .
     'TOMCAT_HOME :' . $ENV{'TOMCAT_HOME'} . "\n" .
     'HADOOP_PREFIX :' . $ENV{'HADOOP_PREFIX'} . "\n" .
-    'HCAT_PREFIX :' . $ENV{'HCAT_PREFIX'} . "\n" 
+    'HCAT_PREFIX :' . $ENV{'HCAT_PREFIX'} . "\n" .
+    'ZOOKEEPER_HOST :' . $ENV{'ZOOKEEPER_HOST'} . "\n" .
+    'METASTORE_HOST :' . $ENV{'METASTORE_HOST'} . "\n" 
 ;
 print STDERR "##################################################################\n";
 
@@ -79,26 +92,23 @@ system("hadoop fs -copyFromLocal $tdir/inpdir $TEST_INP_DIR") == 0 or die "faile
 system("hadoop fs -chmod -R 777 $TEST_INP_DIR")  == 0 or die "failed to set input dir permissions : $!";
 
 #start tests
-system ("ant test -Dinpdir.hdfs=$TEST_INP_DIR  -Dtest.user.name=$TEST_USER -Dharness.webhdfs.url=$WEBHDFS_URL -Dharness.templeton.url=$TEMPLETON_URL") == 0 or die "templeton tests failed";
+my $cmd = "ant test -Dinpdir.hdfs=$TEST_INP_DIR  -Dtest.user.name=$TEST_USER" .
+    " -Dharness.webhdfs.url=$WEBHDFS_URL -Dharness.templeton.url=$TEMPLETON_URL  -Dtests.to.run='-t TestHive_2'";
 
+system($cmd) == 0 or die "templeton tests failed";
 
 #############################
 sub writeTempletonSiteXml {
     my $conf = $ENV{'TEMPLETON_HOME'} . "/templeton-site.xml";
     open ( CFH,  ">$conf" ) or die $!;
-    my $host = `hostname` ;
-    chomp $host;
-    my $zookeeper_host = $host . ':2181';
-    if( defined $ENV{'ZOOKEEPER_HOST'}){
-	$zookeeper_host = $ENV{'ZOOKEEPER_HOST'}
-    }
+
 
     print CFH '<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
   <property>
     <name>templeton.zookeeper.hosts</name>
     <value>'  . 
- $zookeeper_host .
+ $ENV{'ZOOKEEPER_HOST'} .
 '</value>
     <description>ZooKeeper servers, as comma separated host:port pairs</description>
   </property>
@@ -106,8 +116,8 @@ sub writeTempletonSiteXml {
   <property>
     <name>templeton.hive.properties</name>
     <value>hive.metastore.local=false,hive.metastore.uris=thrift://' .
-    $host .
-    ':9933,hive.metastore.sasl.enabled=false,hive.metastore.execute.setugi=true</value>
+    $ENV{'METASTORE_HOST'} .
+    ',hive.metastore.sasl.enabled=false,hive.metastore.execute.setugi=true</value>
     <description>Properties to set when running hive.</description>
   </property>
 
