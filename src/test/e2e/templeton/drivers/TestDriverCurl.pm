@@ -416,7 +416,7 @@ sub execCurlCmd(){
     $result{'header_fields'} = \%header_field;
 
     print $log "result : " . dump(%result);
-    dump(%result);
+    #dump(%result);
     
     return \%result;
 
@@ -483,9 +483,14 @@ sub compare
 	if(defined $json_info{'info'}){
 	    %json_info = %{$json_info{'info'}};
 	}
-	print STDERR "\n\n json_hash";
-	print STDERR dump(%$json_hash);
-	print STDERR "\n\n";
+	print $log "\n\n json_hash";
+	print $log dump(%$json_hash);
+	print $log "\n\n";
+
+	if(defined $json_hash->{'id'}){
+
+	}
+	print STDERR "jobid " . $json_hash->{'id'} . "\n";
 
 	foreach my $key(keys %$json_matches){
 	    my $json_field_val = $json_info{$key};
@@ -539,7 +544,6 @@ sub compare
 
     
     if(defined $testCmd->{'check_job_created'} || defined  $testCmd->{'check_job_complete'}){
-	print STDERR "ID " . $json_hash->{'id'};
 	my $jobid = $json_hash->{'id'};
 	if(!defined $jobid){
 	    print $log "$0::$subName INFO check failed: " 
