@@ -395,11 +395,9 @@
 	<exclude name="tmp/**" />
       </tarfileset>
 
-
       <tarfileset dir="${basedir}/src/hadoop_temp_fix" mode="664" >
         <include name="ugi.jar" />
       </tarfileset>
-
 
     </tar>
   </target>
@@ -415,7 +413,7 @@
         <include name="${final.name}.tar.gz" />
       </fileset>
     </copy>
-    <copy file="${src.dir}/packages/rpm/spec/templeton.spec" todir="${package.buildroot}/SPECS">
+    <copy file="${package.dir}/rpm/spec/templeton.spec" todir="${package.buildroot}/SPECS">
       <filterchain>
         <replacetokens>
           <token key="final.name" value="${final.name}" />
@@ -428,7 +426,7 @@
         </replacetokens>
       </filterchain>
     </copy>
-    <rpm specFile="pig.spec" command="-bb --target ${os.arch}" topDir="${package.buildroot}" cleanBuildDir="true" failOnError="true"/>
+    <rpm specFile="templeton.spec" command="-bb --target ${os.arch}" topDir="${package.buildroot}" cleanBuildDir="true" failOnError="true"/>
     <copy todir="${build.dir}/" flatten="true">
       <fileset dir="${package.buildroot}/RPMS">
         <include name="**/${name}*.rpm" />
