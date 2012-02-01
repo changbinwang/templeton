@@ -67,7 +67,7 @@ public class LauncherDelegator extends TempletonDelegator {
         Map<String, String> env = TempletonUtils.hadoopUserEnv(user, null);
 
         // Run the job
-        ExecBean exec = execService.run(user, appConf.clusterHadoop(), args, env);
+        ExecBean exec = execService.run(appConf.clusterHadoop(), args, env);
 
         // Return the job info
         if (exec.exitcode != 0)

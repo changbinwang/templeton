@@ -69,7 +69,7 @@ public class ExecServiceImpl implements ExecService {
      * @param env       Any extra environment variables to set
      * @returns         The result of the run.
      */
-    public ExecBean run(String user, String program, List<String> args,
+    public ExecBean run(String program, List<String> args,
                         Map<String, String> env)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
@@ -77,7 +77,7 @@ public class ExecServiceImpl implements ExecService {
         try {
             aquired = avail.tryAcquire();
             if (aquired) {
-                return runUnlimited(user, program, args, env);
+                return runUnlimited(program, args, env);
             } else {
                 throw new BusyException();
             }
@@ -96,7 +96,7 @@ public class ExecServiceImpl implements ExecService {
      * @param program   The program to run.
      * @returns         The result of the run.
      */
-    public ExecBean runUnlimited(String user, String program, List<String> args,
+    public ExecBean runUnlimited(String program, List<String> args,
                                  Map<String, String> env)
         throws NotAuthorizedException, ExecuteException, IOException
     {
@@ -114,7 +114,7 @@ public class ExecServiceImpl implements ExecService {
         ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
         executor.setWatchdog(watchdog);
 
-        CommandLine cmd = makeCommandLine(user, program, args);
+        CommandLine cmd = makeCommandLine(program, args);
 
         LOG.info("Running: " + cmd);
         ExecBean res = new ExecBean();
@@ -126,7 +126,7 @@ public class ExecServiceImpl implements ExecService {
         return res;
     }
 
-    private CommandLine makeCommandLine(String user, String program, 
+    private CommandLine makeCommandLine(String program, 
     		List<String> args)
         throws NotAuthorizedException, IOException
     {
