@@ -93,7 +93,7 @@ system("hadoop fs -chmod -R 777 $TEST_INP_DIR")  == 0 or die "failed to set inpu
 
 #start tests
 my $cmd = "ant test -Dinpdir.hdfs=$TEST_INP_DIR  -Dtest.user.name=$TEST_USER" .
-    " -Dharness.webhdfs.url=$WEBHDFS_URL -Dharness.templeton.url=$TEMPLETON_URL  -Dtests.to.run='-t TestHive_2'";
+    " -Dharness.webhdfs.url=$WEBHDFS_URL -Dharness.templeton.url=$TEMPLETON_URL ";
 
 system($cmd) == 0 or die "templeton tests failed";
 
