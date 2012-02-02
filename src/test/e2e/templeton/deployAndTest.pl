@@ -6,7 +6,7 @@ my $TEST_INP_DIR = '/tmp/test_inpdir/'; #dir on hadoop
 my $TEST_USER = 'hortonth';
 my $WEBHDFS_URL = 'http://localhost:50070';
 my $TEMPLETON_URL = 'http://localhost:8080';
-my $TOMCAT_HOME = $ENV{'TOMCAT_HOME'};
+my $CATALINA_HOME = $ENV{'CATALINA_HOME'};
 
 #use env variables if they have been set
 if(defined  $ENV{'TESTDIR'}){
@@ -49,7 +49,7 @@ print STDERR "Using the following settings for environment variables\n" .
     " (Set them to override the default values) \n" .
     "WEBHDFS_URL : $WEBHDFS_URL \n" .
     "TEMPLETON_URL : $TEMPLETON_URL \n" .
-    'TOMCAT_HOME :' . $ENV{'TOMCAT_HOME'} . "\n" .
+    'CATALINA_HOME :' . $ENV{'CATALINA_HOME'} . "\n" .
     'HADOOP_PREFIX :' . $ENV{'HADOOP_PREFIX'} . "\n" .
     'HCAT_PREFIX :' . $ENV{'HCAT_PREFIX'} . "\n" .
     'ZOOKEEPER_HOST :' . $ENV{'ZOOKEEPER_HOST'} . "\n" .
@@ -63,7 +63,7 @@ system("rm -rf $TESTDIR/");
 my $templeton_src = "$TESTDIR/templeton_src";
 $ENV{'TEMPLETON_HOME'} = "$templeton_src/templeton";
 
-system ("$TOMCAT_HOME/bin/shutdown.sh") == 0 or die "tomcat shutdown failed" ;
+system ("$CATALINA_HOME/bin/shutdown.sh") == 0 or die "tomcat shutdown failed" ;
 sleep 3;
 
 
@@ -80,7 +80,7 @@ writeTempletonSiteXml();
 system ('ant install-war') == 0 or die "templeton build failed";
 
 #tomcat should have shutdown by now, try starting it
-system ("$TOMCAT_HOME/bin/startup.sh") == 0 or die 'tomcat startup failed';
+system ("$CATALINA_HOME/bin/startup.sh") == 0 or die 'tomcat startup failed';
 sleep 3;
 
 my $tdir = "$templeton_src/templeton/src/test/e2e/templeton";
