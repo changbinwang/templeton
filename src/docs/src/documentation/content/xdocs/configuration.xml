@@ -150,12 +150,6 @@ hive.metastore.sasl.enabled=false</code></td>
   </tr>
 
   <tr>
-    <td><strong>templeton.sudo</strong></td>
-    <td><code>/usr/bin/sudo</code></td>
-    <td>The path to the sudo program.</td>
-  </tr>
-
-  <tr>
     <td><strong>templeton.exec.encoding</strong></td>
     <td><code>UTF-8</code></td>
     <td>The encoding of the stdout and stderr data.</td>
@@ -184,7 +178,7 @@ hive.metastore.sasl.enabled=false</code></td>
   <tr>
     <td><strong>templeton.exec.envs</strong></td>
     <td><code>HADOOP_PREFIX,HADOOP_HOME,JAVA_HOME</code></td>
-    <td>The environment variables passed through to sudo.</td>
+    <td>The environment variables passed through to exec.</td>
   </tr>
 
   <tr>

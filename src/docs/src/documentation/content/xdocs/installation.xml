@@ -87,28 +87,6 @@ Date: Tue, 18 Oct 2011 19:35:17 GMT
   </section>
 
   <section>
-  <title>Authentication</title>
-  <p>To run any of the authenticated API calls, sudo must be setup properly.</p>
-  <p><strong>For Development</strong></p>
-  <ol>
-  <li>Run Tomcat as yourself.</li>
-  <li>Make sure that you can sudo as yourself.  For example,
-     <code>sudo -u $USER date </code></li>
-  </ol>
-  <p><strong>For Production</strong></p>
-  <ol>
-  <li>Create user runner with permission to run the required commands.  In the sudoers file:
-<source>
-runner ALL=(%hadoop) NOPASSWD: command1[,command2, ...]
-</source>
-      allows runner to run the commands if they are owned by
-      a user in the group hadoop. 
-  </li>
-  <li>Run Tomcat as runner.</li>
-  </ol>
-  </section>
-
-  <section>
   <title>Hadoop Distributed Cache</title>
   <p>Templeton requires some files be accessible on the 
   <a href="http://hadoop.apache.org/common/docs/current/mapred_tutorial.html#DistributedCache">
