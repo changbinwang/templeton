@@ -26,8 +26,9 @@
   -->
   <!-- name and version -->
   <property name="_version" value="0.1.0"/>
-  <property name="_vtype" value="dev"/>
+  <property name="_vtype" value="-dev"/>
   <property name="templeton.version" value="${_version}${_vtype}"/>
+  <property name="templeton.pkg.version" value="${_version}"/>
   <property name="templeton.jar" value="${ant.project.name}-${templeton.version}.jar"/>
   <property name="final.name" value="${ant.project.name}-${templeton.version}" />
   <property name="package.release" value="1"/>
@@ -367,35 +368,84 @@
   <!-- ================================================================== -->
   <!-- Copy files to a releasable structure                               -->
   <!-- ================================================================== -->
-  <target name="package" depends="war">
-    <mkdir dir="${dist.dir}" />
-    <mkdir dir="${dist.dir}/etc/templeton/" />
-    <mkdir dir="${dist.dir}/share/templeton/scripts" />
-    <mkdir dir="${dist.dir}/share/templeton/templates/conf" />
-    <mkdir dir="${dist.dir}/share/templeton/lib" />
-    <mkdir dir="${dist.dir}/share/doc/templeton" />
-    <mkdir dir="${dist.dir}/share/doc/templeton/api" />
-    <mkdir dir="${dist.dir}/share/doc/templeton/license" />
+  <target name="package-tar" depends="war,docs">
 
     <copy file="${resources.dir}/templeton-default.xml"
-          tofile="${dist.dir}/templeton-site.xml.template" />
+          tofile="${dist.dir}/conf/templeton-site.xml" />
+
+    <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${dist.dir}/" />
+    <copy file="${build.dir}/${ant.project.name}.war" todir="${dist.dir}/" />
+
+    <copy todir="${dist.dir}/docs">
+      <fileset dir="${build.docs}"> 
+	<exclude name="webapp/**" />
+	<exclude name="tmp/**" />
+      </fileset>
+    </copy>
+    <copy todir="${dist.dir}/lib">
+        <fileset dir="${ivy.lib.dir}" includes="zookeeper*.jar"/>
+    </copy>
+
+    <copy todir="${dist.dir}/">
+      <fileset dir="${basedir}/src/hadoop_temp_fix" >
+        <include name="ugi.jar" />
+      </fileset>
+    </copy>
+
+    <copy todir="${dist.dir}/src" includeEmptyDirs="true">
+        <fileset dir="${src.dir}" />
+    </copy>
+
+    <copy todir="${dist.dir}/test" includeEmptyDirs="true">
+        <fileset dir="${test.src.dir}" />
+    </copy>
+
+    <copy todir="${dist.dir}/docs">
+        <fileset dir=".">
+          <include name="*.txt" />
+        </fileset>
+    </copy>
+
+    <copy todir="${dist.dir}/" file="build.xml" /> 
+
+<!-- TODO: enable when we have executables
+    <chmod perm="ugo+x" type="file">
+        <fileset dir="${dist.dir}/bin" />
+    </chmod>
+-->
+
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Copy files to a releasable structure                               -->
+  <!-- ================================================================== -->
+  <target name="package-rpm" depends="war,docs">
+    <mkdir dir="${build.docs}" /> 
+
+    <copy file="${resources.dir}/templeton-default.xml"
+          tofile="${dist.dir}/etc/templeton/templeton-site.xml" />
 
     <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${dist.dir}/share/templeton/" />
     <copy file="${build.dir}/${ant.project.name}.war" todir="${dist.dir}/share/templeton/" />
 
-<!-- TODO :enable this
     <copy todir="${dist.dir}/share/doc/templeton">
       <fileset dir="${build.docs}"> 
 	<exclude name="webapp/**" />
 	<exclude name="tmp/**" />
       </fileset>
     </copy>
--->
-    <copy todir="${dist.dir}/lib">
+
+    <copy todir="${dist.dir}/share/templeton/lib">
         <fileset dir="${ivy.lib.dir}" includes="zookeeper*.jar"/>
     </copy>
 
-    <copy todir="${dist.dir}/">
+    <copy todir="${dist.dir}/sbin">
+        <fileset dir="src/packages">
+        <include name="*.sh"/>
+        </fileset>
+    </copy>
+
+    <copy todir="${dist.dir}/share/templeton/">
       <fileset dir="${basedir}/src/hadoop_temp_fix" >
         <include name="ugi.jar" />
       </fileset>
@@ -411,18 +461,25 @@
         </fileset>
     </copy>
 
-<!-- TODO: enable when we have executables
+    <copy todir="${dist.dir}/share/templeton/templates/conf">
+      <fileset dir="src/packages/templates/conf"/>
+    </copy>
+
+
     <chmod perm="ugo+x" type="file">
+<!-- TODO: enable when we have executables
         <fileset dir="${dist.dir}/bin" />
+-->
         <fileset dir="${dist.dir}/sbin" />
     </chmod>
--->
+
   </target>
+
 
   <!-- ================================================================== -->
   <!-- Create a tar file                                                  -->
   <!-- ================================================================== -->
-  <target name="tar" depends="package">
+  <target name="tar" depends="package-tar">
     <tar compression="gzip" longfile="gnu" destfile="${build.dir}/${final.name}.tar.gz">
 
       <tarfileset dir="${build.dir}" mode="664">
@@ -438,26 +495,38 @@
     </tar>
   </target>
 
-  <target name="rpm" depends="war" description="Make rpm package">
-    <echo message="ttttt version ${templeton.version}"/>
-    <mkdir dir="${package.buildrozot}/BUILD" />
+  <target name="tar-rpm" depends="package-rpm" description="Create rpm package tarball">
+    <tar compression="gzip" longfile="gnu" destfile="${build.dir}/${final.name}.tar.gz">
+      <tarfileset dir="${build.dir}" mode="664">
+        <exclude name="${final.name}/bin/*" />
+        <include name="${final.name}/**" />
+      </tarfileset>
+<!-- TODO: enable when we have executables
+      <tarfileset dir="${build.dir}" mode="755">
+        <include name="${final.name}/bin/*" />
+      </tarfileset>
+-->
+    </tar>
+  </target>
+
+
+
+  <target name="rpm" depends="tar-rpm" description="Make rpm package">
+    <mkdir dir="${package.buildroot}/BUILD" />
     <mkdir dir="${package.buildroot}/RPMS" />
     <mkdir dir="${package.buildroot}/SRPMS" />
     <mkdir dir="${package.buildroot}/SOURCES" />
     <mkdir dir="${package.buildroot}/SPECS" />
     <copy todir="${package.buildroot}/SOURCES">
-      <fileset dir="${build.dir}/${ant.project.name}">
-        <include name="${templeton.jar}" />
-      </fileset>
       <fileset dir="${build.dir}">
-        <include name="${ant.project.name}.war" />
+        <include name="${final.name}.tar.gz" />
       </fileset>
     </copy>
     <copy file="${package.dir}/rpm/spec/templeton.spec" todir="${package.buildroot}/SPECS">
       <filterchain>
         <replacetokens>
           <token key="final.name" value="${final.name}" />
-          <token key="version" value="${templeton.version}" />
+          <token key="version" value="${templeton.pkg.version}" />
           <token key="package.release" value="${package.release}" />
           <token key="package.build.dir" value="${package.build.dir}" />
           <token key="package.prefix" value="${package.prefix}" />
@@ -467,12 +536,9 @@
       </filterchain>
     </copy>
     <rpm specFile="templeton.spec" command="-bb --target ${os.arch}" topDir="${package.buildroot}" cleanBuildDir="true" failOnError="true"/>
-    <copy todir="${build.dir}/" flatten="true">
+    <copy todir="${build.dir}/" flatten="true" failonerror="true">
       <fileset dir="${package.buildroot}/RPMS">
-        <include name="**/${name}*.rpm" />
-      </fileset>
-      <fileset dir="${package.buildroot}/SRPMS">
-        <include name="**/${name}*.rpm" />
+        <include name="**/templeton*.rpm" />
       </fileset>
     </copy>
     <delete dir="${package.buildroot}" quiet="true" verbose="false"/>

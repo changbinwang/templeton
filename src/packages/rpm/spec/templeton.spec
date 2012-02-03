@@ -59,7 +59,6 @@ Name: %{name}
 Version: %{version}
 Release: %{release} 
 Source0: %{_final_name}.tar.gz
-Source1: %{_final_name}-withouthadoop.jar
 Prefix: %{_prefix}
 Prefix: %{_conf_dir}
 Prefix: %{_log_dir}
@@ -111,12 +110,12 @@ mkdir -p ${RPM_BUILD_DIR}%{_conf_dir}
 mv ${RPM_BUILD_DIR}/%{_final_name}/etc/templeton/* ${RPM_BUILD_DIR}%{_conf_dir}
 rm -rf ${RPM_BUILD_DIR}/%{_final_name}/etc/templeton
 mv ${RPM_BUILD_DIR}/%{_final_name}/* ${RPM_BUILD_DIR}%{_prefix}
-cp -f ${RPM_BUILD_DIR}/../SOURCES/%{_final_name}-withouthadoop.jar ${RPM_BUILD_DIR}%{_share_dir}/%{_final_name}-core.jar
+#cp -f ${RPM_BUILD_DIR}/../SOURCES/%{_final_name}.jar ${RPM_BUILD_DIR}%{_share_dir}/%{_final_name}.jar
 
 %pre
 
 %post
-#bash ${RPM_INSTALL_PREFIX0}/sbin/update-templeton-env.sh \
+bash ${RPM_INSTALL_PREFIX0}/sbin/update-templeton-env.sh \
        --prefix=${RPM_INSTALL_PREFIX0} \
        --bin-dir=${RPM_INSTALL_PREFIX0}/bin \
        --conf-dir=${RPM_INSTALL_PREFIX1} \
