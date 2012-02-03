@@ -119,12 +119,16 @@ runner ALL=(%hadoop) NOPASSWD: command1[,command2, ...]
    follow these steps:</p>
   
   <ol>
-  <li>For Hive, download the Hcat tar.gz file and place it in the distributed cache.  For example:  
+  <li><a href="http://www.apache.org/dyn/closer.cgi/incubator/hcatalog/">Download</a> 
+   the HCatalog tar.gz file and place it in the distributed cache. (If you need a version 
+   that is not yet released, you may need to build it yourself following the HCatalog 
+   instructions.)  
 <source>
 hadoop fs -put /tmp/hcatalog-0.3.0.tar.gz /user/templeton/hcatalog-0.3.0.tar.gz
 </source>
   </li>
-  <li>Download the Pig tar.gz file and place it into the cache.  For example:
+  <li><a href="http://www.apache.org/dyn/closer.cgi/pig">Download</a> 
+   the Pig tar.gz file and place it into the cache.  For example:
 <source>
 hadoop fs -put /tmp/pig-0.9.2.tar.gz /user/templeton/pig-0.9.2.tar.gz
 </source>
@@ -155,7 +159,7 @@ hadoop fs -put $HADOOP_PREFIX/hadoop-0.20.205.0/contrib/streaming/hadoop-streami
 
   <tr>
     <td><strong>templeton.pig.path</strong></td>
-    <td><code>pig-0.9.2.tar.gz/bin/pig</code></td>
+    <td><code>pig-0.9.2.tar.gz/pig-0.9.2/bin/pig</code></td>
     <td>The path to the Pig executable.</td>
   </tr>
 
@@ -167,7 +171,7 @@ hadoop fs -put $HADOOP_PREFIX/hadoop-0.20.205.0/contrib/streaming/hadoop-streami
 
   <tr>
     <td><strong>templeton.hive.path</strong></td>
-    <td><code>hcatalog-0.3.0.tar.gz/bin/hive</code></td>
+    <td><code>hcatalog-0.3.0.tar.gz/hcatalog-0.3.0/bin/hive</code></td>
     <td>The path to the Hive executable.</td>
   </tr>
 
