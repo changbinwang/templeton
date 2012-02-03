@@ -119,28 +119,14 @@ runner ALL=(%hadoop) NOPASSWD: command1[,command2, ...]
    follow these steps:</p>
   
   <ol>
-  <li>Create <code>hive.tar</code>.  If you installed HCatalog as noted above, this 
-      this is done as follows:
+  <li>For Hive, download the Hcat tar.gz file and place it in the distributed cache.  For example:  
 <source>
-cd /usr/local/hcat
-tar cf /tmp/hive.tar .
+hadoop fs -put /tmp/hcatalog-0.3.0.tar.gz /user/templeton/hcatalog-0.3.0.tar.gz
 </source>
   </li>
-  <li>Place <code>hive.tar</code> into the cache.
+  <li>Download the Pig tar.gz file and place it into the cache.  For example:
 <source>
-hadoop fs -put /tmp/hive.tar /user/templeton/hive.tar
-</source>
-  </li>
-  <li>Install Pig locally, for example in <code>/usr/local/pig</code>.</li>
-  <li>Create <code>pig.tar</code>:
-<source>
-cd /usr/local/pig
-tar cf /tmp/pig.tar .
-</source>
-  </li>
-  <li>Place <code>pig.tar</code> into the cache.
-<source>
-hadoop fs -put /tmp/pig.tar /user/templeton/pig.tar
+hadoop fs -put /tmp/pig-0.9.2.tar.gz /user/templeton/pig-0.9.2.tar.gz
 </source>
   </li>
   <li>Place <code>hadoop-streaming.jar</code> into the cache. For example, use the 
@@ -163,25 +149,25 @@ hadoop fs -put $HADOOP_PREFIX/hadoop-0.20.205.0/contrib/streaming/hadoop-streami
 
   <tr>
     <td><strong>templeton.pig.archive</strong></td>
-    <td><code>hdfs:///user/templeton/pig.tar</code></td>
+    <td><code>hdfs:///user/templeton/pig-0.9.2.tar.gz</code></td>
     <td>The path to the Pig archive.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.pig.path</strong></td>
-    <td><code>pig.tar/bin/pig</code></td>
+    <td><code>pig-0.9.2.tar.gz/bin/pig</code></td>
     <td>The path to the Pig executable.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.hive.archive</strong></td>
-    <td><code>hdfs:///user/templeton/hive.tar</code></td>
+    <td><code>hdfs:///user/templeton/hcatalog-0.3.0.tar.gz</code></td>
     <td>The path to the Hive archive.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.hive.path</strong></td>
-    <td><code>hive.tar/bin/hive</code></td>
+    <td><code>hcatalog-0.3.0.tar.gz/bin/hive</code></td>
     <td>The path to the Hive executable.</td>
   </tr>
 

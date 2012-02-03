@@ -93,7 +93,7 @@ ${env.PIG_HOME}/bin/pig
 
   <tr>
     <td><strong>templeton.override.jars</strong></td>
-    <td></td>
+    <td><code>hdfs:///user/templeton/ugi.jar</code></td>
     <td>Jars to add to the HADOOP_CLASSPATH for all Map Reduce jobs.
         These jars must exist on HDFS.</td>
   </tr>
@@ -112,13 +112,13 @@ ${env.PIG_HOME}/bin/pig
 
   <tr>
     <td><strong>templeton.pig.archive</strong></td>
-    <td><code>hdfs:///user/templeton/pig.tar</code></td>
+    <td><code>hdfs:///user/templeton/pig-0.9.2.tar.gz</code></td>
     <td>The path to the Pig archive.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.pig.path</strong></td>
-    <td><code>pig.tar/bin/pig</code></td>
+    <td><code>pig-0.9.2.tar.gz/bin/pig</code></td>
     <td>The path to the Pig executable.</td>
   </tr>
 
@@ -128,15 +128,15 @@ ${env.PIG_HOME}/bin/pig
     <td>The path to the Hcatalog executable.</td>
   </tr>
 
-  <tr>
+ <tr>
     <td><strong>templeton.hive.archive</strong></td>
-    <td><code>hdfs:///user/templeton/hive.tar</code></td>
+    <td><code>hdfs:///user/templeton/hcatalog-0.3.0.tar.gz</code></td>
     <td>The path to the Hive archive.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.hive.path</strong></td>
-    <td><code>hive.tar/bin/hive</code></td>
+    <td><code>hcatalog-0.3.0.tar.gz/bin/hive</code></td>
     <td>The path to the Hive executable.</td>
   </tr>
 
