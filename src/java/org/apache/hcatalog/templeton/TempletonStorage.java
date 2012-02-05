@@ -17,8 +17,8 @@
  */
 package org.apache.hcatalog.templeton;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * An interface to handle different Templeton storage methods, including 
@@ -40,10 +40,9 @@ import java.util.HashMap;
  */
 public interface TempletonStorage {
 	// These are the possible types referenced by 'type' below.
-	public static int UNKNOWN = 0;
-	public static int JOB = 1;
-	public static int JOBTRACKING = 2;
-	public static int TEMPLETONOVERHEAD = 3;
+	public enum Type {
+		UNKNOWN, JOB, JOBTRACKING, TEMPLETONOVERHEAD
+	}
 	
 	/**
 	 * Save a single key/value pair for a specific job id.
@@ -61,9 +60,11 @@ public interface TempletonStorage {
 	 * @param type The data type (as listed above)
 	 * @param id The String id of this data grouping (jobid, etc.)
 	 * @param key The name of the field to retrieve
-	 * @return The value of the field requested, or null if not found.
+	 * @return The value of the field requested, or NotFoundException 
+	 * if not found.
 	 */
-	public String getField(int type, String id, String key);
+	public String getField(int type, String id, String key) 
+			throws NotFoundException;
 	
 	/**
 	 * Get all the name/value pairs stored for this id.
@@ -77,7 +78,7 @@ public interface TempletonStorage {
 	 * @param id The String id of this data grouping (jobid, etc.)
 	 * @return A HashMap of key/value pairs found for this type/id.
 	 */
-	public HashMap<String, String> getFields(int type, String id);
+	public Map<String, String> getFields(int type, String id);
 	
 	/**
 	 * Delete a data grouping (all data for a jobid, all tracking data
@@ -95,7 +96,7 @@ public interface TempletonStorage {
 	 * 
 	 * @return An ArrayList<String> of ids.
 	 */
-	public ArrayList<String> getAll();
+	public List<String> getAll();
 	
 	/**
 	 * Get the id of each data grouping of a given type in the storage
@@ -103,7 +104,7 @@ public interface TempletonStorage {
 	 * @param type The data type (as listed above)
 	 * @return An ArrayList<String> of ids.
 	 */
-	public ArrayList<String> getAllForType(int type);
+	public List<String> getAllForType(int type);
 	
 	/**
 	 * Get the id of each data grouping that has the specific key/value
@@ -112,7 +113,7 @@ public interface TempletonStorage {
 	 * @param value The value of the field to search for
 	 * @return An ArrayList<String> of ids.
 	 */
-	public ArrayList<String> getAllForKey(String key, String value);
+	public List<String> getAllForKey(String key, String value);
 	
 	/**
 	 * Get the id of each data grouping of a given type that has the
@@ -122,6 +123,6 @@ public interface TempletonStorage {
 	 * @param value The value of the field to search for
 	 * @return An ArrayList<String> of ids.
 	 */
-	public ArrayList<String> getAllForTypeAndUser(int type, String key, 
+	public List<String> getAllForTypeAndUser(int type, String key, 
 			String value);
 }
