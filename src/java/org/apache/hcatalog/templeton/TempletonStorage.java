@@ -52,7 +52,7 @@ public interface TempletonStorage {
 	 * @param val The value of the field to save
 	 * @return True if successful, false if not
 	 */
-	public boolean saveField(int type, String id, String key, String val);
+	public boolean saveField(Type type, String id, String key, String val);
 	
 	/**
 	 * Get the value of one field for a given data type.  If the type
@@ -63,7 +63,7 @@ public interface TempletonStorage {
 	 * @return The value of the field requested, or NotFoundException 
 	 * if not found.
 	 */
-	public String getField(int type, String id, String key) 
+	public String getField(Type type, String id, String key) 
 			throws NotFoundException;
 	
 	/**
@@ -78,18 +78,19 @@ public interface TempletonStorage {
 	 * @param id The String id of this data grouping (jobid, etc.)
 	 * @return A HashMap of key/value pairs found for this type/id.
 	 */
-	public Map<String, String> getFields(int type, String id);
+	public Map<String, String> getFields(Type type, String id);
 	
 	/**
 	 * Delete a data grouping (all data for a jobid, all tracking data
 	 * for a job, etc.).  If the type is UNKNOWN, search for the id
-	 * in all types.
+	 * in all types.  
 	 * 
 	 * @param type The data type (as listed above)
 	 * @param id The String id of this data grouping (jobid, etc.)
-	 * @return True if successful, false if not.
+	 * @return True if successful, false if not, throws NotFoundException
+	 * if the id wasn't found.
 	 */
-	public boolean delete(int type, String id);
+	public boolean delete(Type type, String id) throws NotFoundException;
 	
 	/**
 	 * Get the id of each data grouping in the storage system.
@@ -104,7 +105,7 @@ public interface TempletonStorage {
 	 * @param type The data type (as listed above)
 	 * @return An ArrayList<String> of ids.
 	 */
-	public List<String> getAllForType(int type);
+	public List<String> getAllForType(Type type);
 	
 	/**
 	 * Get the id of each data grouping that has the specific key/value
@@ -123,6 +124,6 @@ public interface TempletonStorage {
 	 * @param value The value of the field to search for
 	 * @return An ArrayList<String> of ids.
 	 */
-	public List<String> getAllForTypeAndUser(int type, String key, 
+	public List<String> getAllForTypeAndUser(Type type, String key, 
 			String value);
 }
