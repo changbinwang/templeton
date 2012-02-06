@@ -93,7 +93,7 @@ ${env.PIG_HOME}/bin/pig
 
   <tr>
     <td><strong>templeton.override.jars</strong></td>
-    <td></td>
+    <td><code>hdfs:///user/templeton/ugi.jar</code></td>
     <td>Jars to add to the HADOOP_CLASSPATH for all Map Reduce jobs.
         These jars must exist on HDFS.</td>
   </tr>
