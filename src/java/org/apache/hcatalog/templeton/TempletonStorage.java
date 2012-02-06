@@ -52,7 +52,8 @@ public interface TempletonStorage {
 	 * @param val The value of the field to save
 	 * @return True if successful, false if not
 	 */
-	public boolean saveField(Type type, String id, String key, String val);
+	public void saveField(Type type, String id, String key, String val)
+            throws NotFoundException;
 
 	/**
 	 * Get the value of one field for a given data type.  If the type
@@ -60,11 +61,10 @@ public interface TempletonStorage {
 	 * @param type The data type (as listed above)
 	 * @param id The String id of this data grouping (jobid, etc.)
 	 * @param key The name of the field to retrieve
-	 * @return The value of the field requested, or NotFoundException
-	 * if not found.
+	 * @return The value of the field requested, or null if not
+	 * found.
 	 */
-	public String getField(Type type, String id, String key)
-			throws NotFoundException;
+         public String getField(Type type, String id, String key);
 
 	/**
 	 * Get all the name/value pairs stored for this id.
