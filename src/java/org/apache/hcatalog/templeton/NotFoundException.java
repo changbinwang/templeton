@@ -18,12 +18,12 @@
 package org.apache.hcatalog.templeton;
 
 /**
- * Simple "page not found" type exception.
+ * Simple not found exception.
  */
-public class NotFoundException extends SimpleWebException {
+public class NotFoundException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	public NotFoundException(String msg) {
-        super(404, msg);
+        super(msg);
     }
 }
