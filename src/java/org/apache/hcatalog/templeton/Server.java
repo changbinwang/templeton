@@ -19,7 +19,17 @@ package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
 import java.util.List;
-import javax.ws.rs.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.ws.rs.Produces;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
@@ -54,9 +64,6 @@ public class Server {
 
     public static final String SHOW_TABLES_MSG
         = "SHOW TABLES ";
-
-    public static final String DESCRIBE_TABLE_MSG
-        = "DESCRIBE_TABLE ";
 
     protected static ExecService execService = ExecServiceImpl.getInstance();
     private static AppConfig appConf = AppConfig.getInstance();
@@ -122,7 +129,7 @@ public class Server {
         verifyParam(exec, "exec");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.run(exec, group, permissions);
+        return d.run(exec, false, group, permissions);
     }
 
     @GET
@@ -152,8 +159,8 @@ public class Server {
     @GET
     @Path("database/{database-name}/table")
     @Produces("application/json")
-    public String getTables(@PathParam("database-name")String dbName,
-                            @QueryParam("filter-by") String filterBy)
+    public String getTables(@PathParam("database-name") String dbName,
+                            @QueryParam("filter-by")  String filterBy)
         throws NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -166,16 +173,19 @@ public class Server {
     }
 
     @GET
-    @Path("database/{database-name}/table/{table-name}")
+    @Path("ddl/database/{db}/table/{table}")
     @Produces("application/json")
-    public String getTable(@PathParam("database-name")String dbName,
-                           @PathParam("table-name")String tblName)
+    public ExecBean describeTable(@PathParam("db") String db,
+                                  @PathParam("table") String table)
         throws NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
-        return (DESCRIBE_TABLE_MSG + "database-name = " + dbName +
-                " table-name = " + tblName);
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
 
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.describeTable(db, table);
     }
 
     /**
@@ -377,6 +387,23 @@ public class Server {
     {
         if (param == null || param.isEmpty())
             throw new BadParam("Missing " + name + " parameter");
+    }
+
+    public static final Pattern DDL_ID = Pattern.compile("[a-zA-Z]\\w*");
+
+    /**
+     * Verify that the parameter exists and is a simple DDL identifier
+     * name.  Throw an exception if invalid.
+     *
+     * Bug: This needs to allow for quoted ddl identifiers.
+     */
+    public void verifyDdlParam(String param, String name)
+        throws BadParam
+    {
+        verifyParam(param, name);
+        Matcher m = DDL_ID.matcher(param);
+        if (! m.matches())
+            throw new BadParam("Invalid DDL identifier " + name );
     }
 
     public String getUser() {
