@@ -30,7 +30,7 @@ public class HcatDelegator extends LauncherDelegator {
         super(appConf, execService);
     }
 
-    public ExecBean run(String exec, String group, String permissions)
+    public ExecBean run(String exec, boolean format, String group, String permissions)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
         ArrayList<String> args = new ArrayList<String>();
@@ -44,7 +44,20 @@ public class HcatDelegator extends LauncherDelegator {
             args.add("-p");
             args.add(permissions);
         }
+        if (format) {
+            args.add("-D");
+            args.add("hive.format=json");
+        }
 
         return execService.run(appConf.clusterHcat(), args, null);
     }
+
+    public ExecBean describeTable(String db, String table)
+        throws NotAuthorizedException, BusyException, ExecuteException, IOException
+    {
+        String exec = "use " + db + "; ";
+        exec += "desc " + table + "; ";
+        return run(exec, true, null, null);
+    }
+
 }
