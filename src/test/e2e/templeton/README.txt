@@ -1,0 +1,56 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+
+End to end tests
+---------------
+End to end tests in templeton runs tests against an existing templeton server.
+It runs hcat, mapreduce, streaming, hive and pig tests.
+
+Test cases
+----------
+The tests are defined in src/test/e2e/templeton/tests/curl.conf
+
+Test framework
+--------------
+The test framework is derived from the one used in pig, there is more documentation here on the framework -
+https://cwiki.apache.org/confluence/display/PIG/HowToTest
+
+
+Setup
+-----
+1. Templeton needs to be installed and setup to be able to run hcat, maprduce, hive and pig commands. 
+
+2. Install perl and following perl modules  (cpan -i <MODULE_NAME>)
+* IPC::Run
+* JSON
+* Data::Dump
+
+3. Copy contents of src/test/e2e/templeton/inpdir to hdfs
+
+
+Running the tests
+-----------------
+Use the following command to run tests -
+
+ant test -Dinpdir.hdfs=<location of inpdir on hdfs>  -Dtest.user.name=<user the tests should run as> \
+     -Dharness.webhdfs.url=<webhdfs url>  -Dharness.templeton.url=<templeton url> 
+
+If you want to run specific test group you can specify the group, for example:  -Dtests.to.run='-t TestHive'
+
+If you want to run specific test in a group group you can specify the test, for example:  -Dtests.to.run='-t TestHive_1'
