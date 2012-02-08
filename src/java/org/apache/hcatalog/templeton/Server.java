@@ -38,25 +38,25 @@ import org.apache.hadoop.security.authentication.client.PseudoAuthenticator;
 public class Server {
 
     public static final String REQUEST_FORMATS_MSG
-            = "{[\"application/json\"]}\n";
+        = "{[\"application/json\"]}\n";
 
     public static final String STATUS_MSG
         = "{\"status\": \"ok\", \"version\": \"v1\"}\n";
 
     public static final String VERSION_MSG
-            = "{\"supported-versions\": [\"v1\"], \"version\": \"v1\"}\n";
+        = "{\"supported-versions\": [\"v1\"], \"version\": \"v1\"}\n";
 
     public static final String SHOW_DATABASES_MSG
-            = "SHOW DATABASES ";
+        = "SHOW DATABASES ";
 
     public static final String DESCRIBE_DATABASE_MSG
-            = "DESCRIBE_DATABASE ";
+        = "DESCRIBE_DATABASE ";
 
     public static final String SHOW_TABLES_MSG
-            = "SHOW TABLES ";
+        = "SHOW TABLES ";
 
     public static final String DESCRIBE_TABLE_MSG
-            = "DESCRIBE_TABLE ";
+        = "DESCRIBE_TABLE ";
 
     protected static ExecService execService = ExecServiceImpl.getInstance();
     private static AppConfig appConf = AppConfig.getInstance();
@@ -116,7 +116,7 @@ public class Server {
                         @FormParam("group") String group,
                         @FormParam("permissions") String permissions)
         throws NotAuthorizedException, BusyException, BadParam,
-               ExecuteException, IOException
+        ExecuteException, IOException
     {
         verifyUser();
         verifyParam(exec, "exec");
@@ -129,8 +129,9 @@ public class Server {
     @Path("database")
     @Produces("application/json")
     public String getDatabases(@QueryParam("filter-by") String filterBy)
-            throws NotAuthorizedException, BusyException,
-            BadParam, ExecuteException, IOException {
+        throws NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
         String filterByString = filterBy;
         if(filterByString == null) {
             filterByString = "*";
@@ -142,8 +143,9 @@ public class Server {
     @Path("database/{database-name}")
     @Produces("application/json")
     public String getDatabase(@PathParam("database-name")String dbName)
-            throws NotAuthorizedException, BusyException,
-            BadParam, ExecuteException, IOException {
+        throws NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
         return (DESCRIBE_DATABASE_MSG + "db-name = " + dbName);
     }
 
@@ -151,25 +153,28 @@ public class Server {
     @Path("database/{database-name}/table")
     @Produces("application/json")
     public String getTables(@PathParam("database-name")String dbName,
-                              @QueryParam("filter-by") String filterBy)
-            throws NotAuthorizedException, BusyException,
-            BadParam, ExecuteException, IOException {
+                            @QueryParam("filter-by") String filterBy)
+        throws NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
         String filterByString = filterBy;
         if(filterByString == null) {
             filterByString = "*";
         }
-        return (SHOW_TABLES_MSG + "db-name = " + dbName + " filterBy = " + filterByString);
+        return (SHOW_TABLES_MSG + "db-name = " + dbName
+                + " filterBy = " + filterByString);
     }
 
     @GET
     @Path("database/{database-name}/table/{table-name}")
     @Produces("application/json")
     public String getTable(@PathParam("database-name")String dbName,
-                             @PathParam("table-name")String tblName)
-            throws NotAuthorizedException, BusyException,
-            BadParam, ExecuteException, IOException {
+                           @PathParam("table-name")String tblName)
+        throws NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
         return (DESCRIBE_TABLE_MSG + "database-name = " + dbName +
-                         " table-name = " + tblName);
+                " table-name = " + tblName);
 
     }
 
@@ -190,7 +195,7 @@ public class Server {
                                           @FormParam("statusdir") String statusdir,
                                           @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
-               ExecuteException, IOException, InterruptedException
+        ExecuteException, IOException, InterruptedException
     {
         verifyUser();
         verifyParam(inputs, "input");
