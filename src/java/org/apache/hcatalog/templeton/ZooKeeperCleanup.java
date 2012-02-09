@@ -96,7 +96,7 @@ public class ZooKeeperCleanup extends Thread {
                 // Put each check in a separate try/catch, so if that particular
                 // cycle fails, it'll try again on the next cycle.
                 try {
-                    zk = JobState.zkOpen(AppConfig.getInstance());
+                    zk = ZooKeeperStorage.zkOpen(AppConfig.getInstance());
                         
                     nodes = getChildList(zk);
     
@@ -156,10 +156,11 @@ public class ZooKeeperCleanup extends Thread {
      * @param state
      */
     public boolean checkAndDelete(String node, ZooKeeper zk) {
+    	JobState state = null;
         try {
             JobStateTracker tracker = new JobStateTracker(node, zk, true);
             long now = new Date().getTime();
-            JobState state = new JobState(tracker.getJobID(), zk);
+            state = new JobState(tracker.getJobID());
             
             // Set the default to 0 -- if the created date is null, there was
             // an error in creation, and we want to delete it anyway.
@@ -179,6 +180,14 @@ public class ZooKeeperCleanup extends Thread {
             // We don't throw a new exception for this -- just keep going with the
             // next one.
             return true;
+        } finally {
+        	if (state != null) {
+        		try {
+        			state.close();
+        		} catch (IOException e) {
+        			LOG.info("Couldn't close job state.");
+        		}
+        	}
         }
     }
 

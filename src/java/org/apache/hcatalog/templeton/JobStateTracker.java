@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hcatalog.templeton.tool.JobState;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
@@ -33,7 +32,7 @@ import org.apache.zookeeper.data.Stat;
 
 public class JobStateTracker {
     // The root of the tracking nodes
-    public static final String JOB_TRACKINGROOT = JobState.JOB_ROOT + "/created";
+    public static final String JOB_TRACKINGROOT = ZooKeeperStorage.JOB_TRACKINGPATH;
 
     // The zookeeper connection to use
     private ZooKeeper zk;
@@ -68,7 +67,7 @@ public class JobStateTracker {
     public void create()
         throws IOException
     {
-        String[] paths = {JobState.JOB_ROOT, JOB_TRACKINGROOT};
+        String[] paths = {ZooKeeperStorage.STORAGE_ROOT, JOB_TRACKINGROOT};
         for (String znode : paths) {
             try {
                 zk.create(znode, new byte[0],

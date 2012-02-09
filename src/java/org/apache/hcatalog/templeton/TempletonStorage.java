@@ -17,6 +17,7 @@
  */
 package org.apache.hcatalog.templeton;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public interface TempletonStorage {
 	public enum Type {
 		UNKNOWN, JOB, JOBTRACKING, TEMPLETONOVERHEAD
 	}
-
+	
 	/**
 	 * Save a single key/value pair for a specific job id.
 	 * @param type The data type (as listed above)
@@ -64,7 +65,7 @@ public interface TempletonStorage {
 	 * @return The value of the field requested, or null if not
 	 * found.
 	 */
-         public String getField(Type type, String id, String key);
+    public String getField(Type type, String id, String key);
 
 	/**
 	 * Get all the name/value pairs stored for this id.
@@ -76,7 +77,7 @@ public interface TempletonStorage {
 	 *
 	 * @param type The data type (as listed above)
 	 * @param id The String id of this data grouping (jobid, etc.)
-	 * @return A HashMap of key/value pairs found for this type/id.
+	 * @return A Map of key/value pairs found for this type/id.
 	 */
 	public Map<String, String> getFields(Type type, String id);
 
@@ -124,6 +125,18 @@ public interface TempletonStorage {
 	 * @param value The value of the field to search for
 	 * @return An ArrayList<String> of ids.
 	 */
-	public List<String> getAllForTypeAndUser(Type type, String key,
+	public List<String> getAllForTypeAndKey(Type type, String key,
 			String value);
+	
+	/**
+	 * For storage methods that require a connection, this is a hint
+	 * that it's time to open a connection.
+	 */
+	public void openStorage() throws IOException;
+	
+	/**
+	 * For storage methods that require a connection, this is a hint
+	 * that it's time to close the connection.
+	 */
+	public void closeStorage() throws IOException;
 }

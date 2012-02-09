@@ -48,7 +48,7 @@ public class DeleteDelegator extends TempletonDelegator {
             if (jobid == null)
                 throw new BadParam("Invalid jobid: " + id);
             tracker.killJob(jobid);
-            state = new JobState(id, appConf);
+            state = new JobState(id);
             String childid = state.getChildId();
             if (childid != null)
                 tracker.killJob(StatusDelegator.StringToJobID(childid));

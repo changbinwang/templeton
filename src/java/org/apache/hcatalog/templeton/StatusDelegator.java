@@ -51,7 +51,7 @@ public class StatusDelegator extends TempletonDelegator {
             JobID jobid = StatusDelegator.StringToJobID(id);
             if (jobid == null)
                 throw new BadParam("Invalid jobid: " + id);
-            state = new JobState(id, appConf);
+            state = new JobState(id);
             return StatusDelegator.makeStatus(tracker, jobid, state);
         } catch (IllegalStateException e) {
             throw new BadParam(e.getMessage());

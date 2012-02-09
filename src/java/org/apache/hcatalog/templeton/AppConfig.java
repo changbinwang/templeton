@@ -19,6 +19,7 @@ package org.apache.hcatalog.templeton;
 
 import com.sun.jersey.spi.container.servlet.WebComponent;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
@@ -107,9 +108,13 @@ public class AppConfig extends Configuration {
     public static final String HADOOP_END_RETRY_NAME    = "job.end.retry.attempts";
     public static final String HADOOP_END_URL_NAME      = "job.end.notification.url";
 
+    public static final String STORAGE_CLASS	= "templeton.storage.class";
+
     private static final Log LOG = LogFactory.getLog(AppConfig.class);
 
     private static volatile AppConfig theSingleton;
+
+    public TempletonStorage storage = null;
 
     /**
      * Retrieve the singleton.
@@ -143,6 +148,18 @@ public class AppConfig extends Configuration {
         Logger filterLogger = Logger.getLogger(WebComponent.class.getName());
         if (filterLogger != null)
             filterLogger.setLevel(Level.SEVERE);
+        
+        try {
+        	storage = (TempletonStorage) 
+        			Class.forName(get(STORAGE_CLASS)).newInstance();
+        } catch (Exception e) {
+            LOG.error("No storage method found: " + e.getMessage());
+            try {
+            	storage = new ZooKeeperStorage(this);
+            } catch (Exception ex) {
+            	LOG.error("Couldn't create storage.");
+            }
+        }
     }
 
     public String getHadoopConfDir() {
@@ -199,7 +216,7 @@ public class AppConfig extends Configuration {
     public long zkMaxAge()           {
         return getLong(ZooKeeperCleanup.ZK_CLEANUP_MAX_AGE,
                        (1000L * 60L * 60L * 24L * 7L)); }
-    public String zkHosts()          { return get(JobState.ZK_HOSTS); }
-    public int zkSessionTimeout()    { return getInt(JobState.ZK_SESSION_TIMEOUT,
+    public String zkHosts()          { return get(ZooKeeperStorage.ZK_HOSTS); }
+    public int zkSessionTimeout()    { return getInt(ZooKeeperStorage.ZK_SESSION_TIMEOUT,
                                                      30000); }
 }
