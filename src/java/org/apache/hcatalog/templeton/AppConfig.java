@@ -153,7 +153,11 @@ public class AppConfig extends Configuration {
         	storage = (TempletonStorage) 
         			Class.forName(get(STORAGE_CLASS)).newInstance();
         } catch (Exception e) {
-            LOG.error("No storage method found: " + e.getMessage());
+        	String exc = "";
+        	for (int i=0; i<e.getStackTrace().length; i++) {
+        		exc += e.getStackTrace()[i];
+        	}
+            LOG.error("No storage method found: " + e.getMessage() + " " + exc);
             try {
             	storage = new ZooKeeperStorage(this);
             } catch (Exception ex) {

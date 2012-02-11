@@ -93,6 +93,11 @@ public class ZooKeeperStorage implements TempletonStorage {
                       conf.getInt(ZK_SESSION_TIMEOUT, 30000));
     }
 
+    public ZooKeeperStorage() {
+    	// No-op -- this is needed to be able to instantiate the
+    	// class from the name.
+    }
+    
     public ZooKeeperStorage(ZooKeeper zk)
         throws IOException
     {
@@ -267,12 +272,8 @@ public class ZooKeeperStorage implements TempletonStorage {
                 setFieldData(type, id, key, val);
             }
         } catch(Exception e) {
-        	String exc = "";
-        	for (int i=0; i<e.getStackTrace().length; i++) {
-        		exc += e.getStackTrace()[i];
-        	}
             throw new NotFoundException("Writing " + key + ": " + val + ", "
-            		+ e.getMessage() + ", " + exc);
+            		+ e.getMessage());
         }
 	}
 
