@@ -114,7 +114,6 @@ public class TempletonControllerJob extends Configured implements Tool {
         {
 
             Configuration conf = context.getConfiguration();
-            JobState state = new JobState(context.getJobID().toString());
 
             Process proc = startJob(context,
                                     conf.get("user.name"),
@@ -137,6 +136,7 @@ public class TempletonControllerJob extends Configured implements Tool {
                 pool.shutdownNow();
 
             writeExitValue(conf, proc.exitValue(), statusdir);
+            JobState state = new JobState(context.getJobID().toString());
             state.setExitValue(proc.exitValue());
             state.setCompleteStatus("done");
             state.close();

@@ -57,6 +57,15 @@ public class ZooKeeperStorage implements TempletonStorage {
 
     private static final Log LOG = LogFactory.getLog(ZooKeeperStorage.class);
 
+    static {
+        try {
+            ZooKeeperCleanup.startInstance(AppConfig.getInstance());
+        } catch (IOException e) {
+            // If cleanup isn't running, should the server run?
+            LOG.error("ZookeeperCleanup failed to start: " + e.getMessage());
+        }
+    }
+
     private ZooKeeper zk;
 
     /**
@@ -141,6 +150,7 @@ public class ZooKeeperStorage implements TempletonStorage {
                 	// Really not sure if this should go here.  Will have
                 	// to see how the storage mechanism evolves.
                 	if (type.equals(Type.JOB)) { 
+                		LOG.info("*** Creating jobtracker");
                 		JobStateTracker jt = new JobStateTracker(id, zk, false);
                 		jt.create();
                 	}
@@ -257,7 +267,12 @@ public class ZooKeeperStorage implements TempletonStorage {
                 setFieldData(type, id, key, val);
             }
         } catch(Exception e) {
-            throw new NotFoundException("Writing " + key + ": " + val);
+        	String exc = "";
+        	for (int i=0; i<e.getStackTrace().length; i++) {
+        		exc += e.getStackTrace()[i];
+        	}
+            throw new NotFoundException("Writing " + key + ": " + val + ", "
+            		+ e.getMessage() + ", " + exc);
         }
 	}
 

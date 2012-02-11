@@ -279,7 +279,7 @@ public class JobState {
     	try {
     		storage.saveField(type, id, name, val);
     	} catch (NotFoundException ne) {
-    		throw new IOException("Job " + id + " was not found.");
+    		throw new IOException(ne.getMessage());
     	}
     }
     
@@ -302,7 +302,8 @@ public class JobState {
     		try {
     			storage.saveField(type, id, name, String.valueOf(val));
     		} catch (NotFoundException ne) {
-        		throw new IOException("Job " + id + " was not found.");
+        		throw new IOException("Job " + id + " was not found: " + 
+        				ne.getMessage());
         	}
         }
     
