@@ -139,7 +139,6 @@ public class ZooKeeperStorage implements TempletonStorage {
         throws IOException
     {
         try {
-        	LOG.info("*** Creating node " + id);
             String[] paths = {STORAGE_ROOT, getPath(type), makeZnode(type, id)};
             boolean wasCreated = false;
             for (String znode : paths) {
@@ -155,7 +154,6 @@ public class ZooKeeperStorage implements TempletonStorage {
                 	// Really not sure if this should go here.  Will have
                 	// to see how the storage mechanism evolves.
                 	if (type.equals(Type.JOB)) { 
-                		LOG.info("*** Creating jobtracker");
                 		JobStateTracker jt = new JobStateTracker(id, zk, false);
                 		jt.create();
                 	}
@@ -176,7 +174,6 @@ public class ZooKeeperStorage implements TempletonStorage {
             		throw new IOException("Couldn't write to node " + id, nfe);
             	}
             }
-            LOG.info("*** Created node " + id);
         } catch (KeeperException e) {
             throw new IOException("Creating " + id, e);
         } catch (InterruptedException e) {
@@ -201,12 +198,10 @@ public class ZooKeeperStorage implements TempletonStorage {
         throws KeeperException, UnsupportedEncodingException, InterruptedException
     {
         try {
-        	LOG.info("Setting field " + id + ", " + name + ", " + val);
             zk.create(makeFieldZnode(type, id, name),
                       val.getBytes(ENCODING),
                       Ids.OPEN_ACL_UNSAFE,
                       CreateMode.PERSISTENT);
-            LOG.info("Set field.");
         } catch(KeeperException.NodeExistsException e) {
             zk.setData(makeFieldZnode(type, id, name),
                        val.getBytes(ENCODING),
@@ -280,9 +275,7 @@ public class ZooKeeperStorage implements TempletonStorage {
 	@Override
 	public String getField(Type type, String id, String key) {
         try {
-        	LOG.info("Looking for job " + id + ", " + key);
             byte[] b = zk.getData(makeFieldZnode(type, id, key), false, null);
-            LOG.info("Got job: " + new String(b, ENCODING));
             return new String(b, ENCODING);
         } catch(Exception e) {
             return null;

@@ -77,7 +77,6 @@ public class JobStateTracker {
                 throw new IOException("Unable to create parent nodes");
             }
         }
-        LOG.info("*** Creating tracking node for " + jobid);
         try {
             trackingnode = zk.create(makeTrackingZnode(), jobid.getBytes(), 
                     Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
