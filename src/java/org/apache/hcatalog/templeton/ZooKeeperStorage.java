@@ -181,6 +181,12 @@ public class ZooKeeperStorage implements TempletonStorage {
         }
     }
     
+    /**
+     * Get the path based on the job type.
+     * 
+     * @param type
+     * @return
+     */
     public String getPath(Type type) {
     	String typepath = OVERHEAD_PATH;
     	switch (type) {
@@ -194,6 +200,16 @@ public class ZooKeeperStorage implements TempletonStorage {
     	return typepath;
     }
 
+    /**
+     * A helper method that sets a field value.
+     * @param type
+     * @param id
+     * @param name
+     * @param val
+     * @throws KeeperException
+     * @throws UnsupportedEncodingException
+     * @throws InterruptedException
+     */
     private void setFieldData(Type type, String id, String name, String val)
         throws KeeperException, UnsupportedEncodingException, InterruptedException
     {
@@ -221,41 +237,6 @@ public class ZooKeeperStorage implements TempletonStorage {
      */
     public String makeZnode(Type type, String id) {
         return getPath(type) + "/" + id;
-    }
-
-    /**
-     * The ZK watcher.  A no op.
-     */
-
-    /**
-     * Get an id for each currently existing job, which can be used to create
-     * a JobState object.
-     *
-     * @param conf
-     * @return
-     * @throws IOException
-     */
-    public static List<String> getJobs(Configuration conf) throws IOException {
-        ArrayList<String> jobs = new ArrayList<String>();
-        ZooKeeper zk = null;
-        try {
-            zk = zkOpen(conf);
-            for (String myid : zk.getChildren(JOB_PATH, false)) {
-                jobs.add(myid);
-            }
-        } catch (Exception e) {
-            throw new IOException("Can't get children", e);
-        } finally {
-        	if (zk != null) {
-        		try {
-        			zk.close();
-        			zk = null;
-        		} catch (Exception e) {
-        			LOG.info("Couldn't close ZooKeeper.");
-        		}
-        	}
-        }
-        return jobs;
     }
 
 	@Override
