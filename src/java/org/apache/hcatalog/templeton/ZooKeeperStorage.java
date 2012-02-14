@@ -42,7 +42,7 @@ import org.apache.zookeeper.ZooKeeper;
  * Data is stored with each key/value pair being a node in ZooKeeper.
  */
 public class ZooKeeperStorage implements TempletonStorage {
-	// Predictable locations for each of the storage types
+    // Predictable locations for each of the storage types
     public static final String STORAGE_ROOT = "/templeton-hadoop";
 
     public static final String JOB_PATH = STORAGE_ROOT + "/jobs";
@@ -94,8 +94,8 @@ public class ZooKeeperStorage implements TempletonStorage {
     }
 
     public ZooKeeperStorage() {
-    	// No-op -- this is needed to be able to instantiate the
-    	// class from the name.
+        // No-op -- this is needed to be able to instantiate the
+        // class from the name.
     }
 
     /**
@@ -133,12 +133,12 @@ public class ZooKeeperStorage implements TempletonStorage {
             }
             if (wasCreated) {
                 try {
-                	// Really not sure if this should go here.  Will have
-                	// to see how the storage mechanism evolves.
-                	if (type.equals(Type.JOB)) {
-                		JobStateTracker jt = new JobStateTracker(id, zk, false);
-                		jt.create();
-                	}
+                    // Really not sure if this should go here.  Will have
+                    // to see how the storage mechanism evolves.
+                    if (type.equals(Type.JOB)) {
+                        JobStateTracker jt = new JobStateTracker(id, zk, false);
+                        jt.create();
+                    }
                 } catch (Exception e) {
                     // If we couldn't create the tracker node, don't
                     // create the main node.
@@ -148,13 +148,13 @@ public class ZooKeeperStorage implements TempletonStorage {
             if (zk.exists(makeZnode(type, id), false) == null)
                 throw new IOException("Unable to create " + makeZnode(type, id));
             if (wasCreated) {
-            	try {
-            		saveField(type, id, "created",
-                		Long.toString(System.currentTimeMillis()));
-            	} catch (NotFoundException nfe) {
-            		// Wow, something's really wrong.
-            		throw new IOException("Couldn't write to node " + id, nfe);
-            	}
+                try {
+                    saveField(type, id, "created",
+                              Long.toString(System.currentTimeMillis()));
+                } catch (NotFoundException nfe) {
+                    // Wow, something's really wrong.
+                    throw new IOException("Couldn't write to node " + id, nfe);
+                }
             }
         } catch (KeeperException e) {
             throw new IOException("Creating " + id, e);
@@ -170,16 +170,16 @@ public class ZooKeeperStorage implements TempletonStorage {
      * @return
      */
     public String getPath(Type type) {
-    	String typepath = OVERHEAD_PATH;
-    	switch (type) {
-    	case JOB:
-    		typepath = JOB_PATH;
-    		break;
-    	case JOBTRACKING:
-    		typepath = JOB_TRACKINGPATH;
-    		break;
-    	}
-    	return typepath;
+        String typepath = OVERHEAD_PATH;
+        switch (type) {
+        case JOB:
+            typepath = JOB_PATH;
+            break;
+        case JOBTRACKING:
+            typepath = JOB_TRACKINGPATH;
+            break;
+        }
+        return typepath;
     }
 
     /**
@@ -221,48 +221,48 @@ public class ZooKeeperStorage implements TempletonStorage {
         return getPath(type) + "/" + id;
     }
 
-	@Override
-	public void saveField(Type type, String id, String key, String val)
-			throws NotFoundException {
-		try {
+    @Override
+    public void saveField(Type type, String id, String key, String val)
+        throws NotFoundException {
+        try {
             if (val != null) {
                 create(type, id);
                 setFieldData(type, id, key, val);
             }
         } catch(Exception e) {
             throw new NotFoundException("Writing " + key + ": " + val + ", "
-            		+ e.getMessage());
+                                        + e.getMessage());
         }
-	}
+    }
 
-	@Override
-	public String getField(Type type, String id, String key) {
+    @Override
+    public String getField(Type type, String id, String key) {
         try {
             byte[] b = zk.getData(makeFieldZnode(type, id, key), false, null);
             return new String(b, ENCODING);
         } catch(Exception e) {
             return null;
         }
-	}
+    }
 
-	@Override
-	public Map<String, String> getFields(Type type, String id) {
-		HashMap<String, String> map = new HashMap<String, String>();
-		try {
-			for (String node: zk.getChildren(makeZnode(type, id), false)) {
-				byte[] b = zk.getData(makeFieldZnode(type, id, node),
-						false, null);
-				map.put(node, new String(b, ENCODING));
-			}
+    @Override
+    public Map<String, String> getFields(Type type, String id) {
+        HashMap<String, String> map = new HashMap<String, String>();
+        try {
+            for (String node: zk.getChildren(makeZnode(type, id), false)) {
+                byte[] b = zk.getData(makeFieldZnode(type, id, node),
+                                      false, null);
+                map.put(node, new String(b, ENCODING));
+            }
         } catch(Exception e) {
             return map;
         }
-		return map;
-	}
+        return map;
+    }
 
-	@Override
-	public boolean delete(Type type, String id) throws NotFoundException {
-		try {
+    @Override
+    public boolean delete(Type type, String id) throws NotFoundException {
+        try {
             for (String child : zk.getChildren(makeZnode(type, id), false)) {
                 try {
                     zk.delete(makeFieldZnode(type, id, child), -1);
@@ -270,7 +270,7 @@ public class ZooKeeperStorage implements TempletonStorage {
                     // Other nodes may be trying to delete this at the same time,
                     // so just log errors and skip them.
                     throw new NotFoundException("Couldn't delete " +
-                    	makeFieldZnode(type, id, child));
+                                                makeFieldZnode(type, id, child));
                 }
             }
             try {
@@ -278,77 +278,77 @@ public class ZooKeeperStorage implements TempletonStorage {
             } catch (Exception e) {
                 // Same thing -- might be deleted by other nodes, so just go on.
                 throw new NotFoundException("Couldn't delete " +
-                	makeZnode(type, id));
+                                            makeZnode(type, id));
             }
         } catch (Exception e) {
             // Error getting children of node -- probably node has been deleted
             throw new NotFoundException("Couldn't get children of " +
-            		makeZnode(type, id));
+                                        makeZnode(type, id));
         }
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public List<String> getAll() {
-		ArrayList<String> allNodes = new ArrayList<String>();
-		for (Type type: Type.values()) {
-			allNodes.addAll(getAllForType(type));
-		}
-		return allNodes;
-	}
+    @Override
+    public List<String> getAll() {
+        ArrayList<String> allNodes = new ArrayList<String>();
+        for (Type type: Type.values()) {
+            allNodes.addAll(getAllForType(type));
+        }
+        return allNodes;
+    }
 
-	@Override
-	public List<String> getAllForType(Type type) {
-		try {
-			return zk.getChildren(getPath(type), false);
-		} catch (Exception e) {
-			return new ArrayList<String>();
-		}
-	}
+    @Override
+    public List<String> getAllForType(Type type) {
+        try {
+            return zk.getChildren(getPath(type), false);
+        } catch (Exception e) {
+            return new ArrayList<String>();
+        }
+    }
 
-	@Override
-	public List<String> getAllForKey(String key, String value) {
-		ArrayList<String> allNodes = new ArrayList<String>();
-		try {
-			for (Type type: Type.values()) {
-				allNodes.addAll(getAllForTypeAndKey(type, key, value));
-			}
-		} catch (Exception e) {
-			LOG.info("Couldn't find children.");
-		}
-		return allNodes;
-	}
+    @Override
+    public List<String> getAllForKey(String key, String value) {
+        ArrayList<String> allNodes = new ArrayList<String>();
+        try {
+            for (Type type: Type.values()) {
+                allNodes.addAll(getAllForTypeAndKey(type, key, value));
+            }
+        } catch (Exception e) {
+            LOG.info("Couldn't find children.");
+        }
+        return allNodes;
+    }
 
-	@Override
-	public List<String> getAllForTypeAndKey(Type type, String key, String value) {
-		ArrayList<String> allNodes = new ArrayList<String>();
-		try {
-			for (String id : zk.getChildren(getPath(type), false)) {
-				for (String field : zk.getChildren(id, false)) {
-					if (field.endsWith("/" + key)) {
-						byte[] b = zk.getData(field, false, null);
-						if (new String(b, ENCODING).equals(value)) {
-							allNodes.add(id);
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			// Log and go to the next type -- this one might not exist
-			LOG.info("Couldn't find children of " + getPath(type));
-		}
-		return allNodes;
-	}
+    @Override
+    public List<String> getAllForTypeAndKey(Type type, String key, String value) {
+        ArrayList<String> allNodes = new ArrayList<String>();
+        try {
+            for (String id : zk.getChildren(getPath(type), false)) {
+                for (String field : zk.getChildren(id, false)) {
+                    if (field.endsWith("/" + key)) {
+                        byte[] b = zk.getData(field, false, null);
+                        if (new String(b, ENCODING).equals(value)) {
+                            allNodes.add(id);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Log and go to the next type -- this one might not exist
+            LOG.info("Couldn't find children of " + getPath(type));
+        }
+        return allNodes;
+    }
 
-	@Override
-	public void openStorage() throws IOException {
-		if (zk == null) {
-			zk = zkOpen(AppConfig.getInstance());
-		}
-	}
+    @Override
+    public void openStorage() throws IOException {
+        if (zk == null) {
+            zk = zkOpen(AppConfig.getInstance());
+        }
+    }
 
-	@Override
-	public void closeStorage() throws IOException {
-		close();
-	}
+    @Override
+    public void closeStorage() throws IOException {
+        close();
+    }
 }

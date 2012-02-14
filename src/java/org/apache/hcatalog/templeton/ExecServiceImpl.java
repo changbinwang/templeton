@@ -126,8 +126,8 @@ public class ExecServiceImpl implements ExecService {
         return res;
     }
 
-    private CommandLine makeCommandLine(String program, 
-    		List<String> args)
+    private CommandLine makeCommandLine(String program,
+                                        List<String> args)
         throws NotAuthorizedException, IOException
     {
         String path = validateProgram(program);

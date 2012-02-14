@@ -61,7 +61,7 @@ public class LauncherDelegator extends TempletonDelegator {
     public EnqueueBean enqueueController(String user, String callback,
                                          List<String> args)
         throws NotAuthorizedException, BusyException, ExecuteException,
-               IOException, QueueException
+        IOException, QueueException
     {
         // Setup the hadoop vars to specify the user.
         Map<String, String> env = TempletonUtils.hadoopUserEnv(user, null);
@@ -97,8 +97,8 @@ public class LauncherDelegator extends TempletonDelegator {
         addDef(args, "user.name", runAs);
 
         // Zk vars
-        addDef(args, ZooKeeperStorage.ZK_HOSTS, 
-        		appConf.get(ZooKeeperStorage.ZK_HOSTS));
+        addDef(args, ZooKeeperStorage.ZK_HOSTS,
+               appConf.get(ZooKeeperStorage.ZK_HOSTS));
         addDef(args, ZooKeeperStorage.ZK_SESSION_TIMEOUT,
                appConf.get(ZooKeeperStorage.ZK_SESSION_TIMEOUT));
 

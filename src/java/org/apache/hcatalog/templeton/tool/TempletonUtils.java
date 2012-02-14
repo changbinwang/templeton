@@ -137,7 +137,7 @@ public class TempletonUtils {
      * Encode a List into a string.
      */
     public static String encodeArray(List<String> list) {
-    	if (list == null)
+        if (list == null)
             return null;
         String[] array = new String[list.size()];
         return encodeArray(list.toArray(array));
@@ -164,9 +164,9 @@ public class TempletonUtils {
         throws URISyntaxException, FileNotFoundException, IOException,
         InterruptedException
     {
-    	if (files == null || conf == null) {
+        if (files == null || conf == null) {
             return null;
-    	}
+        }
         String[] dirty = files.split(",");
         String[] clean = new String[dirty.length];
 
@@ -181,9 +181,9 @@ public class TempletonUtils {
         throws URISyntaxException, FileNotFoundException, IOException,
         InterruptedException
     {
-    	if (files == null || conf == null) {
+        if (files == null || conf == null) {
             return null;
-    	}
+        }
         return StringUtils.arrayToString(hadoopFsListAsArray(files, conf, user));
     }
 
@@ -202,9 +202,9 @@ public class TempletonUtils {
         throws URISyntaxException, FileNotFoundException, IOException,
         InterruptedException
     {
-    	if (fname == null || conf == null) {
+        if (fname == null || conf == null) {
             return null;
-    	}
+        }
         FileSystem defaultFs = FileSystem.get(new URI(fname), conf, user);
         URI u = new URI(fname);
         Path p = new Path(u).makeQualified(defaultFs);

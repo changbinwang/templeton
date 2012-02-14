@@ -54,17 +54,17 @@ public class ListDelegator extends TempletonDelegator {
 
             if (jobs != null) {
                 for (JobStatus job : jobs) {
-                	JobState state = null;
-                	try { 
-                		String id = job.getJobID().toString();
-                		state = new JobState(id);
-                		if (user.equals(state.getUser()))
-                			ids.add(id);
-                	} finally {
-                		if (state != null) {
-                			state.close();
-                		}
-                	}
+                    JobState state = null;
+                    try {
+                        String id = job.getJobID().toString();
+                        state = new JobState(id);
+                        if (user.equals(state.getUser()))
+                            ids.add(id);
+                    } finally {
+                        if (state != null) {
+                            state.close();
+                        }
+                    }
                 }
             }
 

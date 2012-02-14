@@ -36,19 +36,19 @@ public class JobState {
     private static final Log LOG = LogFactory.getLog(JobState.class);
 
     private String id;
-    
+
     // Storage is instantiated in the constructor
     private TempletonStorage storage = null;
-    
+
     private static TempletonStorage.Type type = TempletonStorage.Type.JOB;
-    
+
     public JobState(String id)
         throws IOException
     {
         this.id = id;
         storage = AppConfig.getInstance().getStorage();
         storage.openStorage();
-    }  
+    }
 
     public void delete()
         throws IOException
@@ -60,15 +60,15 @@ public class JobState {
             LOG.info("Couldn't delete " + id);
         }
     }
-    
+
     /**
      * For storage methods that require a connection, this is a hint
-	 * that it's time to close the connection.
+     * that it's time to close the connection.
      */
     public void close() throws IOException {
-    	storage.closeStorage();
+        storage.closeStorage();
     }
-    
+
     //
     // Properties
     //
@@ -110,37 +110,37 @@ public class JobState {
 
     /**
      * Add a jobid to the list of children of this job.
-     * 
+     *
      * @param jobid
      * @throws IOException
      */
     public void addChild(String jobid) throws IOException {
-    	String jobids = "";
-    	try {
-    		jobids = getField("children");
-    	} catch (Exception e) {
-    		// There are none or they're not readable.
-    	}
-    	if (!jobids.equals("")) {
-    		jobids += ",";
-    	}
-    	jobids += jobid;
-    	setField("children", jobids);
+        String jobids = "";
+        try {
+            jobids = getField("children");
+        } catch (Exception e) {
+            // There are none or they're not readable.
+        }
+        if (!jobids.equals("")) {
+            jobids += ",";
+        }
+        jobids += jobid;
+        setField("children", jobids);
     }
-    
+
     /**
      * Get a list of jobstates for jobs that are children of this job.
      * @return
      * @throws IOException
      */
     public List<JobState> getChildren() throws IOException {
-    	ArrayList<JobState> children = new ArrayList<JobState>();
-    	for (String jobid : getField("children").split(",")) {
-    		children.add(new JobState(jobid));
-    	}
-    	return children;
+        ArrayList<JobState> children = new ArrayList<JobState>();
+        for (String jobid : getField("children").split(",")) {
+            children.add(new JobState(jobid));
+        }
+        return children;
     }
-    
+
     /**
      * Save a comma-separated list of jobids that are children
      * of this job.
@@ -148,24 +148,24 @@ public class JobState {
      * @throws IOException
      */
     public void setChildren(String jobids) throws IOException {
-    	setField("children", jobids);
+        setField("children", jobids);
     }
-    
+
     /**
      * Set the list of child jobs of this job
      * @param children
      */
     public void setChildren(List<JobState> children) throws IOException {
-    	String val = "";
-    	for (JobState jobstate : children) {
-    		if (!val.equals("")) {
-    			val += ",";
-    		}
-    		val += jobstate.getId();
-    	}
-    	setField("children", val);
+        String val = "";
+        for (JobState jobstate : children) {
+            if (!val.equals("")) {
+                val += ",";
+            }
+            val += jobstate.getId();
+        }
+        setField("children", val);
     }
-    
+
     /**
      * The system exit value of the job.
      */
@@ -278,38 +278,38 @@ public class JobState {
      */
     public void setField(String name, String val)
         throws IOException
-    {	
-    	try {
-    		storage.saveField(type, id, name, val);
-    	} catch (NotFoundException ne) {
-    		throw new IOException(ne.getMessage());
-    	}
-    }
-    
-    public String getField(String name)
-            throws IOException
-        {
-            return storage.getField(type, id, name);
+    {
+        try {
+            storage.saveField(type, id, name, val);
+        } catch (NotFoundException ne) {
+            throw new IOException(ne.getMessage());
         }
-    
+    }
+
+    public String getField(String name)
+        throws IOException
+    {
+        return storage.getField(type, id, name);
+    }
+
     /**
      * Store a long field.
-     * 
+     *
      * @param name
      * @param val
      * @throws IOException
      */
     public void setLongField(String name, long val)
-            throws IOException
-        {
-    		try {
-    			storage.saveField(type, id, name, String.valueOf(val));
-    		} catch (NotFoundException ne) {
-        		throw new IOException("Job " + id + " was not found: " + 
-        				ne.getMessage());
-        	}
+        throws IOException
+    {
+        try {
+            storage.saveField(type, id, name, String.valueOf(val));
+        } catch (NotFoundException ne) {
+            throw new IOException("Job " + id + " was not found: " +
+                                  ne.getMessage());
         }
-    
+    }
+
     /**
      * Get an id for each currently existing job, which can be used to create
      * a JobState object.

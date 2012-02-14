@@ -108,7 +108,7 @@ public class AppConfig extends Configuration {
     public static final String HADOOP_END_RETRY_NAME    = "job.end.retry.attempts";
     public static final String HADOOP_END_URL_NAME      = "job.end.notification.url";
 
-    public static final String STORAGE_CLASS	= "templeton.storage.class";
+    public static final String STORAGE_CLASS    = "templeton.storage.class";
 
     private static final Log LOG = LogFactory.getLog(AppConfig.class);
 
@@ -154,16 +154,16 @@ public class AppConfig extends Configuration {
      * @return
      */
     public TempletonStorage getStorage() {
-    	TempletonStorage storage = null;
+        TempletonStorage storage = null;
         try {
-        	storage = (TempletonStorage)
-        			Class.forName(get(STORAGE_CLASS)).newInstance();
+            storage = (TempletonStorage)
+                Class.forName(get(STORAGE_CLASS)).newInstance();
         } catch (Exception e) {
             LOG.warn("No storage method found: " + e.getMessage());
             try {
-            	storage = new ZooKeeperStorage();
+                storage = new ZooKeeperStorage();
             } catch (Exception ex) {
-            	LOG.error("Couldn't create storage.");
+                LOG.error("Couldn't create storage.");
             }
         }
         return storage;
