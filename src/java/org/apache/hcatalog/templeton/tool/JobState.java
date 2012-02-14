@@ -37,13 +37,16 @@ public class JobState {
 
     private String id;
     
-    private static TempletonStorage storage = AppConfig.getInstance().storage;
+    // Storage is instantiated in the constructor
+    private TempletonStorage storage = null;
+    
     private static TempletonStorage.Type type = TempletonStorage.Type.JOB;
     
     public JobState(String id)
         throws IOException
     {
         this.id = id;
+        storage = AppConfig.getInstance().getStorage();
         storage.openStorage();
     }  
 
@@ -317,7 +320,7 @@ public class JobState {
      */
     public static List<String> getJobs() throws IOException {
         try {
-            return storage.getAllForType(type);
+            return AppConfig.getInstance().getStorage().getAllForType(type);
         } catch (Exception e) {
             throw new IOException("Can't get jobs", e);
         }

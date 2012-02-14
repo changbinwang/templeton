@@ -114,8 +114,6 @@ public class AppConfig extends Configuration {
 
     private static volatile AppConfig theSingleton;
 
-    public TempletonStorage storage = null;
-
     /**
      * Retrieve the singleton.
      */
@@ -148,22 +146,27 @@ public class AppConfig extends Configuration {
         Logger filterLogger = Logger.getLogger(WebComponent.class.getName());
         if (filterLogger != null)
             filterLogger.setLevel(Level.SEVERE);
-        
+    }
+    
+    /**
+     * Get an instance of the selected storage class.  Defaults to
+     * ZooKeeper storage if none is specified.
+     * @return
+     */
+    public TempletonStorage getStorage() {
+    	TempletonStorage storage = null;
         try {
         	storage = (TempletonStorage) 
         			Class.forName(get(STORAGE_CLASS)).newInstance();
         } catch (Exception e) {
-        	String exc = "";
-        	for (int i=0; i<e.getStackTrace().length; i++) {
-        		exc += e.getStackTrace()[i];
-        	}
-            LOG.error("No storage method found: " + e.getMessage() + " " + exc);
+            LOG.error("No storage method found: " + e.getMessage());
             try {
             	storage = new ZooKeeperStorage(this);
             } catch (Exception ex) {
             	LOG.error("Couldn't create storage.");
             }
         }
+        return storage;
     }
 
     public String getHadoopConfDir() {
