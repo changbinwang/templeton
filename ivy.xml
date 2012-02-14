@@ -70,6 +70,9 @@
                 conf="common->master"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="1.4.3"
                 conf="common->master"/>
+                
+    <dependency org="io.netty" name="netty" rev="3.3.1.Final" conf="common->master"/>
+
 
     <dependency org="com.sun.jersey"
                 name="jersey-core"
@@ -83,11 +86,6 @@
                 name="jersey-json"
                 rev="1.9.1"
                 conf="common->master"/>
-    <dependency org="com.sun.jersey"
-                name="jersey-json"
-                rev="1.9.1"
-                conf="common->master"/>
-
     <dependency org="com.sun.jersey"
                 name="jersey-json"
                 rev="1.9.1"
