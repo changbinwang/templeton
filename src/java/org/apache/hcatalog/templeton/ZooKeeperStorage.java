@@ -341,9 +341,9 @@ public class ZooKeeperStorage implements TempletonStorage {
     }
 
     @Override
-    public void openStorage() throws IOException {
+    public void openStorage(Configuration config) throws IOException {
         if (zk == null) {
-            zk = zkOpen(AppConfig.getInstance());
+            zk = zkOpen(config);
         }
     }
 

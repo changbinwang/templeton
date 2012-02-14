@@ -19,7 +19,6 @@ package org.apache.hcatalog.templeton;
 
 import com.sun.jersey.spi.container.servlet.WebComponent;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
@@ -29,7 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.VersionInfo;
-import org.apache.hcatalog.templeton.tool.JobState;
 
 /**
  * The configuration for Templeton.  This merges the normal Hadoop
@@ -158,6 +156,7 @@ public class AppConfig extends Configuration {
         try {
             storage = (TempletonStorage)
                 Class.forName(get(STORAGE_CLASS)).newInstance();
+            storage.openStorage(this);
         } catch (Exception e) {
             LOG.warn("No storage method found: " + e.getMessage());
             try {

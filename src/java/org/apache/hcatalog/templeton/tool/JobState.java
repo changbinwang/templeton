@@ -47,7 +47,6 @@ public class JobState {
     {
         this.id = id;
         storage = AppConfig.getInstance().getStorage();
-        storage.openStorage();
     }
 
     public void delete()

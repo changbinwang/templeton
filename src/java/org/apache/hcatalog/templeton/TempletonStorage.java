@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.hadoop.conf.Configuration;
+
 /**
  * An interface to handle different Templeton storage methods, including
  * ZooKeeper and HDFS.  Any storage scheme must be able to handle being
@@ -132,7 +134,7 @@ public interface TempletonStorage {
      * For storage methods that require a connection, this is a hint
      * that it's time to open a connection.
      */
-    public void openStorage() throws IOException;
+    public void openStorage(Configuration config) throws IOException;
 
     /**
      * For storage methods that require a connection, this is a hint
