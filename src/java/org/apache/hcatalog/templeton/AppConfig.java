@@ -147,7 +147,7 @@ public class AppConfig extends Configuration {
         if (filterLogger != null)
             filterLogger.setLevel(Level.SEVERE);
     }
-    
+
     /**
      * Get an instance of the selected storage class.  Defaults to
      * ZooKeeper storage if none is specified.
@@ -156,12 +156,12 @@ public class AppConfig extends Configuration {
     public TempletonStorage getStorage() {
     	TempletonStorage storage = null;
         try {
-        	storage = (TempletonStorage) 
+        	storage = (TempletonStorage)
         			Class.forName(get(STORAGE_CLASS)).newInstance();
         } catch (Exception e) {
-            LOG.error("No storage method found: " + e.getMessage());
+            LOG.warn("No storage method found: " + e.getMessage());
             try {
-            	storage = new ZooKeeperStorage(this);
+            	storage = new ZooKeeperStorage();
             } catch (Exception ex) {
             	LOG.error("Couldn't create storage.");
             }

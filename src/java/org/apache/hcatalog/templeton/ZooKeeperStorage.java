@@ -38,17 +38,17 @@ import org.apache.zookeeper.ZooKeeper;
  * A storage implementation based on storing everything in ZooKeeper.
  * This keeps everything in a central location that is guaranteed
  * to be available and accessible.
- * 
+ *
  * Data is stored with each key/value pair being a node in ZooKeeper.
  */
 public class ZooKeeperStorage implements TempletonStorage {
 	// Predictable locations for each of the storage types
     public static final String STORAGE_ROOT = "/templeton-hadoop";
-    
+
     public static final String JOB_PATH = STORAGE_ROOT + "/jobs";
     public static final String JOB_TRACKINGPATH = STORAGE_ROOT + "/created";
     public static final String OVERHEAD_PATH = STORAGE_ROOT + "/overhead";
-    
+
     public static final String ZK_HOSTS = "templeton.zookeeper.hosts";
     public static final String ZK_SESSION_TIMEOUT
         = "templeton.zookeeper.session-timeout";
@@ -97,24 +97,6 @@ public class ZooKeeperStorage implements TempletonStorage {
     	// No-op -- this is needed to be able to instantiate the
     	// class from the name.
     }
-    
-    public ZooKeeperStorage(ZooKeeper zk)
-        throws IOException
-    {
-        this.zk = zk;
-    }
-
-    public ZooKeeperStorage(String zkHosts, int zkSessionTimeout)
-        throws IOException
-    {
-        this(zkOpen(zkHosts, zkSessionTimeout));
-    }
-
-    public ZooKeeperStorage(Configuration conf)
-        throws IOException
-    {
-        this(conf.get(ZK_HOSTS), conf.getInt(ZK_SESSION_TIMEOUT, 30000));
-    }
 
     /**
      * Close this ZK connection.
@@ -153,7 +135,7 @@ public class ZooKeeperStorage implements TempletonStorage {
                 try {
                 	// Really not sure if this should go here.  Will have
                 	// to see how the storage mechanism evolves.
-                	if (type.equals(Type.JOB)) { 
+                	if (type.equals(Type.JOB)) {
                 		JobStateTracker jt = new JobStateTracker(id, zk, false);
                 		jt.create();
                 	}
@@ -167,7 +149,7 @@ public class ZooKeeperStorage implements TempletonStorage {
                 throw new IOException("Unable to create " + makeZnode(type, id));
             if (wasCreated) {
             	try {
-            		saveField(type, id, "created", 
+            		saveField(type, id, "created",
                 		Long.toString(System.currentTimeMillis()));
             	} catch (NotFoundException nfe) {
             		// Wow, something's really wrong.
@@ -180,10 +162,10 @@ public class ZooKeeperStorage implements TempletonStorage {
             throw new IOException("Creating " + id, e);
         }
     }
-    
+
     /**
      * Get the path based on the job type.
-     * 
+     *
      * @param type
      * @return
      */
@@ -260,7 +242,7 @@ public class ZooKeeperStorage implements TempletonStorage {
             return new String(b, ENCODING);
         } catch(Exception e) {
             return null;
-        } 
+        }
 	}
 
 	@Override
@@ -268,13 +250,13 @@ public class ZooKeeperStorage implements TempletonStorage {
 		HashMap<String, String> map = new HashMap<String, String>();
 		try {
 			for (String node: zk.getChildren(makeZnode(type, id), false)) {
-				byte[] b = zk.getData(makeFieldZnode(type, id, node), 
+				byte[] b = zk.getData(makeFieldZnode(type, id, node),
 						false, null);
 				map.put(node, new String(b, ENCODING));
 			}
         } catch(Exception e) {
             return map;
-        } 
+        }
 		return map;
 	}
 
@@ -287,7 +269,7 @@ public class ZooKeeperStorage implements TempletonStorage {
                 } catch (Exception e) {
                     // Other nodes may be trying to delete this at the same time,
                     // so just log errors and skip them.
-                    throw new NotFoundException("Couldn't delete " + 
+                    throw new NotFoundException("Couldn't delete " +
                     	makeFieldZnode(type, id, child));
                 }
             }
@@ -295,12 +277,12 @@ public class ZooKeeperStorage implements TempletonStorage {
                 zk.delete(makeZnode(type, id), -1);
             } catch (Exception e) {
                 // Same thing -- might be deleted by other nodes, so just go on.
-                throw new NotFoundException("Couldn't delete " + 
+                throw new NotFoundException("Couldn't delete " +
                 	makeZnode(type, id));
             }
         } catch (Exception e) {
             // Error getting children of node -- probably node has been deleted
-            throw new NotFoundException("Couldn't get children of " + 
+            throw new NotFoundException("Couldn't get children of " +
             		makeZnode(type, id));
         }
 		return true;
