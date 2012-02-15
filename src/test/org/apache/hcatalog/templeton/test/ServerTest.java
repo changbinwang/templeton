@@ -42,7 +42,7 @@ public class ServerTest extends TestCase {
     }
 
     public void testStatus() {
-        assertTrue(server.status().indexOf("\"ok\"") > -1);
+        assertEquals(server.status().get("status"), "ok");
     }
 
     public void testDDL() {

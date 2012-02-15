@@ -18,15 +18,19 @@
 package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.ws.rs.Produces;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.QueryParam;
@@ -46,24 +50,36 @@ import org.apache.hadoop.security.authentication.client.PseudoAuthenticator;
  */
 @Path("/v1")
 public class Server {
+    public static final String VERSION = "v1";
 
-    public static final String REQUEST_FORMATS_MSG
-        = "{[\"application/json\"]}\n";
+    public static final Map<String, String> STATUS_OK = createStatusMsg();
+    public static final Map<String, Object> SUPPORTED_VERSIONS = createVersions();
+    public static final List<String> SUPPORTED_FORMATS = createFormats();
 
-    public static final String STATUS_MSG
-        = "{\"status\": \"ok\", \"version\": \"v1\"}\n";
+    private static Map<String, String> createStatusMsg() {
+        HashMap<String, String> res = new HashMap<String, String>();
+        res.put("status", "ok");
+        res.put("version", VERSION);
 
-    public static final String VERSION_MSG
-        = "{\"supported-versions\": [\"v1\"], \"version\": \"v1\"}\n";
+        return Collections.unmodifiableMap(res);
+    }
 
-    public static final String SHOW_DATABASES_MSG
-        = "SHOW DATABASES ";
+    private static Map<String, Object> createVersions() {
+        ArrayList<String> versions = new ArrayList<String>();
+        versions.add(VERSION);
 
-    public static final String DESCRIBE_DATABASE_MSG
-        = "DESCRIBE_DATABASE ";
+        HashMap<String, Object> res = new HashMap<String, Object>();
+        res.put("supported-versions", versions);
+        res.put("version", VERSION);
 
-    public static final String SHOW_TABLES_MSG
-        = "SHOW TABLES ";
+        return Collections.unmodifiableMap(res);
+    }
+
+    private static List<String> createFormats() {
+        ArrayList<String> res = new ArrayList<String>();
+        res.add("application/json");
+        return Collections.unmodifiableList(res);
+    }
 
     protected static ExecService execService = ExecServiceImpl.getInstance();
     private static AppConfig appConf = AppConfig.getInstance();
@@ -74,23 +90,22 @@ public class Server {
     private static final Log LOG = LogFactory.getLog(Server.class);
 
     /**
-     * Check the supported request formats of this server.
-     */
-    @GET
-    @Path("")
-    @Produces({MediaType.APPLICATION_JSON})
-    public String requestFormats() {
-        return REQUEST_FORMATS_MSG;
-    }
-
-    /**
      * Check the status of this server.
      */
     @GET
     @Path("status")
     @Produces({MediaType.APPLICATION_JSON})
-    public String status() {
-        return STATUS_MSG;
+    public Map<String, String> status() {
+        return STATUS_OK;
+    }
+
+    /**
+     * Check the supported request formats of this server.
+     */
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<String> requestFormats() {
+        return SUPPORTED_FORMATS;
     }
 
     /**
@@ -99,8 +114,8 @@ public class Server {
     @GET
     @Path("version")
     @Produces({MediaType.APPLICATION_JSON})
-    public String version() {
-        return VERSION_MSG;
+    public Map<String, Object> version() {
+        return SUPPORTED_VERSIONS;
     }
 
     /**
@@ -121,46 +136,6 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.run(exec, false, group, permissions);
-    }
-
-    @GET
-    @Path("database")
-    @Produces("application/json")
-    public String getDatabases(@QueryParam("filter-by") String filterBy)
-        throws NotAuthorizedException, BusyException,
-        BadParam, ExecuteException, IOException
-    {
-        String filterByString = filterBy;
-        if(filterByString == null) {
-            filterByString = "*";
-        }
-        return (SHOW_DATABASES_MSG + " filterBy = " + filterByString);
-    }
-
-    @GET
-    @Path("database/{database-name}")
-    @Produces("application/json")
-    public String getDatabase(@PathParam("database-name")String dbName)
-        throws NotAuthorizedException, BusyException,
-        BadParam, ExecuteException, IOException
-    {
-        return (DESCRIBE_DATABASE_MSG + "db-name = " + dbName);
-    }
-
-    @GET
-    @Path("database/{database-name}/table")
-    @Produces("application/json")
-    public String getTables(@PathParam("database-name") String dbName,
-                            @QueryParam("filter-by")  String filterBy)
-        throws NotAuthorizedException, BusyException,
-        BadParam, ExecuteException, IOException
-    {
-        String filterByString = filterBy;
-        if(filterByString == null) {
-            filterByString = "*";
-        }
-        return (SHOW_TABLES_MSG + "db-name = " + dbName
-                + " filterBy = " + filterByString);
     }
 
     @GET
@@ -410,6 +385,6 @@ public class Server {
             return null;
         if (theUriInfo.getBaseUri() == null)
             return null;
-        return theUriInfo.getBaseUri() + "v1/internal/complete/$jobId.json";
+        return theUriInfo.getBaseUri() + VERSION + "/internal/complete/$jobId.json";
     }
 }
