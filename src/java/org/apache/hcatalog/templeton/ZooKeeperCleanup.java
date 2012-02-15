@@ -35,14 +35,14 @@ import org.apache.commons.logging.LogFactory;
 public class ZooKeeperCleanup extends Thread {
     protected AppConfig appConf;
 
-    // The interval to wake up and check the queue            
-    public static final String ZK_CLEANUP_INTERVAL = 
-            "templeton.zookeeper.cleanup.interval"; // 12 hours
-    
-    // The max age of a task allowed    
-    public static final String ZK_CLEANUP_MAX_AGE = 
-            "templeton.zookeeper.cleanup.maxage"; // ~ 1 week
-    
+    // The interval to wake up and check the queue
+    public static final String ZK_CLEANUP_INTERVAL =
+        "templeton.zookeeper.cleanup.interval"; // 12 hours
+
+    // The max age of a task allowed
+    public static final String ZK_CLEANUP_MAX_AGE =
+        "templeton.zookeeper.cleanup.maxage"; // ~ 1 week
+
     protected static long interval = 1000L * 60L * 60L * 12L;
     protected static long maxage = 1000L * 60L * 60L * 24L * 7L;
 
@@ -51,10 +51,10 @@ public class ZooKeeperCleanup extends Thread {
 
     // Handle to cancel loop
     private boolean stop = false;
-    
+
     // The instance
     private static ZooKeeperCleanup thisclass = null;
-    
+
     // Whether the cycle is running
     private static boolean isRunning = false;
 
@@ -67,7 +67,7 @@ public class ZooKeeperCleanup extends Thread {
         interval = appConf.getLong(ZK_CLEANUP_INTERVAL, interval);
         maxage = appConf.getLong(ZK_CLEANUP_MAX_AGE, maxage);
     }
-    
+
     public static ZooKeeperCleanup getInstance(AppConfig appConf) {
         if (thisclass != null) {
             return thisclass;
@@ -75,7 +75,7 @@ public class ZooKeeperCleanup extends Thread {
         thisclass = new ZooKeeperCleanup(appConf);
         return thisclass;
     }
-    
+
     public static void startInstance(AppConfig appConf) throws IOException {
         if (!isRunning) {
             getInstance(appConf).start();
@@ -87,7 +87,7 @@ public class ZooKeeperCleanup extends Thread {
      *
      * @throws IOException
      */
-    public void run() {  
+    public void run() {
         ZooKeeper zk = null;
         List<String> nodes = null;
         isRunning = true;
@@ -96,17 +96,17 @@ public class ZooKeeperCleanup extends Thread {
                 // Put each check in a separate try/catch, so if that particular
                 // cycle fails, it'll try again on the next cycle.
                 try {
-                    zk = JobState.zkOpen(AppConfig.getInstance());
-                        
+                    zk = ZooKeeperStorage.zkOpen(AppConfig.getInstance());
+
                     nodes = getChildList(zk);
-    
+
                     for (String node : nodes) {
                         boolean deleted = checkAndDelete(node, zk);
                         if (!deleted) {
                             break;
                         }
                     }
-                    
+
                     zk.close();
                 } catch (Exception e) {
                     LOG.error("Cleanup cycle failed: " + e.getMessage());
@@ -119,7 +119,7 @@ public class ZooKeeperCleanup extends Thread {
                         }
                     }
                 }
-                
+
                 long sleepMillis = (long) (Math.random() * interval);
                 LOG.info("Next execution: " + new Date(new Date().getTime()
                                                        + sleepMillis));
@@ -156,11 +156,12 @@ public class ZooKeeperCleanup extends Thread {
      * @param state
      */
     public boolean checkAndDelete(String node, ZooKeeper zk) {
+        JobState state = null;
         try {
             JobStateTracker tracker = new JobStateTracker(node, zk, true);
             long now = new Date().getTime();
-            JobState state = new JobState(tracker.getJobID(), zk);
-            
+            state = new JobState(tracker.getJobID());
+
             // Set the default to 0 -- if the created date is null, there was
             // an error in creation, and we want to delete it anyway.
             long then = 0;
@@ -172,13 +173,21 @@ public class ZooKeeperCleanup extends Thread {
                 state.delete();
                 tracker.delete();
                 return true;
-            } 
+            }
             return false;
         } catch (Exception e) {
             LOG.info("checkAndDelete failed for " + node);
             // We don't throw a new exception for this -- just keep going with the
             // next one.
             return true;
+        } finally {
+            if (state != null) {
+                try {
+                    state.close();
+                } catch (IOException e) {
+                    LOG.info("Couldn't close job state.");
+                }
+            }
         }
     }
 

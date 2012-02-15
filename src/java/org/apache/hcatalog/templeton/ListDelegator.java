@@ -43,7 +43,6 @@ public class ListDelegator extends TempletonDelegator {
     {
         UserGroupInformation ugi = UserGroupInformation.createRemoteUser(user);
         TempletonJobTracker tracker = null;
-        ZooKeeper zk = null;
         try {
             tracker = new TempletonJobTracker(ugi,
                                               JobTracker.getAddress(appConf),
@@ -52,14 +51,20 @@ public class ListDelegator extends TempletonDelegator {
             ArrayList<String> ids = new ArrayList<String>();
 
             JobStatus[] jobs = tracker.getAllJobs();
-            zk = JobState.zkOpen(appConf);
 
             if (jobs != null) {
                 for (JobStatus job : jobs) {
-                    String id = job.getJobID().toString();
-                    JobState state = new JobState(id, zk);
-                    if (user.equals(state.getUser()))
-                        ids.add(id);
+                    JobState state = null;
+                    try {
+                        String id = job.getJobID().toString();
+                        state = new JobState(id);
+                        if (user.equals(state.getUser()))
+                            ids.add(id);
+                    } finally {
+                        if (state != null) {
+                            state.close();
+                        }
+                    }
                 }
             }
 
@@ -69,12 +74,6 @@ public class ListDelegator extends TempletonDelegator {
         } finally {
             if (tracker != null)
                 tracker.close();
-            if (zk != null) {
-                try {
-                    zk.close();
-                } catch (InterruptedException e) {
-                }
-            }
         }
     }
 }

@@ -73,15 +73,6 @@ public class Server {
 
     private static final Log LOG = LogFactory.getLog(Server.class);
 
-    static {
-        try {
-            ZooKeeperCleanup.startInstance(AppConfig.getInstance());
-        } catch (IOException e) {
-            // If cleanup isn't running, should the server run?
-            LOG.error("ZookeeperCleanup failed to start: " + e.getMessage());
-        }
-    }
-
     /**
      * Check the supported request formats of this server.
      */

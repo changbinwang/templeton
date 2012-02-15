@@ -18,167 +18,54 @@
 package org.apache.hcatalog.templeton.tool;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hcatalog.templeton.JobStateTracker;
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooDefs.Ids;
-import org.apache.zookeeper.ZooKeeper;
+import org.apache.hcatalog.templeton.AppConfig;
+import org.apache.hcatalog.templeton.NotFoundException;
+import org.apache.hcatalog.templeton.TempletonStorage;
 
 /**
- * The persistent state of a job.  The state is stored in ZooKeeper
- * where each field in a state is a separate znode.  For example, the
- * exit valiue could be contained in the znode
- *
- *     /templeton-hadoop/jobs/job_201112140012_0048/exitValue
- *
- * If a field is not set, null is returned for that field.  All fields
- * are encoded as utf-8 strings.
+ * The persistent state of a job.  The state is stored in one of the
+ * supported storage systems.
  */
 public class JobState {
-    public static final String JOB_ROOT = "/templeton-hadoop";
-    public static final String JOB_PATH = JOB_ROOT + "/jobs";
-
-    public static final String ZK_HOSTS = "templeton.zookeeper.hosts";
-    public static final String ZK_SESSION_TIMEOUT
-        = "templeton.zookeeper.session-timeout";
-
-    public static final String ENCODING = "UTF-8";
 
     private static final Log LOG = LogFactory.getLog(JobState.class);
 
     private String id;
-    private ZooKeeper zk;
 
-    /**
-     * Open a ZooKeeper connection for the JobState.
-     */
-    public static ZooKeeper zkOpen(String zkHosts, int zkSessionTimeout)
-        throws IOException
-    {
-        return new ZooKeeper(zkHosts,
-                             zkSessionTimeout,
-                             new Watcher() {
-                                 @Override
-                                 synchronized public void process(WatchedEvent event) {
-                                 }
-                             });
-    }
+    // Storage is instantiated in the constructor
+    private TempletonStorage storage = null;
 
-    /**
-     * Open a ZooKeeper connection for the JobState.
-     */
-    public static ZooKeeper zkOpen(Configuration conf)
-        throws IOException
-    {
-        return zkOpen(conf.get(ZK_HOSTS),
-                      conf.getInt(ZK_SESSION_TIMEOUT, 30000));
-    }
+    private static TempletonStorage.Type type = TempletonStorage.Type.JOB;
 
-    public JobState(String id, ZooKeeper zk)
+    public JobState(String id)
         throws IOException
     {
         this.id = id;
-        this.zk = zk;
-    }
-
-    public JobState(String id, String zkHosts, int zkSessionTimeout)
-        throws IOException
-    {
-        this(id, zkOpen(zkHosts, zkSessionTimeout));
-    }
-
-    public JobState(String id, Configuration conf)
-        throws IOException
-    {
-        this(id, conf.get(ZK_HOSTS), conf.getInt(ZK_SESSION_TIMEOUT, 30000));
-    }
-
-    /**
-     * Close this ZK connection.
-     */
-    public void close()
-        throws IOException
-    {
-        if (zk != null) {
-            try {
-                zk.close();
-            } catch (InterruptedException e) {
-                throw new IOException("Closing " + id, e);
-            }
-        }
-    }
-
-    /**
-     * Create the parent znode for this job state.
-     */
-    public void create()
-        throws IOException
-    {
-        try {
-            String[] paths = {JOB_ROOT, JOB_PATH, makeZnode()};
-            boolean wasCreated = false;
-            for (String znode : paths) {
-                try {
-                    zk.create(znode, new byte[0],
-                              Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-                    wasCreated = true;
-                } catch (KeeperException.NodeExistsException e) {
-                }
-            }
-            if (wasCreated) {
-                try {
-                    JobStateTracker jt = new JobStateTracker(id, zk, false);
-                    jt.create();
-                } catch (Exception e) {
-                    // If we couldn't create the tracker node, don't
-                    // create the main node.
-                    zk.delete(makeZnode(), -1);
-                }
-            }
-            if (zk.exists(makeZnode(), false) == null)
-                throw new IOException("Unable to create " + makeZnode());
-            if (wasCreated) {
-                setCreated(System.currentTimeMillis());
-            }
-        } catch (KeeperException e) {
-            throw new IOException("Creating " + id, e);
-        } catch (InterruptedException e) {
-            throw new IOException("Creating " + id, e);
-        }
+        storage = AppConfig.getInstance().getStorage();
     }
 
     public void delete()
         throws IOException
     {
         try {
-            for (String child : zk.getChildren(makeZnode(), false)) {
-                try {
-                    zk.delete(makeFieldZnode(child), -1);
-                } catch (Exception e) {
-                    // Other nodes may be trying to delete this at the same time,
-                    // so just log errors and skip them.
-                    LOG.info("Couldn't delete " + makeFieldZnode(child));
-                }
-            }
-            try {
-                zk.delete(makeZnode(), -1);
-            } catch (Exception e) {
-                // Same thing -- might be deleted by other nodes, so just go on.
-                LOG.info("Couldn't delete " + makeZnode());
-            }
+            storage.delete(type, id);
         } catch (Exception e) {
             // Error getting children of node -- probably node has been deleted
-            LOG.info("Couldn't get children of " + makeZnode());
+            LOG.info("Couldn't delete " + id);
         }
+    }
+
+    /**
+     * For storage methods that require a connection, this is a hint
+     * that it's time to close the connection.
+     */
+    public void close() throws IOException {
+        storage.closeStorage();
     }
 
     //
@@ -218,6 +105,64 @@ public class JobState {
         throws IOException
     {
         setField("childid", childid);
+    }
+
+    /**
+     * Add a jobid to the list of children of this job.
+     *
+     * @param jobid
+     * @throws IOException
+     */
+    public void addChild(String jobid) throws IOException {
+        String jobids = "";
+        try {
+            jobids = getField("children");
+        } catch (Exception e) {
+            // There are none or they're not readable.
+        }
+        if (!jobids.equals("")) {
+            jobids += ",";
+        }
+        jobids += jobid;
+        setField("children", jobids);
+    }
+
+    /**
+     * Get a list of jobstates for jobs that are children of this job.
+     * @return
+     * @throws IOException
+     */
+    public List<JobState> getChildren() throws IOException {
+        ArrayList<JobState> children = new ArrayList<JobState>();
+        for (String jobid : getField("children").split(",")) {
+            children.add(new JobState(jobid));
+        }
+        return children;
+    }
+
+    /**
+     * Save a comma-separated list of jobids that are children
+     * of this job.
+     * @param jobids
+     * @throws IOException
+     */
+    public void setChildren(String jobids) throws IOException {
+        setField("children", jobids);
+    }
+
+    /**
+     * Set the list of child jobs of this job
+     * @param children
+     */
+    public void setChildren(List<JobState> children) throws IOException {
+        String val = "";
+        for (JobState jobstate : children) {
+            if (!val.equals("")) {
+                val += ",";
+            }
+            val += jobstate.getId();
+        }
+        setField("children", val);
     }
 
     /**
@@ -314,7 +259,7 @@ public class JobState {
     public Long getLongField(String name)
         throws IOException
     {
-        String s = getField(name);
+        String s = storage.getField(type, id, name);
         if (s == null)
             return null;
         else {
@@ -328,78 +273,41 @@ public class JobState {
     }
 
     /**
-     * Store an integer field from the ZK store.
-     */
-    public void setLongField(String name, long val)
-        throws IOException
-    {
-        setField(name, String.valueOf(val));
-    }
-
-    /**
-     * Fetch a string for the ZK store.
-     */
-    public String getField(String name)
-        throws IOException
-    {
-        try {
-            byte[] b = zk.getData(makeFieldZnode(name), false, null);
-            return new String(b, ENCODING);
-        } catch(KeeperException.NoNodeException e) {
-            return null;
-        } catch(Exception e) {
-            throw new IOException("Reading " + name, e);
-        }
-    }
-
-    /**
-     * Store a string in the ZK store.  Null vals are ignored.
+     * Store a String field from the ZK store.
      */
     public void setField(String name, String val)
         throws IOException
     {
         try {
-            if (val != null) {
-                create();
-                setFieldData(name, val);
-            }
-        } catch(Exception e) {
-            throw new IOException("Writing " + name + ": " + val, e);
+            storage.saveField(type, id, name, val);
+        } catch (NotFoundException ne) {
+            throw new IOException(ne.getMessage());
         }
     }
 
-    private void setFieldData(String name, String val)
-        throws KeeperException, UnsupportedEncodingException, InterruptedException
+    public String getField(String name)
+        throws IOException
+    {
+        return storage.getField(type, id, name);
+    }
+
+    /**
+     * Store a long field.
+     *
+     * @param name
+     * @param val
+     * @throws IOException
+     */
+    public void setLongField(String name, long val)
+        throws IOException
     {
         try {
-            zk.create(makeFieldZnode(name),
-                      val.getBytes(ENCODING),
-                      Ids.OPEN_ACL_UNSAFE,
-                      CreateMode.PERSISTENT);
-        } catch(KeeperException.NodeExistsException e) {
-            zk.setData(makeFieldZnode(name),
-                       val.getBytes(ENCODING),
-                       -1);
+            storage.saveField(type, id, name, String.valueOf(val));
+        } catch (NotFoundException ne) {
+            throw new IOException("Job " + id + " was not found: " +
+                                  ne.getMessage());
         }
     }
-
-    /**
-     * Make a ZK path to the named field.
-     */
-    public String makeFieldZnode(String name) {
-        return makeZnode() + "/" + name;
-    }
-
-    /**
-     * Make a ZK path to job
-     */
-    public String makeZnode() {
-        return JOB_PATH + "/" + id;
-    }
-
-    /**
-     * The ZK watcher.  A no op.
-     */
 
     /**
      * Get an id for each currently existing job, which can be used to create
@@ -409,16 +317,11 @@ public class JobState {
      * @return
      * @throws IOException
      */
-    public static List<String> getJobs(Configuration conf) throws IOException {
-        ArrayList<String> jobs = new ArrayList<String>();
+    public static List<String> getJobs() throws IOException {
         try {
-            ZooKeeper zk = zkOpen(conf);
-            for (String myid : zk.getChildren(JOB_PATH, false)) {
-                jobs.add(myid);
-            }
+            return AppConfig.getInstance().getStorage().getAllForType(type);
         } catch (Exception e) {
-            throw new IOException("Can't get children", e);
+            throw new IOException("Can't get jobs", e);
         }
-        return jobs;
     }
 }

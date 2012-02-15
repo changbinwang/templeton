@@ -62,8 +62,7 @@ public class CompleteDelegator extends TempletonDelegator {
 
         JobState state = null;
         try {
-            state = new JobState(id, appConf);
-
+            state = new JobState(id);
             if (state.getCompleteStatus() == null)
                 failed("Job not yet complete", null);
 

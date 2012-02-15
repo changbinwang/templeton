@@ -28,7 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.VersionInfo;
-import org.apache.hcatalog.templeton.tool.JobState;
 
 /**
  * The configuration for Templeton.  This merges the normal Hadoop
@@ -107,6 +106,8 @@ public class AppConfig extends Configuration {
     public static final String HADOOP_END_RETRY_NAME    = "job.end.retry.attempts";
     public static final String HADOOP_END_URL_NAME      = "job.end.notification.url";
 
+    public static final String STORAGE_CLASS    = "templeton.storage.class";
+
     private static final Log LOG = LogFactory.getLog(AppConfig.class);
 
     private static volatile AppConfig theSingleton;
@@ -143,6 +144,28 @@ public class AppConfig extends Configuration {
         Logger filterLogger = Logger.getLogger(WebComponent.class.getName());
         if (filterLogger != null)
             filterLogger.setLevel(Level.SEVERE);
+    }
+
+    /**
+     * Get an instance of the selected storage class.  Defaults to
+     * ZooKeeper storage if none is specified.
+     * @return
+     */
+    public TempletonStorage getStorage() {
+        TempletonStorage storage = null;
+        try {
+            storage = (TempletonStorage)
+                Class.forName(get(STORAGE_CLASS)).newInstance();
+            storage.openStorage(this);
+        } catch (Exception e) {
+            LOG.warn("No storage method found: " + e.getMessage());
+            try {
+                storage = new ZooKeeperStorage();
+            } catch (Exception ex) {
+                LOG.error("Couldn't create storage.");
+            }
+        }
+        return storage;
     }
 
     public String getHadoopConfDir() {
@@ -199,7 +222,7 @@ public class AppConfig extends Configuration {
     public long zkMaxAge()           {
         return getLong(ZooKeeperCleanup.ZK_CLEANUP_MAX_AGE,
                        (1000L * 60L * 60L * 24L * 7L)); }
-    public String zkHosts()          { return get(JobState.ZK_HOSTS); }
-    public int zkSessionTimeout()    { return getInt(JobState.ZK_SESSION_TIMEOUT,
+    public String zkHosts()          { return get(ZooKeeperStorage.ZK_HOSTS); }
+    public int zkSessionTimeout()    { return getInt(ZooKeeperStorage.ZK_SESSION_TIMEOUT,
                                                      30000); }
 }

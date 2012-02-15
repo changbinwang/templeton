@@ -158,6 +158,11 @@ limitations under the License.
     <description>How many times to retry the callback</description>
   </property>
 
+ <property>
+    <name>templeton.storage.class</name>
+    <value>org.apache.hcatalog.templeton.ZooKeeperStorage</value>
+    <description>The class to use as storage</description>
+  </property>
 
   <property>
     <name>templeton.zookeeper.cleanup.interval</name>
