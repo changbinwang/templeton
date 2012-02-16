@@ -20,8 +20,7 @@ package org.apache.hcatalog.templeton;
 import java.io.File;
 import java.net.URL;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -53,7 +52,7 @@ import org.apache.hadoop.util.VersionInfo;
  *
  * To find the configuration files, we first attempt to load a file
  * from the CLASSPATH and then look in the directory specified in the
- * TEMPLETON_HOME environment variable.
+ * TEMPLETON_CONF_DIR environment variable.
  *
  * In addition the configuration files may access the special env
  * variable env for all environment variables.  For example, the
@@ -71,7 +70,7 @@ public class AppConfig extends Configuration {
         "HADOOP_PREFIX", "HADOOP_HOME"
     };
 
-    public static final String TEMPLETON_HOME_VAR = "TEMPLETON_HOME";
+    public static final String TEMPLETON_CONF_DIR_VAR = "TEMPLETON_CONF_DIR";
 
     public static final String[] TEMPLETON_CONF_FILENAMES = {
         "templeton-default.xml",
@@ -156,7 +155,7 @@ public class AppConfig extends Configuration {
     }
 
     public static String getTempletonDir() {
-        return System.getenv(TEMPLETON_HOME_VAR);
+        return System.getenv(TEMPLETON_CONF_DIR_VAR);
     }
 
     private boolean loadOneFileConfig(String dir, String fname) {
