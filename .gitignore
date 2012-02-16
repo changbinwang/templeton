@@ -1,8 +1,12 @@
+*.swp
 /TAGS
 /build
 /foo.log
 /ivy/ivy-2.2.0.jar
 /lib
 /templeton-*.jar
+/templeton-console-error.log
+/templeton-console.log
 /templeton-site.xml
-*.swp
+/templeton.log
+/templeton.pid

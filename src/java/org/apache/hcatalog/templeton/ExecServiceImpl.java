@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ExecServiceImpl implements ExecService {
     private static final Log LOG = LogFactory.getLog(ExecServiceImpl.class);
-    private static AppConfig appConf = AppConfig.getInstance();
+    private static AppConfig appConf = Main.getAppConfigInstance();
 
     private static volatile ExecServiceImpl theSingleton;
 

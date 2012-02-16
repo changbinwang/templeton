@@ -302,14 +302,8 @@
     <delete dir="${build.dir}" />
   </target>
 
-  <!-- Clean up files copied locally by install-war command -->
-  <target name="install-war-local-clean" description="Cleanup build">
-    <delete dir="${basedir}/lib" />
-    <delete file="${basedir}/${templeton.jar}" />
-  </target>
-
   <!-- Clean up children -->
-  <target name="clean" depends="clean-builds,install-war-local-clean" description="Cleanup all build artifacts">
+  <target name="clean" depends="clean-builds" description="Cleanup all build artifacts">
     <delete dir="${artifacts.dir}" />
   </target>
 
@@ -340,41 +334,15 @@
     </javadoc>
   </target>
 
-
-  <!-- ================================================================== -->
-  <!-- Make war file                                                      -->
-  <!-- ================================================================== -->
-  <target name="war" depends="jar">
-    <war destfile="${build.dir}/${ant.project.name}.war"
-         webxml="${webapp.dir}/WEB-INF/web.xml">
-         <lib dir="${ivy.lib.dir}"/>
-         <classes dir="${build.classes}"/>
-    </war>
-  </target>
-
-  <!-- ================================================================== -->
-  <!-- Install war file for testing                                       -->
-  <!-- ================================================================== -->
-  <target name="install-war" depends="war">
-    <copy todir="${basedir}/lib">
-      <fileset dir="${ivy.lib.dir}" > 
-        <include name="zookeeper*jar"/>
-      </fileset>
-    </copy>
-    <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${basedir}" />
-    <copy file="${build.dir}/${ant.project.name}.war"
-          todir="${env.CATALINA_HOME}/webapps/" />
-  </target>
   <!-- ================================================================== -->
   <!-- Copy files to a releasable structure                               -->
   <!-- ================================================================== -->
-  <target name="package-tar" depends="war,docs">
+  <target name="package-tar" depends="docs">
 
     <copy file="${resources.dir}/templeton-default.xml"
           tofile="${dist.dir}/conf/templeton-site.xml" />
 
     <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${dist.dir}/" />
-    <copy file="${build.dir}/${ant.project.name}.war" todir="${dist.dir}/" />
 
     <copy todir="${dist.dir}/docs">
       <fileset dir="${build.docs}"> 
@@ -419,14 +387,13 @@
   <!-- ================================================================== -->
   <!-- Copy files to a releasable structure                               -->
   <!-- ================================================================== -->
-  <target name="package-rpm" depends="war,docs">
+  <target name="package-rpm" depends="docs">
     <mkdir dir="${build.docs}" /> 
 
     <copy file="${resources.dir}/templeton-default.xml"
           tofile="${dist.dir}/etc/templeton/templeton-site.xml" />
 
     <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${dist.dir}/share/templeton/" />
-    <copy file="${build.dir}/${ant.project.name}.war" todir="${dist.dir}/share/templeton/" />
 
     <copy todir="${dist.dir}/share/doc/templeton">
       <fileset dir="${build.docs}"> 

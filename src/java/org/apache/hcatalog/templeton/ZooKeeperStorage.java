@@ -57,15 +57,6 @@ public class ZooKeeperStorage implements TempletonStorage {
 
     private static final Log LOG = LogFactory.getLog(ZooKeeperStorage.class);
 
-    static {
-        try {
-            ZooKeeperCleanup.startInstance(AppConfig.getInstance());
-        } catch (IOException e) {
-            // If cleanup isn't running, should the server run?
-            LOG.error("ZookeeperCleanup failed to start: " + e.getMessage());
-        }
-    }
-
     private ZooKeeper zk;
 
     /**

@@ -15,4 +15,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Empty config file
+# The file containing the running pid
+PID_FILE=./templeton.pid
+
+# The console error log
+ERROR_LOG=./templeton-console-error.log
+
+# The console log
+CONSOLE_LOG=./templeton-console.log
+
+# The name of the templeton jar file
+TEMPLETON_JAR=templeton-0.1.0-dev.jar
+
+# How long to wait before testing that the process started correctly
+SLEEP_TIME_AFTER_START=10
+
+
+

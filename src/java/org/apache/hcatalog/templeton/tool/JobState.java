@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hcatalog.templeton.AppConfig;
+import org.apache.hcatalog.templeton.Main;
 import org.apache.hcatalog.templeton.NotFoundException;
 import org.apache.hcatalog.templeton.TempletonStorage;
 
@@ -46,7 +46,7 @@ public class JobState {
         throws IOException
     {
         this.id = id;
-        storage = AppConfig.getInstance().getStorage();
+        storage = Main.getAppConfigInstance().getStorage();
     }
 
     public void delete()
@@ -319,7 +319,7 @@ public class JobState {
      */
     public static List<String> getJobs() throws IOException {
         try {
-            return AppConfig.getInstance().getStorage().getAllForType(type);
+            return Main.getAppConfigInstance().getStorage().getAllForType(type);
         } catch (Exception e) {
             throw new IOException("Can't get jobs", e);
         }
