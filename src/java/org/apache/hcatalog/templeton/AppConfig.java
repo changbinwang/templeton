@@ -17,7 +17,6 @@
  */
 package org.apache.hcatalog.templeton;
 
-import com.sun.jersey.spi.container.servlet.WebComponent;
 import java.io.File;
 import java.net.URL;
 import java.util.Map;
@@ -80,6 +79,7 @@ public class AppConfig extends Configuration {
         "templeton-site.xml"
     };
 
+    public static final String PORT                = "templeton.port";
     public static final String EXEC_ENCODING_NAME  = "templeton.exec.encoding";
     public static final String EXEC_ENVS_NAME      = "templeton.exec.envs";
     public static final String EXEC_MAX_BYTES_NAME = "templeton.exec.max-output-bytes";
@@ -110,17 +110,6 @@ public class AppConfig extends Configuration {
 
     private static final Log LOG = LogFactory.getLog(AppConfig.class);
 
-    private static volatile AppConfig theSingleton;
-
-    /**
-     * Retrieve the singleton.
-     */
-    public static synchronized AppConfig getInstance() {
-        if (theSingleton == null)
-            theSingleton = new AppConfig();
-        return theSingleton;
-    }
-
     public AppConfig() {
         init();
         LOG.info("Using Hadoop version " + VersionInfo.getVersion());
@@ -138,12 +127,6 @@ public class AppConfig extends Configuration {
         String hadoopConfDir = getHadoopConfDir();
         for (String fname : HADOOP_CONF_FILENAMES)
             loadOneFileConfig(hadoopConfDir, fname);
-
-        // What a horrible place to do this.  Needs to move into the
-        // logging config file.
-        Logger filterLogger = Logger.getLogger(WebComponent.class.getName());
-        if (filterLogger != null)
-            filterLogger.setLevel(Level.SEVERE);
     }
 
     /**

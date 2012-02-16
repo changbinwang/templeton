@@ -56,6 +56,8 @@
                 conf="common->master"/>
     <dependency org="commons-lang" name="commons-lang" rev="2.5"
                 conf="common->master"/>
+    <dependency org="commons-cli" name="commons-cli" rev="1.2"
+                conf="common->master"/>
     <dependency org="commons-codec" name="commons-codec" rev="1.4"
                 conf="common->master"/>
     <dependency org="org.apache.zookeeper" name="zookeeper" rev="3.3.4"

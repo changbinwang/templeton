@@ -77,7 +77,7 @@ public class ZooKeeperCleanup extends Thread {
     }
 
     public static void startInstance(AppConfig appConf) throws IOException {
-        if (!isRunning) {
+        if (! isRunning) {
             getInstance(appConf).start();
         }
     }
@@ -96,7 +96,7 @@ public class ZooKeeperCleanup extends Thread {
                 // Put each check in a separate try/catch, so if that particular
                 // cycle fails, it'll try again on the next cycle.
                 try {
-                    zk = ZooKeeperStorage.zkOpen(AppConfig.getInstance());
+                    zk = ZooKeeperStorage.zkOpen(appConf);
 
                     nodes = getChildList(zk);
 
@@ -195,13 +195,4 @@ public class ZooKeeperCleanup extends Thread {
     public void exit() {
         stop = true;
     }
-
-    public static void main(String[] args) {
-        try {
-            ZooKeeperCleanup.startInstance(AppConfig.getInstance());
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-        }
-    }
-
 }

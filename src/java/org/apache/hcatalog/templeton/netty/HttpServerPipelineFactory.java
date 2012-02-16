@@ -21,7 +21,6 @@ import com.sun.jersey.api.container.ContainerFactory;
 import com.sun.jersey.api.core.ClassNamesResourceConfig;
 import com.sun.jersey.api.core.ResourceConfig;
 import java.util.HashMap;
-import org.apache.hcatalog.templeton.Server;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
@@ -33,8 +32,10 @@ import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
  */
 public class HttpServerPipelineFactory implements ChannelPipelineFactory {
     private JerseyHandler jerseyHandler;
+    private String className;
 
-    public HttpServerPipelineFactory() {
+    public HttpServerPipelineFactory(String className) {
+        this.className = className;
         this.jerseyHandler = getJerseyHandler();
     }
 
@@ -48,8 +49,7 @@ public class HttpServerPipelineFactory implements ChannelPipelineFactory {
 
     private JerseyHandler getJerseyHandler(){
         HashMap<String, Object> props = new HashMap<String, Object>();
-        props.put(ClassNamesResourceConfig.PROPERTY_CLASSNAMES,
-                  Server.class.getName());
+        props.put(ClassNamesResourceConfig.PROPERTY_CLASSNAMES, className);
         props.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
         ResourceConfig rcf = new ClassNamesResourceConfig(props);
         return ContainerFactory.createContainer(JerseyHandler.class, rcf);

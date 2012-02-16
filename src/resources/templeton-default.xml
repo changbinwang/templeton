@@ -24,6 +24,12 @@ limitations under the License.
 <configuration>
 
   <property>
+    <name>templeton.port</name>
+    <value>8080</value>
+    <description>The HTTP port for the main server.</description>
+  </property>
+
+  <property>
     <name>templeton.hadoop.conf.dir</name>
     <value>${env.HADOOP_CONF_DIR}</value>
     <description>The path to the Hadoop configuration.</description>

@@ -83,21 +83,12 @@ public class Server {
     }
 
     protected static ExecService execService = ExecServiceImpl.getInstance();
-    private static AppConfig appConf = AppConfig.getInstance();
+    private static AppConfig appConf = Main.getAppConfigInstance();
 
     private @Context SecurityContext theSecurityContext;
     private @Context UriInfo theUriInfo;
 
     private static final Log LOG = LogFactory.getLog(Server.class);
-
-    static {
-        try {
-            ZooKeeperCleanup.startInstance(AppConfig.getInstance());
-        } catch (IOException e) {
-            // If cleanup isn't running, should the server run?
-            LOG.error("ZookeeperCleanup failed to start: " + e.getMessage());
-        }
-    }
 
     /**
      * Check the status of this server.

@@ -17,17 +17,25 @@
  */
 package org.apache.hcatalog.templeton;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.URL;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hcatalog.templeton.netty.HttpServerPipelineFactory;
 import org.jboss.netty.bootstrap.ServerBootstrap;
+import org.jboss.netty.channel.ChannelException;
 import org.jboss.netty.channel.socket.oio.OioServerSocketChannelFactory;
 
 /**
  * The main executable that starts up and runs the Server.
  */
 public class Main {
+    private static final Log LOG = LogFactory.getLog(AppConfig.class);
+
     /**
      * More threads than we can handle, but an upper limit so the
      * server won't crash.
@@ -36,7 +44,58 @@ public class Main {
 
     public static final int DEFAULT_PORT = 8080;
 
-    public static void main(String[] args) {
+    public static final String TEMPLETON_L4J = "templeton-log4j.properties";
+
+    private static volatile AppConfig conf;
+
+    /**
+     * Retrieve the config singleton.
+     */
+    public static synchronized AppConfig getAppConfigInstance() {
+        if (conf == null)
+            LOG.error("Bug: configuration not yet loaded");
+        return conf;
+    }
+
+    public Main(String[] args) {
+        init(args);
+    }
+
+    public void init(String[] args) {
+        conf = loadConfig(args);
+        LOG.debug("Loaded conf " + conf);
+    }
+
+    public AppConfig loadConfig(String[] args) {
+        AppConfig cf = new AppConfig();
+        try {
+            GenericOptionsParser parser = new GenericOptionsParser(cf, args);
+            if (parser.getRemainingArgs().length > 0)
+                usage();
+        } catch (IOException e) {
+            LOG.error("Unable to parse options: " + e);
+            usage();
+        }
+
+        return cf;
+    }
+
+    public void usage() {
+        System.err.println("usage: templeton [-Dtempleton.port=N] [-D...]");
+        System.exit(1);
+    }
+
+    public void run() {
+        try {
+            ZooKeeperCleanup.startInstance(conf);
+        } catch (IOException e) {
+            LOG.error("ZookeeperCleanup failed to start: " + e.getMessage());
+        }
+
+        runServer(conf.getInt(AppConfig.PORT, DEFAULT_PORT));
+    }
+
+    public void runServer(int port) {
         ThreadPoolExecutor boss = (ThreadPoolExecutor) Executors.newCachedThreadPool();
         ThreadPoolExecutor worker = (ThreadPoolExecutor) Executors.newCachedThreadPool();
         boss.setMaximumPoolSize(MAX_THREADS);
@@ -47,18 +106,20 @@ public class Main {
 
         ServerBootstrap bootstrap = new ServerBootstrap(factory);
 
-        bootstrap.setPipelineFactory(new HttpServerPipelineFactory());
-        int port = DEFAULT_PORT;
-        if (args.length > 0) {
-            try {
-                port = Integer.parseInt(args[0]);
-            } catch (NumberFormatException e) {
-                System.err.println("Invalid port: " + e);
-                System.exit(1);
-            }
+        String className = Server.class.getName();
+        bootstrap.setPipelineFactory(new HttpServerPipelineFactory(className));
+        LOG.info("Templeton listening on port " + port);
+        try {
+            bootstrap.bind(new InetSocketAddress(port));
+        } catch (ChannelException e) {
+            System.err.println("templeton: Server failed to start: " + e.getMessage());
+            LOG.fatal("Server failed to start: " + e);
+            System.exit(1);
         }
+    }
 
-        System.out.println("Templeton listening on port:"+port);
-        bootstrap.bind(new InetSocketAddress(port));
+    public static void main(String[] args) {
+        Main templeton = new Main(args);
+        templeton.run();
     }
 }
