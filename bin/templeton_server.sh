@@ -16,7 +16,7 @@
 # limitations under the License.
 
 echo "Start the server!"
-PORT=8090
+PORT=8080
 CLASSPATH='./build/classes:build/ivy/lib/templeton/'*''
 
-java -cp $CLASSPATH org.apache.hcatalog.templeton.Server $PORT
+java -cp $CLASSPATH org.apache.hcatalog.templeton.Main $PORT
