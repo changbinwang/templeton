@@ -369,24 +369,32 @@
         <fileset dir="${src.dir}" />
     </copy>
 
-    <copy todir="${dist.dir}/bin" >
-        <fileset dir="${bin.dir}" />
+    <copy todir="${dist.dir}/sbin" >
+      <fileset dir="${bin.dir}">
+        <include name="templeton_server.sh"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist.dir}/libexec" >
+      <fileset dir="${bin.dir}">
+        <include name="templeton_config.sh"/>
+      </fileset>
     </copy>
 
     <copy todir="${dist.dir}/test" includeEmptyDirs="true">
-        <fileset dir="${test.src.dir}" />
+      <fileset dir="${test.src.dir}" />
     </copy>
 
     <copy todir="${dist.dir}/docs">
-        <fileset dir=".">
-          <include name="*.txt" />
-        </fileset>
+      <fileset dir=".">
+        <include name="*.txt" />
+       </fileset>
     </copy>
 
     <copy todir="${dist.dir}/" file="build.xml" /> 
 
     <chmod perm="ugo+x" type="file">
-        <fileset dir="${dist.dir}/bin" />
+      <fileset dir="${dist.dir}/sbin" />
     </chmod>
 
   </target>
@@ -413,11 +421,20 @@
         <fileset dir="${ivy.lib.dir}" includes="zookeeper*.jar"/>
     </copy>
 
-    <copy todir="${dist.dir}/sbin">
-        <fileset dir="src/packages">
-        <include name="*.sh"/>
-        </fileset>
+    <copy todir="${dist.dir}/libexec" >
+      <fileset dir="${bin.dir}">
+        <include name="templeton_config.sh"/>
+      </fileset>
     </copy>
+
+    <copy todir="${dist.dir}/sbin">
+      <fileset dir="src/packages">
+        <include name="*.sh"/>
+      </fileset>
+      <fileset dir="${bin.dir}">
+        <include name="templeton_server.sh"/>
+      </fileset>
+     </copy>
 
     <copy todir="${dist.dir}/share/templeton/">
       <fileset dir="${basedir}/src/hadoop_temp_fix" >
@@ -441,9 +458,6 @@
 
 
     <chmod perm="ugo+x" type="file">
-<!-- TODO: enable when we have executables
-        <fileset dir="${dist.dir}/bin" />
--->
         <fileset dir="${dist.dir}/sbin" />
     </chmod>
 
