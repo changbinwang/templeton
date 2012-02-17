@@ -136,7 +136,7 @@ public class TempletonControllerJob extends Configured implements Tool {
                 pool.shutdownNow();
 
             writeExitValue(conf, proc.exitValue(), statusdir);
-            JobState state = new JobState(context.getJobID().toString());
+            JobState state = new JobState(context.getJobID().toString(), conf);
             state.setExitValue(proc.exitValue());
             state.setCompleteStatus("done");
             state.close();
@@ -146,6 +146,7 @@ public class TempletonControllerJob extends Configured implements Tool {
                                    + proc.exitValue());
                 System.exit(proc.exitValue());
             }
+            System.err.println("templeton: job completed with exit code 0");
         }
 
         private void executeWatcher(ExecutorService pool, Configuration conf,
@@ -224,7 +225,7 @@ public class TempletonControllerJob extends Configured implements Tool {
                         String childid = TempletonUtils.extractChildJobId(line);
 
                         if (percent != null || childid != null) {
-                            state = new JobState(jobid.toString());
+                            state = new JobState(jobid.toString(), conf);
                             state.setPercentComplete(percent);
                             state.setChildId(childid);
                         }
