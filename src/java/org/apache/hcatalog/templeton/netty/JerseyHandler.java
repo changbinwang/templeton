@@ -28,6 +28,9 @@ import org.jboss.netty.channel.ChannelPipelineCoverage;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
+/**
+ * Handle a Jersey app using a Netty http connection.
+ */
 @ChannelPipelineCoverage("one")
 public class JerseyHandler extends AbstractHttpHandler {
 
@@ -46,17 +49,16 @@ public class JerseyHandler extends AbstractHttpHandler {
         final URI baseUri = new URI(base);
         final URI requestUri = new URI(base.substring(0, base.length() - 1)
                                        + request.getUri());
+        ContainerRequest conRequest
+            = new ContainerRequest(application,
+                                   request.getMethod().getName(),
+                                   baseUri,
+                                   requestUri,
+                                   getHeaders(request),
+                                   new ChannelBufferInputStream(request.getContent()));
 
-        final ContainerRequest cRequest = new ContainerRequest(
-            application,
-            request.getMethod().getName(),
-            baseUri,
-            requestUri,
-            getHeaders(request),
-            new ChannelBufferInputStream(request.getContent())
-            );
-
-        application.handleRequest(cRequest, new NettyWriter(userChannel));
+        conRequest.setSecurityContext(new NettySecurityContext(request));
+        application.handleRequest(conRequest, new NettyWriter(userChannel));
     }
 
 

@@ -106,8 +106,11 @@ public class Main {
 
         ServerBootstrap bootstrap = new ServerBootstrap(factory);
 
-        String className = Server.class.getName();
-        bootstrap.setPipelineFactory(new HttpServerPipelineFactory(className));
+        HttpServerPipelineFactory pipelineFactory
+            = new HttpServerPipelineFactory(Server.class.getName(),
+                                            SimpleExceptionMapper.class.getName(),
+                                            CatchallExceptionMapper.class.getName());
+        bootstrap.setPipelineFactory(pipelineFactory);
         LOG.info("Templeton listening on port " + port);
         try {
             bootstrap.bind(new InetSocketAddress(port));

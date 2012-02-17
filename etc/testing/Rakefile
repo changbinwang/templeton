@@ -41,9 +41,9 @@ task :test do
   end
 end
 
-desc "Run status.json"
+desc "Run status"
 task :status do
-  curl "status.json"
+  curl "status"
 end
 
 desc "Run ddl.json"
