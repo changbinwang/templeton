@@ -411,7 +411,8 @@ public class Server {
             return null;
         if (theUriInfo.getBaseUri() == null)
             return null;
-        return theUriInfo.getBaseUri() + VERSION + "/internal/complete/$jobId.json";
+        return theUriInfo.getBaseUri() + "templeton/" + VERSION
+            + "/internal/complete/$jobId.json";
     }
 
 }
