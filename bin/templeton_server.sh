@@ -70,7 +70,7 @@ function find_jar_path() {
 # Find the templeton classpath
 function find_classpath() {
         local classpath=""
-        for dir in "lib" "build/ivy/lib/templeton" $TEMPLETON_CONF_DIR; do
+        for dir in "lib" "build/ivy/lib/templeton" "conf" $TEMPLETON_CONF_DIR; do
                 local path="$this_bin/../$dir"
                 if [[ -d $path ]]; then
                         for jar_or_conf in $path/*; do

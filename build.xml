@@ -370,6 +370,9 @@
     </copy>
 
     <copy todir="${dist.dir}/sbin" >
+      <fileset dir="${package.dir}">
+        <include name="*.sh"/>
+      </fileset>
       <fileset dir="${bin.dir}">
         <include name="templeton_server.sh"/>
       </fileset>

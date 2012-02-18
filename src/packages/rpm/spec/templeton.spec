@@ -52,7 +52,7 @@
 
 Summary: Templeton provides a REST-like web API for HCatalog and related Hadoop components.
 License: Apache License, Version 2.0
-#URL: TODO 
+URL: https://issues.apache.org/jira/browse/HCATALOG-182
 #Vendor:  TODO
 Group: Development/Libraries
 Name: %{name}
