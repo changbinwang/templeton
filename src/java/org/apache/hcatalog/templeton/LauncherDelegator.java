@@ -26,6 +26,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.hcatalog.templeton.tool.JobState;
 import org.apache.hcatalog.templeton.tool.TempletonControllerJob;
+import org.apache.hcatalog.templeton.tool.TempletonStorage;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
@@ -45,7 +46,7 @@ public class LauncherDelegator extends TempletonDelegator {
     {
         JobState state = null;
         try {
-            state = new JobState(id);
+            state = new JobState(id, Main.getAppConfigInstance());
             state.setUser(user);
             state.setCallback(callback);
         } finally {
@@ -96,11 +97,9 @@ public class LauncherDelegator extends TempletonDelegator {
         // Set user
         addDef(args, "user.name", runAs);
 
-        // Zk vars
-        addDef(args, ZooKeeperStorage.ZK_HOSTS,
-               appConf.get(ZooKeeperStorage.ZK_HOSTS));
-        addDef(args, ZooKeeperStorage.ZK_SESSION_TIMEOUT,
-               appConf.get(ZooKeeperStorage.ZK_SESSION_TIMEOUT));
+        // Storage vars
+        addDef(args, TempletonStorage.STORAGE_CLASS,
+               appConf.get(appConf.get(TempletonStorage.STORAGE_CLASS)));
 
         // Completion notifier vars
         addDef(args, AppConfig.HADOOP_END_RETRY_NAME,
@@ -139,7 +138,7 @@ public class LauncherDelegator extends TempletonDelegator {
         if (overrides == null)
             return null;
 
-        ArrayList<String> cp = new ArrayList();
+        ArrayList<String> cp = new ArrayList<String>();
         for (String fname : overrides) {
             Path p = new Path(fname);
             cp.add(p.getName());
