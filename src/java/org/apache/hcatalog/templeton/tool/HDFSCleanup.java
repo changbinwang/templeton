@@ -64,7 +64,7 @@ public class HDFSCleanup extends Thread {
     private HDFSCleanup(Configuration appConf) {
         this.appConf = appConf;
         interval = appConf.getLong(HDFS_CLEANUP_INTERVAL, interval);
-        maxage = 300000; //appConf.getLong(HDFS_CLEANUP_MAX_AGE, maxage);
+        maxage = appConf.getLong(HDFS_CLEANUP_MAX_AGE, maxage);
     }
     
     public static HDFSCleanup getInstance(Configuration appConf) {

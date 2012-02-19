@@ -99,7 +99,7 @@ public class LauncherDelegator extends TempletonDelegator {
 
         // Storage vars
         addDef(args, TempletonStorage.STORAGE_CLASS,
-               appConf.get(appConf.get(TempletonStorage.STORAGE_CLASS)));
+               appConf.get(TempletonStorage.STORAGE_CLASS));
 
         // Completion notifier vars
         addDef(args, AppConfig.HADOOP_END_RETRY_NAME,

@@ -64,12 +64,15 @@ public class HDFSStorage implements TempletonStorage {
 	@Override
 	public void saveField(Type type, String id, String key, String val)
 			throws NotFoundException {
-		Path file = new Path(getPath(type) + "/" + id);
+		if (val == null) {
+			return;
+		}
+		//Path file = new Path(getPath(type) + "/" + id + "/" + key);
 		PrintWriter out = null;
 		try {
-			if (!fs.exists(file)) {
-				fs.create(file);
-			}
+			//if (!fs.exists(file)) {
+			//	fs.create(file);
+			//}
 			Path keyfile = new Path(getPath(type) + "/" + id + "/" + key);
 			// This will replace the old value if there is one
 			// Overwrite the existing file
@@ -106,7 +109,8 @@ public class HDFSStorage implements TempletonStorage {
 			LOG.info("***Got field " + key + " / " + val);
 			return val;
 		} catch (IOException e) {
-			LOG.info("Couldn't find " + getPath(type) + "/" + id);
+			LOG.info("Couldn't find " + getPath(type) + "/" + id + "/" + key
+					+ ": " + e.getMessage());
 		} finally {
 			try {
 				in.close();
