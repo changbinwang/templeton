@@ -58,7 +58,7 @@ function log() {
 
 # Find the templeton jar
 function find_jar_path() {
-        for dir in "." "lib" "build/templeton"; do
+        for dir in "." "lib" "build/templeton" "share/templeton/"; do
                 local jar="$this_bin/../$dir/$TEMPLETON_JAR"
                 if [[ -f $jar ]]; then
                         echo $jar

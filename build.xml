@@ -418,8 +418,12 @@
       </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/share/templeton/lib">
-        <fileset dir="${ivy.lib.dir}" includes="zookeeper*.jar"/>
+    <copy todir="${dist.dir}/lib">
+        <fileset dir="${ivy.lib.dir}" >
+	  <exclude name="hadoop*jar"/>
+	  <exclude name="hadoop*jar"/>
+	  <exclude name="junit*jar"/>
+	</fileset>  
     </copy>
 
     <copy todir="${dist.dir}/libexec" >
