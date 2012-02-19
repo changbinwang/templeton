@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hcatalog.templeton.netty.HttpServerPipelineFactory;
-import org.apache.hcatalog.templeton.tool.Server;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.ChannelException;
 import org.jboss.netty.channel.socket.oio.OioServerSocketChannelFactory;
