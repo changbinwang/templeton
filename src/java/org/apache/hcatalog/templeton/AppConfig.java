@@ -129,20 +129,20 @@ public class AppConfig extends Configuration {
     }
     
     public void startCleanup() {
-    	 try {
-         	((TempletonStorage) Class.forName(
-         			get(TempletonStorage.STORAGE_CLASS))
-         					.newInstance()).startCleanup(this);
+         try {
+             ((TempletonStorage) Class.forName(
+                     get(TempletonStorage.STORAGE_CLASS))
+                             .newInstance()).startCleanup(this);
          } catch (Exception e) {
-         	// Default to ZK
-        	try {
-        		LOG.warn("Couldn't find " + 
-        			get(TempletonStorage.STORAGE_CLASS) + "," +
-        				" starting ZooKeeperCleanup.");
-        		ZooKeeperCleanup.startInstance(this);
-        	} catch (Exception ex) {
-        		LOG.error("Unable to start up Cleanup instance.");
-        	}
+             // Default to ZK
+            try {
+                LOG.warn("Couldn't find " + 
+                    get(TempletonStorage.STORAGE_CLASS) + "," +
+                        " starting ZooKeeperCleanup.");
+                ZooKeeperCleanup.startInstance(this);
+            } catch (Exception ex) {
+                LOG.error("Unable to start up Cleanup instance.");
+            }
          }
     }
 

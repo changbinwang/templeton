@@ -71,7 +71,7 @@ public class JobState {
         try {
             storage = (TempletonStorage)
                 Class.forName(conf.get(TempletonStorage.STORAGE_CLASS))
-                	.newInstance();
+                    .newInstance();
             storage.openStorage(conf);
         } catch (Exception e) {
             LOG.warn("No storage method found: " + e.getMessage());

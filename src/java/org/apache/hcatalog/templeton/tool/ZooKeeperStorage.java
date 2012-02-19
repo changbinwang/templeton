@@ -106,11 +106,11 @@ public class ZooKeeperStorage implements TempletonStorage {
     }
     
     public void startCleanup(Configuration config) {
-    	try {
-    		ZooKeeperCleanup.startInstance(config);
-    	} catch (Exception e) {
-    		LOG.warn("Cleanup instance didn't start.");
-    	}
+        try {
+            ZooKeeperCleanup.startInstance(config);
+        } catch (Exception e) {
+            LOG.warn("Cleanup instance didn't start.");
+        }
     }
 
     /**

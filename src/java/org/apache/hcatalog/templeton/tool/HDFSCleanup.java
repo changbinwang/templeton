@@ -86,16 +86,16 @@ public class HDFSCleanup extends Thread {
      *
      */
     public void run() {
-    	FileSystem fs = null;
+        FileSystem fs = null;
         while (!stop) {
             try {
                 // Put each check in a separate try/catch, so if that particular
                 // cycle fails, it'll try again on the next cycle.
                 try {
-                	if (fs == null) {
-                		fs = FileSystem.get(appConf);
-                	}
-        			checkFiles(fs);
+                    if (fs == null) {
+                        fs = FileSystem.get(appConf);
+                    }
+                    checkFiles(fs);
                 } catch (Exception e) {
                     LOG.error("Cleanup cycle failed: " + e.getMessage());
                 }
@@ -122,20 +122,20 @@ public class HDFSCleanup extends Thread {
      * @throws IOException
      */
     private void checkFiles(FileSystem fs) throws IOException {
-    	long now = new Date().getTime();
-	    for (Type type : Type.values()) {
-	    	try {
-				for (FileStatus status : fs.listStatus(new Path(
-							HDFSStorage.getPath(type)))) {
-					if (now - status.getModificationTime() > maxage) {
-						LOG.info("Deleting " + status.getPath().toString());
-						fs.delete(status.getPath(), true);
-					}
-				}
-			} catch (Exception e) {
-				// Nothing to find for this type.
-			}					
-		}
+        long now = new Date().getTime();
+        for (Type type : Type.values()) {
+            try {
+                for (FileStatus status : fs.listStatus(new Path(
+                        HDFSStorage.getPath(type)))) {
+                    if (now - status.getModificationTime() > maxage) {
+                        LOG.info("Deleting " + status.getPath().toString());
+                        fs.delete(status.getPath(), true);
+                    }
+                }
+            } catch (Exception e) {
+                // Nothing to find for this type.
+            }
+        }
     }
 
     // Handle to stop this process from the outside if needed.
