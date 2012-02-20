@@ -17,23 +17,25 @@
  */
 package org.apache.hcatalog.templeton;
 
+import com.sun.jersey.api.core.PackagesResourceConfig;
+import com.sun.jersey.spi.container.servlet.ServletContainer;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hdfs.web.AuthFilter;
 import org.apache.hadoop.util.GenericOptionsParser;
-import org.apache.hcatalog.templeton.netty.HttpServerPipelineFactory;
-import org.jboss.netty.bootstrap.ServerBootstrap;
-import org.jboss.netty.channel.ChannelException;
-import org.jboss.netty.channel.socket.oio.OioServerSocketChannelFactory;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlet.FilterMapping;
 
 /**
  * The main executable that starts up and runs the Server.
  */
 public class Main {
-    private static final Log LOG = LogFactory.getLog(AppConfig.class);
+    public static final String SERVLET_PATH = "templeton";
+    private static final Log LOG = LogFactory.getLog(Main.class);
 
     /**
      * More threads than we can handle, but an upper limit so the
@@ -86,33 +88,45 @@ public class Main {
     }
 
     public void run() {
-        runServer(conf.getInt(AppConfig.PORT, DEFAULT_PORT));
-    }
-
-    public void runServer(int port) {
-        ThreadPoolExecutor boss = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-        ThreadPoolExecutor worker = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-        boss.setMaximumPoolSize(MAX_THREADS);
-        worker.setMaximumPoolSize(MAX_THREADS);
-
-        OioServerSocketChannelFactory factory
-            = new OioServerSocketChannelFactory(boss, worker);
-
-        ServerBootstrap bootstrap = new ServerBootstrap(factory);
-
-        HttpServerPipelineFactory pipelineFactory
-            = new HttpServerPipelineFactory(Server.class.getName(),
-                                            SimpleExceptionMapper.class.getName(),
-                                            CatchallExceptionMapper.class.getName());
-        bootstrap.setPipelineFactory(pipelineFactory);
-        LOG.info("Templeton listening on port " + port);
         try {
-            bootstrap.bind(new InetSocketAddress(port));
-        } catch (ChannelException e) {
+            ZooKeeperCleanup.startInstance(conf);
+        } catch (IOException e) {
+            LOG.error("ZookeeperCleanup failed to start: " + e.getMessage());
+        }
+
+        int port = conf.getInt(AppConfig.PORT, DEFAULT_PORT);
+        try {
+            runServer(port);
+            LOG.info("Templeton listening on port " + port);
+        } catch (Exception e) {
             System.err.println("templeton: Server failed to start: " + e.getMessage());
             LOG.fatal("Server failed to start: " + e);
             System.exit(1);
         }
+    }
+
+    public Server runServer(int port)
+        throws Exception
+    {
+        // Create the Jetty server
+        Server server = new Server(port);
+        ServletContextHandler root = new ServletContextHandler(server, "/");
+
+        // Add the Auth filter
+        root.addFilter(AuthFilter.class, "/*", FilterMapping.REQUEST);
+
+        // Connect Jersey
+        PackagesResourceConfig rc
+            = new PackagesResourceConfig("org.apache.hcatalog.templeton");
+        HashMap<String, Object> props = new HashMap<String, Object>();
+        props.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
+        rc.setPropertiesAndFeatures(props);
+        root.addServlet(new ServletHolder(new ServletContainer(rc)),
+                        "/" + SERVLET_PATH + "/*");
+
+        // Start the server
+        server.start();
+        return server;
     }
 
     public static void main(String[] args) {

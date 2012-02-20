@@ -68,13 +68,16 @@
                 conf="common->master"/>
     <dependency org="log4j" name="log4j" rev="1.2.15"
                 conf="common->master"/>
-    <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.4.3"
+    <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.6.4"
                 conf="common->master"/>
-    <dependency org="org.slf4j" name="slf4j-api" rev="1.4.3"
+    <dependency org="org.slf4j" name="slf4j-api" rev="1.6.4"
                 conf="common->master"/>
                 
-    <dependency org="io.netty" name="netty" rev="3.3.1.Final" conf="common->master"/>
-
+    <dependency org="org.eclipse.jetty.aggregate"
+                name="jetty-all-server" rev="7.6.0.v20120127"
+                conf="common->master"/>
+    <dependency org="javax.servlet" name="servlet-api" rev="2.5"
+                conf="common->master"/>
 
     <dependency org="com.sun.jersey"
                 name="jersey-core"

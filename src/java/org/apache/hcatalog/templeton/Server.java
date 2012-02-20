@@ -47,7 +47,7 @@ import org.apache.hadoop.security.authentication.client.PseudoAuthenticator;
 /**
  * The Templeton Web API server.
  */
-@Path("/templeton/v1")
+@Path("/v1")
 public class Server {
     public static final String VERSION = "v1";
 
@@ -126,12 +126,11 @@ public class Server {
     @Produces({MediaType.APPLICATION_JSON})
     public ExecBean ddl(@FormParam("exec") String exec,
                         @FormParam("group") String group,
-                        @FormParam("permissions") String permissions,
-                        @FormParam(PseudoAuthenticator.USER_NAME) String user)
+                        @FormParam("permissions") String permissions)
         throws NotAuthorizedException, BusyException, BadParam,
         ExecuteException, IOException
     {
-        verifyUser(user);
+        verifyUser();
         verifyParam(exec, "exec");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
@@ -142,12 +141,11 @@ public class Server {
     @Path("ddl/database/{db}/table/{table}")
     @Produces("application/json")
     public ExecBean describeTable(@PathParam("db") String db,
-                                  @PathParam("table") String table,
-                                  @FormParam(PseudoAuthenticator.USER_NAME) String user)
+                                  @PathParam("table") String table)
         throws NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
-        verifyUser(user);
+        verifyUser();
         verifyDdlParam(db, ":db");
         verifyDdlParam(table, ":table");
 
@@ -170,19 +168,17 @@ public class Server {
                                           @FormParam("cmdenv") List<String> cmdenvs,
                                           @FormParam("arg") List<String> args,
                                           @FormParam("statusdir") String statusdir,
-                                          @FormParam("callback") String callback,
-                                          @FormParam(PseudoAuthenticator.USER_NAME)
-                                          String user)
+                                          @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException, InterruptedException
     {
-        verifyUser(user);
+        verifyUser();
         verifyParam(inputs, "input");
         verifyParam(mapper, "mapper");
         verifyParam(reducer, "reducer");
 
         StreamingDelegator d = new StreamingDelegator(appConf, execService);
-        return d.run(getUser(user), inputs, output, mapper, reducer,
+        return d.run(getUser(), inputs, output, mapper, reducer,
                      files, defines, cmdenvs, args,
                      statusdir, callback, getCompletedUrl());
     }
@@ -200,18 +196,16 @@ public class Server {
                                     @FormParam("arg") List<String> args,
                                     @FormParam("define") List<String> defines,
                                     @FormParam("statusdir") String statusdir,
-                                    @FormParam("callback") String callback,
-                                    @FormParam(PseudoAuthenticator.USER_NAME)
-                                    String user)
+                                    @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException, InterruptedException
     {
-        verifyUser(user);
+        verifyUser();
         verifyParam(jar, "jar");
         verifyParam(mainClass, "class");
 
         JarDelegator d = new JarDelegator(appConf, execService);
-        return d.run(getUser(user),
+        return d.run(getUser(),
                      jar, mainClass,
                      libjars, files, args, defines,
                      statusdir, callback, getCompletedUrl());
@@ -228,17 +222,16 @@ public class Server {
                            @FormParam("arg") List<String> pigArgs,
                            @FormParam("files") String otherFiles,
                            @FormParam("statusdir") String statusdir,
-                           @FormParam("callback") String callback,
-                           @FormParam(PseudoAuthenticator.USER_NAME) String user)
+                           @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException, InterruptedException
     {
-        verifyUser(user);
+        verifyUser();
         if (execute == null && srcFile == null)
             throw new BadParam("Either execute or file parameter required");
 
         PigDelegator d = new PigDelegator(appConf, execService);
-        return d.run(getUser(user),
+        return d.run(getUser(),
                      execute, srcFile,
                      pigArgs, otherFiles,
                      statusdir, callback, getCompletedUrl());
@@ -254,17 +247,16 @@ public class Server {
                             @FormParam("file") String srcFile,
                             @FormParam("define") List<String> defines,
                             @FormParam("statusdir") String statusdir,
-                            @FormParam("callback") String callback,
-                            @FormParam(PseudoAuthenticator.USER_NAME) String user)
+                            @FormParam("callback") String callback)
         throws NotAuthorizedException, BusyException, BadParam, QueueException,
         ExecuteException, IOException, InterruptedException
     {
-        verifyUser(user);
+        verifyUser();
         if (execute == null && srcFile == null)
             throw new BadParam("Either execute or file parameter required");
 
         HiveDelegator d = new HiveDelegator(appConf, execService);
-        return d.run(getUser(user), execute, srcFile, defines,
+        return d.run(getUser(), execute, srcFile, defines,
                      statusdir, callback, getCompletedUrl());
     }
 
@@ -274,16 +266,14 @@ public class Server {
     @GET
     @Path("queue/{jobid}.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public QueueStatusBean showQueueId(@PathParam("jobid") String jobid,
-                                       @QueryParam(PseudoAuthenticator.USER_NAME)
-                                       String user)
+    public QueueStatusBean showQueueId(@PathParam("jobid") String jobid)
         throws NotAuthorizedException, BadParam, IOException
     {
-        verifyUser(user);
+        verifyUser();
         verifyParam(jobid, ":jobid");
 
         StatusDelegator d = new StatusDelegator(appConf, execService);
-        return d.run(getUser(user), jobid);
+        return d.run(getUser(), jobid);
     }
 
     /**
@@ -292,16 +282,14 @@ public class Server {
     @DELETE
     @Path("queue/{jobid}.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public QueueStatusBean deleteQueueId(@PathParam("jobid") String jobid,
-                                         @QueryParam(PseudoAuthenticator.USER_NAME)
-                                         String user)
+    public QueueStatusBean deleteQueueId(@PathParam("jobid") String jobid)
         throws NotAuthorizedException, BadParam, IOException
     {
-        verifyUser(user);
+        verifyUser();
         verifyParam(jobid, ":jobid");
 
         DeleteDelegator d = new DeleteDelegator(appConf, execService);
-        return d.run(getUser(user), jobid);
+        return d.run(getUser(), jobid);
     }
 
     /**
@@ -310,14 +298,13 @@ public class Server {
     @GET
     @Path("queue.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<String> showQueueList(@QueryParam(PseudoAuthenticator.USER_NAME)
-                                      String user)
+    public List<String> showQueueList()
         throws NotAuthorizedException, BadParam, IOException
     {
-        verifyUser(user);
+        verifyUser();
 
         ListDelegator d = new ListDelegator(appConf, execService);
-        return d.run(getUser(user));
+        return d.run(getUser());
     }
 
     /**
@@ -336,10 +323,10 @@ public class Server {
     /**
      * Verify that we have a valid user.  Throw an exception if invalid.
      */
-    public void servletVerifyUser()
+    public void verifyUser()
         throws NotAuthorizedException
     {
-        if (servletGetUser() == null) {
+        if (getUser() == null) {
             String msg = "No user found.";
             if (! UserGroupInformation.isSecurityEnabled())
                 msg += "  Missing " + PseudoAuthenticator.USER_NAME + " parameter.";
@@ -384,26 +371,12 @@ public class Server {
             throw new BadParam("Invalid DDL identifier " + name );
     }
 
-    public String servletGetUser() {
+    public String getUser() {
         if (theSecurityContext == null)
             return null;
         if (theSecurityContext.getUserPrincipal() == null)
             return null;
         return theSecurityContext.getUserPrincipal().getName();
-    }
-
-    public void verifyUser(String user)
-        throws NotAuthorizedException
-    {
-        if (user == null)
-            servletVerifyUser();
-    }
-
-    public String getUser(String user) {
-        if (user != null)
-            return user;
-        else
-            return servletGetUser();
     }
 
     public String getCompletedUrl() {
