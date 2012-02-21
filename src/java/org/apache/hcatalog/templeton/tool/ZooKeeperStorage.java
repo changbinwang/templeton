@@ -187,11 +187,15 @@ public class ZooKeeperStorage implements TempletonStorage {
     
     public static String[] getPaths(String fullpath) {
         ArrayList<String> paths = new ArrayList<String>();
-        int location = 1;
-        while ((location = fullpath.indexOf("/", location + 1)) > 0) {
-            paths.add(fullpath.substring(0, location));
+        if (fullpath.length() < 2) {
+            paths.add(fullpath);
+        } else {
+            int location = 0;
+            while ((location = fullpath.indexOf("/", location + 1)) > 0) {
+                paths.add(fullpath.substring(0, location));
+            }
+            paths.add(fullpath);
         }
-        paths.add(fullpath);
         String[] strings = new String[paths.size()];
         return paths.toArray(strings);
     }
