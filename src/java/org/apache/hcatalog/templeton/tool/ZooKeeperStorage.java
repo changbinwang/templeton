@@ -122,7 +122,7 @@ public class ZooKeeperStorage implements TempletonStorage {
         throws IOException
     {
         try {
-            String[] paths = {storage_root, getPath(type), makeZnode(type, id)};
+            String[] paths = getPaths(makeZnode(type, id));
             boolean wasCreated = false;
             for (String znode : paths) {
                 try {
@@ -184,7 +184,18 @@ public class ZooKeeperStorage implements TempletonStorage {
         }
         return typepath;
     }
-
+    
+    public static String[] getPaths(String fullpath) {
+        ArrayList<String> paths = new ArrayList<String>();
+        int location = 1;
+        while ((location = fullpath.indexOf("/", location + 1)) > 0) {
+            paths.add(fullpath.substring(0, location));
+        }
+        paths.add(fullpath);
+        String[] strings = new String[paths.size()];
+        return paths.toArray(strings);
+    }
+    
     /**
      * A helper method that sets a field value.
      * @param type
