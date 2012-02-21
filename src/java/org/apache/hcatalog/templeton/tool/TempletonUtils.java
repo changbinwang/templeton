@@ -241,7 +241,7 @@ public class TempletonUtils {
                                                     String overrideClasspath)
     {
         HashMap<String, String> env = new HashMap<String, String>();
-        env.put("HADOOP_USER", user);
+        env.put("HADOOP_USER_NAME", user);
 
         if (overrideClasspath != null) {
             env.put("HADOOP_USER_CLASSPATH_FIRST", "true");

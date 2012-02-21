@@ -37,6 +37,7 @@
   <property environment="env"/>
   <property name="lib.dir" value="${basedir}/lib/" />
   <property name="src.dir"  location="${basedir}/src/java"/>
+  <property name="bin.dir"  location="${basedir}/bin"/>
   <property name="resources.dir"  location="${basedir}/src/resources"/>
   <property name="package.dir"  location="${basedir}/src/packages"/>
   <property name="docs.src" value="${basedir}/src/docs"/>
@@ -351,7 +352,11 @@
       </fileset>
     </copy>
     <copy todir="${dist.dir}/lib">
-        <fileset dir="${ivy.lib.dir}" includes="zookeeper*.jar"/>
+        <fileset dir="${ivy.lib.dir}" >
+	  <exclude name="hadoop*jar"/>
+	  <exclude name="hadoop*jar"/>
+	  <exclude name="junit*jar"/>
+	</fileset>  
     </copy>
 
     <copy todir="${dist.dir}/">
@@ -364,23 +369,34 @@
         <fileset dir="${src.dir}" />
     </copy>
 
+    <copy todir="${dist.dir}/sbin" >
+      <fileset dir="${package.dir}">
+        <include name="*.sh"/>
+      </fileset>
+      <fileset dir="${bin.dir}">
+        <include name="templeton_server.sh"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist.dir}/libexec" >
+      <fileset dir="${bin.dir}">
+        <include name="templeton_config.sh"/>
+      </fileset>
+    </copy>
+
     <copy todir="${dist.dir}/test" includeEmptyDirs="true">
-        <fileset dir="${test.src.dir}" />
+      <fileset dir="${test.src.dir}" />
     </copy>
 
     <copy todir="${dist.dir}/docs">
-        <fileset dir=".">
-          <include name="*.txt" />
-        </fileset>
+      <fileset dir=".">
+        <include name="*.txt" />
+       </fileset>
     </copy>
 
     <copy todir="${dist.dir}/" file="build.xml" /> 
 
-<!-- TODO: enable when we have executables
-    <chmod perm="ugo+x" type="file">
-        <fileset dir="${dist.dir}/bin" />
-    </chmod>
--->
+    <chmod perm="ugo+x" dir= "${dist.dir}/sbin/" includes="**/*.sh" />
 
   </target>
 
@@ -402,15 +418,26 @@
       </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/share/templeton/lib">
-        <fileset dir="${ivy.lib.dir}" includes="zookeeper*.jar"/>
+    <copy todir="${dist.dir}/lib">
+        <fileset dir="${ivy.lib.dir}" >
+	  <exclude name="hadoop*jar"/>
+	  <exclude name="hadoop*jar"/>
+	  <exclude name="junit*jar"/>
+	</fileset>  
     </copy>
 
-    <copy todir="${dist.dir}/sbin">
-        <fileset dir="src/packages">
-        <include name="*.sh"/>
-        </fileset>
+    <copy todir="${dist.dir}/libexec" >
+      <fileset dir="${bin.dir}">
+        <include name="templeton_config.sh"/>
+      </fileset>
     </copy>
+
+    <copy todir="${dist.dir}/sbin" >
+      <fileset dir="${bin.dir}">
+        <include name="templeton_server.sh"/>
+      </fileset>
+    </copy>
+
 
     <copy todir="${dist.dir}/share/templeton/">
       <fileset dir="${basedir}/src/hadoop_temp_fix" >
@@ -432,13 +459,7 @@
       <fileset dir="src/packages/templates/conf"/>
     </copy>
 
-
-    <chmod perm="ugo+x" type="file">
-<!-- TODO: enable when we have executables
-        <fileset dir="${dist.dir}/bin" />
--->
-        <fileset dir="${dist.dir}/sbin" />
-    </chmod>
+    <chmod perm="ugo+x" dir= "${dist.dir}/sbin/" includes="**/*.sh" />
 
   </target>
 
@@ -450,14 +471,12 @@
     <tar compression="gzip" longfile="gnu" destfile="${build.dir}/${final.name}.tar.gz">
 
       <tarfileset dir="${build.dir}" mode="664">
-          <exclude name="${final.name}/bin/*" />
+          <exclude name="${final.name}/sbin/*" />
           <include name="${final.name}/**" />
       </tarfileset>
-<!-- TODO: enable when we have executables
       <tarfileset dir="${build.dir}" mode="755">
-          <include name="${final.name}/bin/*" />
+          <include name="${final.name}/sbin/*" />
       </tarfileset>
--->
 
     </tar>
   </target>
@@ -465,14 +484,12 @@
   <target name="tar-rpm" depends="package-rpm" description="Create rpm package tarball">
     <tar compression="gzip" longfile="gnu" destfile="${build.dir}/${final.name}.tar.gz">
       <tarfileset dir="${build.dir}" mode="664">
-        <exclude name="${final.name}/bin/*" />
+        <exclude name="${final.name}/sbin/*" />
         <include name="${final.name}/**" />
       </tarfileset>
-<!-- TODO: enable when we have executables
       <tarfileset dir="${build.dir}" mode="755">
-        <include name="${final.name}/bin/*" />
+        <include name="${final.name}/sbin/*" />
       </tarfileset>
--->
     </tar>
   </target>
 
