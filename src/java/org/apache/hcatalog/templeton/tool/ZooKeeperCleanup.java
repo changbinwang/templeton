@@ -158,7 +158,9 @@ public class ZooKeeperCleanup extends Thread {
     public boolean checkAndDelete(String node, ZooKeeper zk) {
         JobState state = null;
         try {
-            JobStateTracker tracker = new JobStateTracker(node, zk, true);
+            JobStateTracker tracker = new JobStateTracker(node, zk, true,
+                    appConf.get(TempletonStorage.STORAGE_ROOT +
+                            ZooKeeperStorage.TRACKINGDIR));
             long now = new Date().getTime();
             state = new JobState(tracker.getJobID(), appConf);
 

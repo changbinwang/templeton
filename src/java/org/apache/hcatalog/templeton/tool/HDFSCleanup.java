@@ -58,6 +58,9 @@ public class HDFSCleanup extends Thread {
     // Whether the cycle is running
     private static boolean isRunning = false;
     
+    // The storage root
+    private String storage_root;
+    
     /**
      * Create a cleanup object. 
      */
@@ -65,6 +68,7 @@ public class HDFSCleanup extends Thread {
         this.appConf = appConf;
         interval = appConf.getLong(HDFS_CLEANUP_INTERVAL, interval);
         maxage = appConf.getLong(HDFS_CLEANUP_MAX_AGE, maxage);
+        storage_root = appConf.get(TempletonStorage.STORAGE_ROOT);
     }
     
     public static HDFSCleanup getInstance(Configuration appConf) {
@@ -126,7 +130,7 @@ public class HDFSCleanup extends Thread {
         for (Type type : Type.values()) {
             try {
                 for (FileStatus status : fs.listStatus(new Path(
-                        HDFSStorage.getPath(type)))) {
+                        HDFSStorage.getPath(type, storage_root)))) {
                     if (now - status.getModificationTime() > maxage) {
                         LOG.info("Deleting " + status.getPath().toString());
                         fs.delete(status.getPath(), true);

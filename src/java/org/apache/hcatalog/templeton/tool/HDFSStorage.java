@@ -44,11 +44,11 @@ import org.apache.hadoop.fs.Path;
 public class HDFSStorage implements TempletonStorage {
     FileSystem fs = null;
     
-    public static final String STORAGE_ROOT = "/user/templeton/storage";
+    public String storage_root = null;
     
-    public static final String JOB_PATH = STORAGE_ROOT + "/jobs";
-    public static final String JOB_TRACKINGPATH = STORAGE_ROOT + "/created";
-    public static final String OVERHEAD_PATH = STORAGE_ROOT + "/overhead";
+    public static final String JOB_PATH = "/jobs";
+    public static final String JOB_TRACKINGPATH = "/created";
+    public static final String OVERHEAD_PATH = "/overhead";
     
     private static final Log LOG = LogFactory.getLog(HDFSStorage.class);
 
@@ -215,6 +215,7 @@ public class HDFSStorage implements TempletonStorage {
 
     @Override
     public void openStorage(Configuration config) throws IOException {
+        storage_root = config.get(TempletonStorage.STORAGE_ROOT);
         if (fs == null) {
             fs = FileSystem.get(config);
         }
@@ -230,14 +231,25 @@ public class HDFSStorage implements TempletonStorage {
      * @param type
      * @return
      */
-    public static String getPath(Type type) {
-        String typepath = OVERHEAD_PATH;
+    public String getPath(Type type) {
+        return getPath(type, storage_root);
+    }
+    
+    /**
+     * Static method to get the path based on the type.
+     * 
+     * @param type
+     * @param root
+     * @return
+     */
+    public static String getPath(Type type, String root) {
+        String typepath = root + OVERHEAD_PATH;
         switch (type) {
         case JOB:
-            typepath = JOB_PATH;
+            typepath = root + JOB_PATH;
             break;
         case JOBTRACKING:
-            typepath = JOB_TRACKINGPATH;
+            typepath = root + JOB_TRACKINGPATH;
             break;
         }
         return typepath;

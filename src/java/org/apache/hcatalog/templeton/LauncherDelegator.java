@@ -28,6 +28,7 @@ import org.apache.hcatalog.templeton.tool.JobState;
 import org.apache.hcatalog.templeton.tool.TempletonControllerJob;
 import org.apache.hcatalog.templeton.tool.TempletonStorage;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
+import org.apache.hcatalog.templeton.tool.ZooKeeperStorage;
 
 /**
  * The helper class for all the Templeton delegator classes that
@@ -100,6 +101,12 @@ public class LauncherDelegator extends TempletonDelegator {
         // Storage vars
         addDef(args, TempletonStorage.STORAGE_CLASS,
                appConf.get(TempletonStorage.STORAGE_CLASS));
+        addDef(args, TempletonStorage.STORAGE_ROOT,
+                appConf.get(TempletonStorage.STORAGE_ROOT));
+        addDef(args, ZooKeeperStorage.ZK_HOSTS,
+                appConf.get(ZooKeeperStorage.ZK_HOSTS));
+        addDef(args, ZooKeeperStorage.ZK_SESSION_TIMEOUT,
+                appConf.get(ZooKeeperStorage.ZK_SESSION_TIMEOUT));
 
         // Completion notifier vars
         addDef(args, AppConfig.HADOOP_END_RETRY_NAME,

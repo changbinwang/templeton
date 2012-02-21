@@ -48,6 +48,7 @@ public interface TempletonStorage {
     }
     
     public static final String STORAGE_CLASS    = "templeton.storage.class";
+    public static final String STORAGE_ROOT     = "templeton.storage.root";
 
     /**
      * Start the cleanup process for this storage type.
