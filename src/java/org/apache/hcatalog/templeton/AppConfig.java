@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.VersionInfo;
+import org.apache.hcatalog.templeton.tool.JobState;
 import org.apache.hcatalog.templeton.tool.TempletonStorage;
 import org.apache.hcatalog.templeton.tool.ZooKeeperCleanup;
 import org.apache.hcatalog.templeton.tool.ZooKeeperStorage;
@@ -106,7 +107,7 @@ public class AppConfig extends Configuration {
     public static final String HADOOP_END_INTERVAL_NAME = "job.end.retry.interval";
     public static final String HADOOP_END_RETRY_NAME    = "job.end.retry.attempts";
     public static final String HADOOP_END_URL_NAME      = "job.end.notification.url";
-    
+
     private static final Log LOG = LogFactory.getLog(AppConfig.class);
 
     public AppConfig() {
@@ -127,23 +128,9 @@ public class AppConfig extends Configuration {
         for (String fname : HADOOP_CONF_FILENAMES)
             loadOneFileConfig(hadoopConfDir, fname);
     }
-    
+
     public void startCleanup() {
-         try {
-             ((TempletonStorage) Class.forName(
-                     get(TempletonStorage.STORAGE_CLASS))
-                             .newInstance()).startCleanup(this);
-         } catch (Exception e) {
-             // Default to ZK
-            try {
-                LOG.warn("Couldn't find " + 
-                    get(TempletonStorage.STORAGE_CLASS) + "," +
-                        " starting ZooKeeperCleanup.");
-                ZooKeeperCleanup.startInstance(this);
-            } catch (Exception ex) {
-                LOG.error("Unable to start up Cleanup instance.");
-            }
-         }
+        JobState.getStorageInstance(this).startCleanup(this);
     }
 
     public String getHadoopConfDir() {

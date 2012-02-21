@@ -39,7 +39,7 @@ public class JobState {
     private TempletonStorage storage = null;
 
     private static TempletonStorage.Type type = TempletonStorage.Type.JOB;
-    
+
     private Configuration config = null;
 
     public JobState(String id, Configuration conf)
@@ -60,19 +60,18 @@ public class JobState {
             LOG.info("Couldn't delete " + id);
         }
     }
-    
+
     /**
      * Get an instance of the selected storage class.  Defaults to
      * ZooKeeper storage if none is specified.
      * @return
      */
-    public static TempletonStorage getStorage(Configuration conf) {
+    public static TempletonStorage getStorageInstance(Configuration conf) {
         TempletonStorage storage = null;
         try {
             storage = (TempletonStorage)
                 Class.forName(conf.get(TempletonStorage.STORAGE_CLASS))
                     .newInstance();
-            storage.openStorage(conf);
         } catch (Exception e) {
             LOG.warn("No storage method found: " + e.getMessage());
             try {
@@ -81,6 +80,16 @@ public class JobState {
                 LOG.error("Couldn't create storage.");
             }
         }
+        return storage;
+    }
+
+    /**
+     * Get an open instance of the selected storage class.  Defaults
+     * to ZooKeeper storage if none is specified.
+     */
+    public static TempletonStorage getStorage(Configuration conf) throws IOException {
+        TempletonStorage storage = getStorageInstance(conf);
+        storage.openStorage(conf);
         return storage;
     }
 

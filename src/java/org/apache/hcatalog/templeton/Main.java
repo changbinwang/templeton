@@ -88,12 +88,6 @@ public class Main {
     }
 
     public void run() {
-        try {
-            ZooKeeperCleanup.startInstance(conf);
-        } catch (IOException e) {
-            LOG.error("ZookeeperCleanup failed to start: " + e.getMessage());
-        }
-
         int port = conf.getInt(AppConfig.PORT, DEFAULT_PORT);
         try {
             runServer(port);
