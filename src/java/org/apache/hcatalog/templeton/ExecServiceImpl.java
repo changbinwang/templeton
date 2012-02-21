@@ -155,7 +155,9 @@ public class ExecServiceImpl implements ExecService {
         }
         if (env != null)
             res.putAll(env);
-
+        for(Map.Entry<String, String> envs : res.entrySet()){
+	    LOG.info("Env " + envs.getKey() + "=" + envs.getValue());
+        }
         return res;
     }
 
