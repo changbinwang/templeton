@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.hcatalog.templeton;
+package org.apache.hcatalog.templeton.tool;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Date;
 
-import org.apache.hcatalog.templeton.tool.JobState;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.zookeeper.ZooKeeper;
 
 import org.apache.commons.logging.Log;
@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  * This does periodic cleanup
  */
 public class ZooKeeperCleanup extends Thread {
-    protected AppConfig appConf;
+    protected Configuration appConf;
 
     // The interval to wake up and check the queue
     public static final String ZK_CLEANUP_INTERVAL =
@@ -62,13 +62,13 @@ public class ZooKeeperCleanup extends Thread {
      * Create a cleanup object.  We use the appConfig to configure JobState.
      * @param appConf
      */
-    private ZooKeeperCleanup(AppConfig appConf) {
+    private ZooKeeperCleanup(Configuration appConf) {
         this.appConf = appConf;
         interval = appConf.getLong(ZK_CLEANUP_INTERVAL, interval);
         maxage = appConf.getLong(ZK_CLEANUP_MAX_AGE, maxage);
     }
-
-    public static ZooKeeperCleanup getInstance(AppConfig appConf) {
+    
+    public static ZooKeeperCleanup getInstance(Configuration appConf) {
         if (thisclass != null) {
             return thisclass;
         }
@@ -76,7 +76,7 @@ public class ZooKeeperCleanup extends Thread {
         return thisclass;
     }
 
-    public static void startInstance(AppConfig appConf) throws IOException {
+    public static void startInstance(Configuration appConf) throws IOException {
         if (! isRunning) {
             getInstance(appConf).start();
         }
@@ -158,9 +158,11 @@ public class ZooKeeperCleanup extends Thread {
     public boolean checkAndDelete(String node, ZooKeeper zk) {
         JobState state = null;
         try {
-            JobStateTracker tracker = new JobStateTracker(node, zk, true);
+            JobStateTracker tracker = new JobStateTracker(node, zk, true,
+                    appConf.get(TempletonStorage.STORAGE_ROOT +
+                            ZooKeeperStorage.TRACKINGDIR));
             long now = new Date().getTime();
-            state = new JobState(tracker.getJobID());
+            state = new JobState(tracker.getJobID(), appConf);
 
             // Set the default to 0 -- if the created date is null, there was
             // an error in creation, and we want to delete it anyway.

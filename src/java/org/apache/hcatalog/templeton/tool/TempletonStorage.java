@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.hcatalog.templeton;
+package org.apache.hcatalog.templeton.tool;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,7 +46,16 @@ public interface TempletonStorage {
     public enum Type {
         UNKNOWN, JOB, JOBTRACKING, TEMPLETONOVERHEAD
     }
+    
+    public static final String STORAGE_CLASS    = "templeton.storage.class";
+    public static final String STORAGE_ROOT     = "templeton.storage.root";
 
+    /**
+     * Start the cleanup process for this storage type.
+     * @param config
+     */
+    public void startCleanup(Configuration config);
+    
     /**
      * Save a single key/value pair for a specific job id.
      * @param type The data type (as listed above)

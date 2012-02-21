@@ -164,10 +164,28 @@ limitations under the License.
     <description>How many times to retry the callback</description>
   </property>
 
- <property>
+  <property>
     <name>templeton.storage.class</name>
-    <value>org.apache.hcatalog.templeton.ZooKeeperStorage</value>
+    <value>org.apache.hcatalog.templeton.tool.ZooKeeperStorage</value>
     <description>The class to use as storage</description>
+  </property>
+
+  <property>
+    <name>templeton.storage.root</name>
+    <value>/templeton-hadoop</value>
+    <description>The path to the directory to use for storage</description>
+  </property>
+
+  <property>
+    <name>templeton.hdfs.cleanup.interval</name>
+    <value>43200000</value>
+    <description>The maximum delay between a thread's cleanup checks</description>
+  </property>
+
+  <property>
+    <name>templeton.hdfs.cleanup.maxage</name>
+    <value>604800000</value>
+    <description>The maximum age of a templeton job</description>
   </property>
 
   <property>
@@ -181,7 +199,5 @@ limitations under the License.
     <value>604800000</value>
     <description>The maximum age of a templeton job</description>
   </property>
-
-
 
 </configuration>

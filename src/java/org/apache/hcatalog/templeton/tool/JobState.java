@@ -24,10 +24,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hcatalog.templeton.Main;
-import org.apache.hcatalog.templeton.NotFoundException;
-import org.apache.hcatalog.templeton.TempletonStorage;
-import org.apache.hcatalog.templeton.ZooKeeperStorage;
 
 /**
  * The persistent state of a job.  The state is stored in one of the
@@ -43,20 +39,15 @@ public class JobState {
     private TempletonStorage storage = null;
 
     private static TempletonStorage.Type type = TempletonStorage.Type.JOB;
-
-    public JobState(String id)
-        throws IOException
-    {
-        this.id = id;
-        storage = Main.getAppConfigInstance().getStorage();
-    }
+    
+    private Configuration config = null;
 
     public JobState(String id, Configuration conf)
         throws IOException
     {
         this.id = id;
-        storage = new ZooKeeperStorage();
-        storage.openStorage(conf);
+        config = conf;
+        storage = getStorage(conf);
     }
 
     public void delete()
@@ -68,6 +59,29 @@ public class JobState {
             // Error getting children of node -- probably node has been deleted
             LOG.info("Couldn't delete " + id);
         }
+    }
+    
+    /**
+     * Get an instance of the selected storage class.  Defaults to
+     * ZooKeeper storage if none is specified.
+     * @return
+     */
+    public static TempletonStorage getStorage(Configuration conf) {
+        TempletonStorage storage = null;
+        try {
+            storage = (TempletonStorage)
+                Class.forName(conf.get(TempletonStorage.STORAGE_CLASS))
+                    .newInstance();
+            storage.openStorage(conf);
+        } catch (Exception e) {
+            LOG.warn("No storage method found: " + e.getMessage());
+            try {
+                storage = new ZooKeeperStorage();
+            } catch (Exception ex) {
+                LOG.error("Couldn't create storage.");
+            }
+        }
+        return storage;
     }
 
     /**
@@ -145,7 +159,7 @@ public class JobState {
     public List<JobState> getChildren() throws IOException {
         ArrayList<JobState> children = new ArrayList<JobState>();
         for (String jobid : getField("children").split(",")) {
-            children.add(new JobState(jobid));
+            children.add(new JobState(jobid, config));
         }
         return children;
     }
@@ -327,9 +341,9 @@ public class JobState {
      * @return
      * @throws IOException
      */
-    public static List<String> getJobs() throws IOException {
+    public static List<String> getJobs(Configuration conf) throws IOException {
         try {
-            return Main.getAppConfigInstance().getStorage().getAllForType(type);
+            return getStorage(conf).getAllForType(type);
         } catch (Exception e) {
             throw new IOException("Can't get jobs", e);
         }

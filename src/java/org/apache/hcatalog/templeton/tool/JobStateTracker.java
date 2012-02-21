@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.hcatalog.templeton;
+package org.apache.hcatalog.templeton.tool;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,9 +31,9 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.data.Stat;
 
 public class JobStateTracker {
-    // The root of the tracking nodes
-    public static final String JOB_TRACKINGROOT = ZooKeeperStorage.JOB_TRACKINGPATH;
-
+    // The path to the tracking root
+    private String job_trackingroot = null;
+    
     // The zookeeper connection to use
     private ZooKeeper zk;
     
@@ -52,13 +52,15 @@ public class JobStateTracker {
      * @param jobid
      * @param zk
      */
-    public JobStateTracker(String node, ZooKeeper zk, boolean nodeIsTracker) {
+    public JobStateTracker(String node, ZooKeeper zk, boolean nodeIsTracker,
+            String job_trackingpath) {
         this.zk = zk;
         if (nodeIsTracker) {
             trackingnode = node;
         } else {
             jobid = node;
         }
+        job_trackingroot = job_trackingpath;
     }
     
     /**
@@ -67,7 +69,8 @@ public class JobStateTracker {
     public void create()
         throws IOException
     {
-        String[] paths = {ZooKeeperStorage.STORAGE_ROOT, JOB_TRACKINGROOT};
+        String[] paths = {job_trackingroot.substring
+                (0, job_trackingroot.lastIndexOf("/")), job_trackingroot};
         for (String znode : paths) {
             try {
                 zk.create(znode, new byte[0],
@@ -117,14 +120,14 @@ public class JobStateTracker {
      * Make a ZK path to a new tracking node
      */
     public String makeTrackingZnode() {
-        return JOB_TRACKINGROOT + "/";
+        return job_trackingroot + "/";
     }
     
     /**
      * Make a ZK path to an existing tracking node
      */
     public String makeTrackingJobZnode(String nodename) {
-        return JOB_TRACKINGROOT + "/" + nodename;
+        return job_trackingroot + "/" + nodename;
     }
     
     /*
@@ -135,7 +138,9 @@ public class JobStateTracker {
             throws IOException {
         ArrayList<String> jobs = new ArrayList<String>();
         try {
-            for (String myid : zk.getChildren(JOB_TRACKINGROOT, false)) {
+            for (String myid : zk.getChildren(
+                    conf.get(TempletonStorage.STORAGE_ROOT)
+                    + ZooKeeperStorage.TRACKINGDIR, false)) {
                 jobs.add(myid);
             }
         } catch (Exception e) {

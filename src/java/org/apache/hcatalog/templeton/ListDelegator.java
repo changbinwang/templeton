@@ -57,7 +57,7 @@ public class ListDelegator extends TempletonDelegator {
                     JobState state = null;
                     try {
                         String id = job.getJobID().toString();
-                        state = new JobState(id);
+                        state = new JobState(id, Main.getAppConfigInstance());
                         if (user.equals(state.getUser()))
                             ids.add(id);
                     } finally {

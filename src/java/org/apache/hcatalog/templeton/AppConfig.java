@@ -20,13 +20,14 @@ package org.apache.hcatalog.templeton;
 import java.io.File;
 import java.net.URL;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.VersionInfo;
+import org.apache.hcatalog.templeton.tool.TempletonStorage;
+import org.apache.hcatalog.templeton.tool.ZooKeeperCleanup;
+import org.apache.hcatalog.templeton.tool.ZooKeeperStorage;
 
 /**
  * The configuration for Templeton.  This merges the normal Hadoop
@@ -105,9 +106,7 @@ public class AppConfig extends Configuration {
     public static final String HADOOP_END_INTERVAL_NAME = "job.end.retry.interval";
     public static final String HADOOP_END_RETRY_NAME    = "job.end.retry.attempts";
     public static final String HADOOP_END_URL_NAME      = "job.end.notification.url";
-
-    public static final String STORAGE_CLASS    = "templeton.storage.class";
-
+    
     private static final Log LOG = LogFactory.getLog(AppConfig.class);
 
     public AppConfig() {
@@ -128,27 +127,23 @@ public class AppConfig extends Configuration {
         for (String fname : HADOOP_CONF_FILENAMES)
             loadOneFileConfig(hadoopConfDir, fname);
     }
-
-    /**
-     * Get an instance of the selected storage class.  Defaults to
-     * ZooKeeper storage if none is specified.
-     * @return
-     */
-    public TempletonStorage getStorage() {
-        TempletonStorage storage = null;
-        try {
-            storage = (TempletonStorage)
-                Class.forName(get(STORAGE_CLASS)).newInstance();
-            storage.openStorage(this);
-        } catch (Exception e) {
-            LOG.warn("No storage method found: " + e.getMessage());
+    
+    public void startCleanup() {
+         try {
+             ((TempletonStorage) Class.forName(
+                     get(TempletonStorage.STORAGE_CLASS))
+                             .newInstance()).startCleanup(this);
+         } catch (Exception e) {
+             // Default to ZK
             try {
-                storage = new ZooKeeperStorage();
+                LOG.warn("Couldn't find " + 
+                    get(TempletonStorage.STORAGE_CLASS) + "," +
+                        " starting ZooKeeperCleanup.");
+                ZooKeeperCleanup.startInstance(this);
             } catch (Exception ex) {
-                LOG.error("Couldn't create storage.");
+                LOG.error("Unable to start up Cleanup instance.");
             }
-        }
-        return storage;
+         }
     }
 
     public String getHadoopConfDir() {

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.hcatalog.templeton;
+package org.apache.hcatalog.templeton.tool;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -42,12 +42,14 @@ import org.apache.zookeeper.ZooKeeper;
  * Data is stored with each key/value pair being a node in ZooKeeper.
  */
 public class ZooKeeperStorage implements TempletonStorage {
-    // Predictable locations for each of the storage types
-    public static final String STORAGE_ROOT = "/templeton-hadoop";
-
-    public static final String JOB_PATH = STORAGE_ROOT + "/jobs";
-    public static final String JOB_TRACKINGPATH = STORAGE_ROOT + "/created";
-    public static final String OVERHEAD_PATH = STORAGE_ROOT + "/overhead";
+    
+    public static final String TRACKINGDIR = "/created";
+    
+    // Locations for each of the storage types
+    public String storage_root = null;
+    public String job_path = null;
+    public String job_trackingpath = null;
+    public String overhead_path = null;
 
     public static final String ZK_HOSTS = "templeton.zookeeper.hosts";
     public static final String ZK_SESSION_TIMEOUT
@@ -104,6 +106,14 @@ public class ZooKeeperStorage implements TempletonStorage {
             }
         }
     }
+    
+    public void startCleanup(Configuration config) {
+        try {
+            ZooKeeperCleanup.startInstance(config);
+        } catch (Exception e) {
+            LOG.warn("Cleanup instance didn't start.");
+        }
+    }
 
     /**
      * Create a node in ZooKeeper
@@ -112,7 +122,7 @@ public class ZooKeeperStorage implements TempletonStorage {
         throws IOException
     {
         try {
-            String[] paths = {STORAGE_ROOT, getPath(type), makeZnode(type, id)};
+            String[] paths = {storage_root, getPath(type), makeZnode(type, id)};
             boolean wasCreated = false;
             for (String znode : paths) {
                 try {
@@ -127,10 +137,12 @@ public class ZooKeeperStorage implements TempletonStorage {
                     // Really not sure if this should go here.  Will have
                     // to see how the storage mechanism evolves.
                     if (type.equals(Type.JOB)) {
-                        JobStateTracker jt = new JobStateTracker(id, zk, false);
+                        JobStateTracker jt = new JobStateTracker(id, zk, false,
+                                job_trackingpath);
                         jt.create();
                     }
                 } catch (Exception e) {
+                    LOG.warn("Error tracking: " + e.getMessage());
                     // If we couldn't create the tracker node, don't
                     // create the main node.
                     zk.delete(makeZnode(type, id), -1);
@@ -161,13 +173,13 @@ public class ZooKeeperStorage implements TempletonStorage {
      * @return
      */
     public String getPath(Type type) {
-        String typepath = OVERHEAD_PATH;
+        String typepath = overhead_path;
         switch (type) {
         case JOB:
-            typepath = JOB_PATH;
+            typepath = job_path;
             break;
         case JOBTRACKING:
-            typepath = JOB_TRACKINGPATH;
+            typepath = job_trackingpath;
             break;
         }
         return typepath;
@@ -333,6 +345,11 @@ public class ZooKeeperStorage implements TempletonStorage {
 
     @Override
     public void openStorage(Configuration config) throws IOException {
+        storage_root = config.get(STORAGE_ROOT);
+        job_path = storage_root + "/jobs";
+        job_trackingpath = storage_root + TRACKINGDIR;
+        overhead_path = storage_root + "/overhead";
+        
         if (zk == null) {
             zk = zkOpen(config);
         }

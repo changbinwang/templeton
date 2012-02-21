@@ -19,7 +19,6 @@ package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.URL;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.commons.logging.Log;
@@ -63,6 +62,7 @@ public class Main {
 
     public void init(String[] args) {
         conf = loadConfig(args);
+        conf.startCleanup();
         LOG.debug("Loaded conf " + conf);
     }
 
@@ -86,12 +86,6 @@ public class Main {
     }
 
     public void run() {
-        try {
-            ZooKeeperCleanup.startInstance(conf);
-        } catch (IOException e) {
-            LOG.error("ZookeeperCleanup failed to start: " + e.getMessage());
-        }
-
         runServer(conf.getInt(AppConfig.PORT, DEFAULT_PORT));
     }
 
