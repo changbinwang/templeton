@@ -69,7 +69,8 @@ public class JobStateTracker {
     public void create()
         throws IOException
     {
-        String[] paths = {ZooKeeperStorage.STORAGE_ROOT, job_trackingroot};
+        String[] paths = {job_trackingroot.substring
+                (0, job_trackingroot.lastIndexOf("/")), job_trackingroot};
         for (String znode : paths) {
             try {
                 zk.create(znode, new byte[0],

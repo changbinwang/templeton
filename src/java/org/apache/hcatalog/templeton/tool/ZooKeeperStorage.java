@@ -46,6 +46,7 @@ public class ZooKeeperStorage implements TempletonStorage {
     public static final String TRACKINGDIR = "/created";
     
     // Locations for each of the storage types
+    public String storage_root = null;
     public String job_path = null;
     public String job_trackingpath = null;
     public String overhead_path = null;
@@ -121,7 +122,7 @@ public class ZooKeeperStorage implements TempletonStorage {
         throws IOException
     {
         try {
-            String[] paths = {STORAGE_ROOT, getPath(type), makeZnode(type, id)};
+            String[] paths = {storage_root, getPath(type), makeZnode(type, id)};
             boolean wasCreated = false;
             for (String znode : paths) {
                 try {
@@ -141,6 +142,7 @@ public class ZooKeeperStorage implements TempletonStorage {
                         jt.create();
                     }
                 } catch (Exception e) {
+                    LOG.warn("Error tracking: " + e.getMessage());
                     // If we couldn't create the tracker node, don't
                     // create the main node.
                     zk.delete(makeZnode(type, id), -1);
@@ -343,11 +345,11 @@ public class ZooKeeperStorage implements TempletonStorage {
 
     @Override
     public void openStorage(Configuration config) throws IOException {
-        String root = config.get(STORAGE_ROOT);
-        job_path = root + "/jobs";
-        job_trackingpath = root + TRACKINGDIR;
-        overhead_path = root + "/overhead";
-
+        storage_root = config.get(STORAGE_ROOT);
+        job_path = storage_root + "/jobs";
+        job_trackingpath = storage_root + TRACKINGDIR;
+        overhead_path = storage_root + "/overhead";
+        
         if (zk == null) {
             zk = zkOpen(config);
         }
