@@ -18,10 +18,9 @@
 package org.apache.hcatalog.templeton.test;
 
 import java.io.IOException;
-
 import junit.framework.TestCase;
-
 import org.apache.hcatalog.templeton.ExecBean;
+import org.apache.hcatalog.templeton.Main;
 import org.apache.hcatalog.templeton.SimpleWebException;
 import org.apache.hcatalog.templeton.test.mock.MockUriInfo;
 import org.apache.hcatalog.templeton.test.mock.MockServer;
@@ -34,6 +33,7 @@ public class ServerTest extends TestCase {
     MockServer server;
 
     public void setUp() {
+        new Main(null);         // Initialize the config
         server = new MockServer();
     }
 

@@ -41,9 +41,9 @@ task :test do
   end
 end
 
-desc "Run status.json"
+desc "Run status"
 task :status do
-  curl "status.json"
+  curl "status"
 end
 
 desc "Run ddl.json"
@@ -108,7 +108,7 @@ end
 
 desc "Prepare the hive table"
 task :hive_prepare do
-  script = "create table FOO(id INT, bar STRING) stored as rcfile;"
+  script = "create table pokes(id INT, bar STRING);"
   curl("hive.json",
        *USER,
        "-d", "execute=#{CGI.escape script}")

@@ -23,9 +23,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hcatalog.templeton.Main;
 import org.apache.hcatalog.templeton.NotFoundException;
 import org.apache.hcatalog.templeton.TempletonStorage;
+import org.apache.hcatalog.templeton.ZooKeeperStorage;
 
 /**
  * The persistent state of a job.  The state is stored in one of the
@@ -47,6 +49,14 @@ public class JobState {
     {
         this.id = id;
         storage = Main.getAppConfigInstance().getStorage();
+    }
+
+    public JobState(String id, Configuration conf)
+        throws IOException
+    {
+        this.id = id;
+        storage = new ZooKeeperStorage();
+        storage.openStorage(conf);
     }
 
     public void delete()

@@ -21,6 +21,7 @@ import com.sun.jersey.api.container.ContainerFactory;
 import com.sun.jersey.api.core.ClassNamesResourceConfig;
 import com.sun.jersey.api.core.ResourceConfig;
 import java.util.HashMap;
+import java.util.ArrayList;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
@@ -32,10 +33,10 @@ import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
  */
 public class HttpServerPipelineFactory implements ChannelPipelineFactory {
     private JerseyHandler jerseyHandler;
-    private String className;
+    private String[] providers;
 
-    public HttpServerPipelineFactory(String className) {
-        this.className = className;
+    public HttpServerPipelineFactory(String... providers) {
+        this.providers = providers;
         this.jerseyHandler = getJerseyHandler();
     }
 
@@ -47,10 +48,13 @@ public class HttpServerPipelineFactory implements ChannelPipelineFactory {
         return p;
     }
 
-    private JerseyHandler getJerseyHandler(){
+    private JerseyHandler getJerseyHandler() {
         HashMap<String, Object> props = new HashMap<String, Object>();
-        props.put(ClassNamesResourceConfig.PROPERTY_CLASSNAMES, className);
+        props.put(ClassNamesResourceConfig.PROPERTY_CLASSNAMES, providers);
         props.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
+        // props.put(ResourceConfig.PROPERTY_CONTAINER_REQUEST_FILTERS,
+        //          org.apache.hadoop.hdfs.web.AuthFilter.class.getName());
+
         ResourceConfig rcf = new ClassNamesResourceConfig(props);
         return ContainerFactory.createContainer(JerseyHandler.class, rcf);
     }

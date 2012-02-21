@@ -112,7 +112,7 @@ function start_templeton() {
         fi
 
         log "starting ..."
-        nohup $start_cmd >>$CONSOLE_LOG 2>$ERROR_LOG &
+        nohup $start_cmd >>$CONSOLE_LOG 2>>$ERROR_LOG &
         local pid=$!
 
         if [[ -z "${pid}" ]] ; then # we failed right off
