@@ -66,7 +66,7 @@ public class ServerTest extends TestCase {
                             String permissions)
         throws SimpleWebException, IOException
     {
-        ExecBean bean = server.ddl(command, group, permissions);
+        ExecBean bean = server.ddl(command, group, permissions, server.getUser());
         assertTrue(bean.stdout.endsWith("bin/hcat"));
         String tmp = bean.stderr.substring(bean.stderr.indexOf("[") + 1,
                                            bean.stderr.indexOf("]"));

@@ -49,6 +49,7 @@
   <property name="dist.dir" value="${build.dir}/${final.name}" />
   <property name="webapp.dir" value="${basedir}/src/webapp"/>
   <property name="build.webapp" value="${build.dir}/webapp"/>
+  <property name="build.instrumented" value="${build.dir}/instrumented" />
   <condition property="forrest.home" value="${env.FORREST_HOME}">
       <isset property="env.FORREST_HOME"/>
   </condition>
@@ -72,6 +73,7 @@
   <property name="test.all.file" value="${test.src.dir}/all-tests"/>
   <property name="test.exclude.file" value="${test.src.dir}/excluded-tests"/>
   <property name="test.output" value="no"/>
+  <property name="build.coverage.dir" value="${basedir}/report" />
 
   <!-- ivy properties set here -->
   <property name="ivy.repo.dir" value="${user.home}/ivyrepo" />
@@ -246,6 +248,13 @@
     ================================================================================
   -->
   <!-- Build Templeton test files -->
+
+  <path id="cobertura.classpath">
+    <fileset dir="${ivy.lib.dir}">
+        <include name="*.jar" />
+    </fileset>
+  </path>
+
   <target name="compile-test" depends="jar">
     <javac encoding="${build.encoding}" srcdir="${test.src.dir}" excludes="${excludes}"
            includes="**/*.java" destdir="${test.build.classes}" debug="${javac.debug}"
@@ -260,15 +269,25 @@
   <target name="test" depends="compile-test">
     <sequential>
       <delete dir="${test.log.dir}"/>
+      <delete file="${basedir}/cobertura.ser"/>
       <mkdir dir="${test.log.dir}"/>
+      <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+      <cobertura-instrument todir="${build.instrumented}">    
+        <fileset dir="${build.classes}"/>
+      </cobertura-instrument>
+
       <junit showoutput="${test.output}" printsummary="yes" haltonfailure="no"
-             fork="yes" maxmemory="512m" dir="${basedir}" timeout="${test.timeout}"
+         fork="yes" maxmemory="512m" dir="${basedir}" timeout="${test.timeout}"
              errorProperty="tests.failed" failureProperty="tests.failed">
+        <sysproperty key="net.sourceforge.cobertura.datafile"
+            file="${basedir}/cobertura.ser" />
         <classpath>
+          <pathelement location="${build.instrumented}" />
           <pathelement location="${test.build.classes}" />
           <pathelement location="." />
           <path refid="test.classpath"/>
         </classpath>
+        <classpath refid="cobertura.classpath" />
         <formatter type="${test.junit.output.format}" />
         <!-- If the user has not defined a particular test to run, run them all -->
         <batchtest fork="yes" todir="${test.log.dir}" unless="testcase">
@@ -289,6 +308,7 @@
         </assertions>
 
       </junit>
+      <cobertura-report srcdir="${src.dir}" destdir="${build.coverage.dir}"/>
       <fail if="tests.failed">Tests failed!</fail>
     </sequential>
   </target>
@@ -347,16 +367,16 @@
 
     <copy todir="${dist.dir}/docs">
       <fileset dir="${build.docs}"> 
-	<exclude name="webapp/**" />
-	<exclude name="tmp/**" />
+        <exclude name="webapp/**" />
+        <exclude name="tmp/**" />
       </fileset>
     </copy>
     <copy todir="${dist.dir}/lib">
         <fileset dir="${ivy.lib.dir}" >
-	  <exclude name="hadoop*jar"/>
-	  <exclude name="hadoop*jar"/>
-	  <exclude name="junit*jar"/>
-	</fileset>  
+          <exclude name="hadoop*jar"/>
+          <exclude name="hadoop*jar"/>
+          <exclude name="junit*jar"/>
+        </fileset>  
     </copy>
 
     <copy todir="${dist.dir}/">
@@ -413,17 +433,17 @@
 
     <copy todir="${dist.dir}/share/doc/templeton">
       <fileset dir="${build.docs}"> 
-	<exclude name="webapp/**" />
-	<exclude name="tmp/**" />
+        <exclude name="webapp/**" />
+        <exclude name="tmp/**" />
       </fileset>
     </copy>
 
     <copy todir="${dist.dir}/lib">
         <fileset dir="${ivy.lib.dir}" >
-	  <exclude name="hadoop*jar"/>
-	  <exclude name="hadoop*jar"/>
-	  <exclude name="junit*jar"/>
-	</fileset>  
+          <exclude name="hadoop*jar"/>
+          <exclude name="hadoop*jar"/>
+          <exclude name="junit*jar"/>
+        </fileset>  
     </copy>
 
     <copy todir="${dist.dir}/libexec" >

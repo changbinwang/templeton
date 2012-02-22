@@ -27,7 +27,6 @@ public class MockServer extends Server {
         execService = new MockExecService();
     }
 
-    @Override
     public String getUser() {
         return System.getenv("USER");
     }
