@@ -51,10 +51,22 @@ import org.apache.hadoop.security.authentication.client.PseudoAuthenticator;
 public class Server {
     public static final String VERSION = "v1";
 
+    /**
+     * The status message.  Always "ok"
+     */
     public static final Map<String, String> STATUS_OK = createStatusMsg();
+
+    /**
+     * The list of supported api versions.
+     */
     public static final Map<String, Object> SUPPORTED_VERSIONS = createVersions();
+
+    /**
+     * The list of supported return formats.  Always json.
+     */
     public static final List<String> SUPPORTED_FORMATS = createFormats();
 
+    // Build the status message for the /status call.
     private static Map<String, String> createStatusMsg() {
         HashMap<String, String> res = new HashMap<String, String>();
         res.put("status", "ok");
@@ -63,6 +75,7 @@ public class Server {
         return Collections.unmodifiableMap(res);
     }
 
+    // Build the versions list.
     private static Map<String, Object> createVersions() {
         ArrayList<String> versions = new ArrayList<String>();
         versions.add(VERSION);
@@ -74,6 +87,7 @@ public class Server {
         return Collections.unmodifiableMap(res);
     }
 
+    // Build the supported formats list
     private static List<String> createFormats() {
         ArrayList<String> res = new ArrayList<String>();
         res.add("application/json");
@@ -83,13 +97,16 @@ public class Server {
     protected static ExecService execService = ExecServiceImpl.getInstance();
     private static AppConfig appConf = Main.getAppConfigInstance();
 
+    // The SecurityContext set by AuthFilter
     private @Context SecurityContext theSecurityContext;
+
+    // The uri requested
     private @Context UriInfo theUriInfo;
 
     private static final Log LOG = LogFactory.getLog(Server.class);
 
     /**
-     * Check the status of this server.
+     * Check the status of this server.  Always OK.
      */
     @GET
     @Path("status")
@@ -137,11 +154,19 @@ public class Server {
         return d.run(exec, false, group, permissions);
     }
 
+    /**
+     * Describe an hcat table.  This is normally a simple list of
+     * columns (using "desc table"), but the extended format will show
+     * more information (using "show table extended like").
+     */
     @GET
     @Path("ddl/database/{db}/table/{table}")
     @Produces("application/json")
-    public ExecBean describeTable(@PathParam("db") String db,
-                                  @PathParam("table") String table)
+    public String describeTable(@PathParam("db") String db,
+                                @PathParam("table") String table,
+                                @QueryParam("format") String format,
+                                @QueryParam("group") String group,
+                                @QueryParam("permissions") String permissions)
         throws NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -150,7 +175,10 @@ public class Server {
         verifyDdlParam(table, ":table");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.describeTable(db, table);
+        if ("extended".equals(format))
+            return d.showTable(db, table, true, group, permissions, true);
+        else
+            return d.describeTable(db, table, false, group, permissions);
     }
 
     /**
@@ -371,6 +399,9 @@ public class Server {
             throw new BadParam("Invalid DDL identifier " + name );
     }
 
+    /**
+     * Get the user name from the security context.
+     */
     public String getUser() {
         if (theSecurityContext == null)
             return null;
@@ -379,6 +410,9 @@ public class Server {
         return theSecurityContext.getUserPrincipal().getName();
     }
 
+    /**
+     * The callback url on this server when a task is completed.
+     */
     public String getCompletedUrl() {
         if (theUriInfo == null)
             return null;

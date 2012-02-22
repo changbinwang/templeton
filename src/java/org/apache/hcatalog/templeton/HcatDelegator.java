@@ -17,9 +17,13 @@
  */
 package org.apache.hcatalog.templeton;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.exec.ExecuteException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Run hcat on the local server using the ExecService.  This is
@@ -30,6 +34,9 @@ public class HcatDelegator extends LauncherDelegator {
         super(appConf, execService);
     }
 
+    /**
+     * Run the local hcat executable.
+     */
     public ExecBean run(String exec, boolean format, String group, String permissions)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
@@ -52,12 +59,67 @@ public class HcatDelegator extends LauncherDelegator {
         return execService.run(appConf.clusterHcat(), args, null);
     }
 
-    public ExecBean describeTable(String db, String table)
+    /**
+     * Return a json description of the table.
+     */
+    public String describeTable(String db, String table, boolean extended,
+                                String group, String permissions)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
         String exec = "use " + db + "; ";
-        exec += "desc " + table + "; ";
-        return run(exec, true, null, null);
+        if (extended)
+            exec += "desc extended " + table + "; ";
+        else
+            exec += "desc " + table + "; ";
+        return jsonRun(exec, group, permissions);
     }
+
+    /**
+     * Return a json "show table like".  This will return a list of
+     * tables, unless single is true.
+     */
+    public String showTable(String db, String table, boolean extended,
+                            String group, String permissions, boolean single)
+        throws NotAuthorizedException, BusyException, ExecuteException, IOException
+    {
+        String exec = "use " + db + "; ";
+        if (extended)
+            exec += "show table extended like " + table + "; ";
+        else
+            exec += "show table like  " + table + "; ";
+
+        String show = jsonRun(exec, group, permissions);
+
+        if (! single)
+            return show;
+        else {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                Map<String, Object> obj = mapper.readValue(show, Map.class);
+                List tables = (List) obj.get("tables");
+                if (tables == null || tables.size() == 0)
+                    return show;
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                mapper.writeValue(out, tables.get(0));
+                return out.toString();
+            } catch (Exception e) {
+                return show;
+            }
+        }
+    }
+
+    /**
+     * Run an hcat expression and return just the json outout.
+     */
+    private String jsonRun(String exec, String group, String permissions)
+        throws NotAuthorizedException, BusyException, ExecuteException, IOException
+    {
+        ExecBean res = run(exec, true, group, permissions);
+        if (res != null && res.exitcode == 0)
+            return res.stdout;
+        else
+            return null;
+    }
+
 
 }
