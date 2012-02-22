@@ -185,7 +185,7 @@ public class Server {
      * Describe the partitons in an hcat table.
      */
     @GET
-    @Path("ddl/database/{db}/table/{table}/partitions")
+    @Path("ddl/database/{db}/table/{table}/partition")
     @Produces("application/json")
     public String showPartitions(@PathParam("db") String db,
                                  @PathParam("table") String table,
@@ -200,6 +200,29 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.showPartitions(db, table, group, permissions);
+    }
+
+    /**
+     * Describe a single partitons in an hcat table.
+     */
+    @GET
+    @Path("ddl/database/{db}/table/{table}/partition/{partition}")
+    @Produces("application/json")
+    public String showPartitions(@PathParam("db") String db,
+                                 @PathParam("table") String table,
+                                 @PathParam("partition") String partition,
+                                 @QueryParam("group") String group,
+                                 @QueryParam("permissions") String permissions)
+        throws NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+        verifyParam(partition, ":partition");
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.showOnePartition(db, table, partition, group, permissions);
     }
 
     /**

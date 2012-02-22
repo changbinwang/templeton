@@ -1,9 +1,13 @@
 *.swp
 /TAGS
+/TempStatsStore
 /build
+/cobertura.ser
+/derby.log
 /foo.log
 /ivy/ivy-2.2.0.jar
 /lib
+/report
 /templeton-*.jar
 /templeton-console-error.log
 /templeton-console.log

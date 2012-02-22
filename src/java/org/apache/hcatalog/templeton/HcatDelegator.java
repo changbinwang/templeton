@@ -22,7 +22,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -30,6 +33,8 @@ import org.codehaus.jackson.map.ObjectMapper;
  * the backend of the ddl web service.
  */
 public class HcatDelegator extends LauncherDelegator {
+    private static final Log LOG = LogFactory.getLog(HcatDelegator.class);
+
     public HcatDelegator(AppConfig appConf, ExecService execService) {
         super(appConf, execService);
     }
@@ -92,19 +97,20 @@ public class HcatDelegator extends LauncherDelegator {
 
         if (! single)
             return show;
-        else {
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                Map<String, Object> obj = mapper.readValue(show, Map.class);
-                List tables = (List) obj.get("tables");
-                if (tables == null || tables.size() == 0)
-                    return show;
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                mapper.writeValue(out, tables.get(0));
-                return out.toString();
-            } catch (Exception e) {
-                return show;
-            }
+        else
+            return singleTable(show);
+    }
+
+    // Pull out the first table from the "show extended" json.
+    private String singleTable(String json) {
+        try {
+            Map obj = jsonToMap(json);
+            List tables = (List) obj.get("tables");
+            if (tables == null || tables.size() == 0)
+                return json;
+            return mapToJson(tables.get(0));
+        } catch (Exception e) {
+            return json;
         }
     }
 
@@ -121,6 +127,19 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     /**
+     * Return a json description of one partition.
+     */
+    public String showOnePartition(String db, String table, String partition,
+                                   String group, String permissions)
+        throws NotAuthorizedException, BusyException, ExecuteException, IOException
+    {
+        String exec = "use " + db + "; ";
+        exec += "show table extended like " + table
+            + " partition (" + partition + "); ";
+        return singleTable(jsonRun(exec, group, permissions));
+    }
+
+    /**
      * Run an hcat expression and return just the json outout.
      */
     private String jsonRun(String exec, String group, String permissions)
@@ -133,5 +152,19 @@ public class HcatDelegator extends LauncherDelegator {
             return null;
     }
 
+    private Map jsonToMap(String json)
+        throws IOException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, Map.class);
+    }
 
+    private String mapToJson(Object obj)
+        throws IOException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        mapper.writeValue(out, obj);
+        return out.toString();
+    }
 }
