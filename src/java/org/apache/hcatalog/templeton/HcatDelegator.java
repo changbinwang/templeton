@@ -109,6 +109,18 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     /**
+     * Return a json description of the partitions.
+     */
+    public String showPartitions(String db, String table,
+                                 String group, String permissions)
+        throws NotAuthorizedException, BusyException, ExecuteException, IOException
+    {
+        String exec = "use " + db + "; ";
+        exec += "show partitions " + table + "; ";
+        return jsonRun(exec, group, permissions);
+    }
+
+    /**
      * Run an hcat expression and return just the json outout.
      */
     private String jsonRun(String exec, String group, String permissions)

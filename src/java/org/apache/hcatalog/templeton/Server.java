@@ -182,6 +182,27 @@ public class Server {
     }
 
     /**
+     * Describe the partitons in an hcat table.
+     */
+    @GET
+    @Path("ddl/database/{db}/table/{table}/partitions")
+    @Produces("application/json")
+    public String showPartitions(@PathParam("db") String db,
+                                 @PathParam("table") String table,
+                                 @QueryParam("group") String group,
+                                 @QueryParam("permissions") String permissions)
+        throws NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.showPartitions(db, table, group, permissions);
+    }
+
+    /**
      * Run a MapReduce Streaming job.
      */
     @POST
