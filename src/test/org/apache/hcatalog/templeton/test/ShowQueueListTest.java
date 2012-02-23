@@ -20,12 +20,14 @@ package org.apache.hcatalog.templeton.test;
 import junit.framework.TestCase;
 
 import org.apache.hcatalog.templeton.Main;
+import org.apache.hcatalog.templeton.NotAuthorizedException;
+import org.apache.hcatalog.templeton.SimpleWebException;
 import org.apache.hcatalog.templeton.test.mock.MockServer;
 
 /*
- * Test that the server code exists, and responds to basic requests.
+ * Test that the server describeTable() call works.
  */
-public class ServerTest extends TestCase {
+public class ShowQueueListTest extends TestCase {
 
     MockServer server;
 
@@ -33,20 +35,29 @@ public class ServerTest extends TestCase {
         new Main(null);         // Initialize the config
         server = new MockServer();
     }
-
-    public void testServer() {
-        assertNotNull(server);
-    }
-
-    public void testStatus() {
-        assertEquals(server.status().get("status"), "ok");
-    }
     
-    public void testVersions() {
-        assertEquals(server.version().get("version"), "v1");
-    }
-    
-    public void testFormats() {
-        assertEquals(server.requestFormats().get(0), "application/json");
+    public void testShowQueueList() {
+        try {
+            try {
+                server.showQueueList(null);
+                fail("null user succeeded.");
+            } catch (NotAuthorizedException bp) {
+                // Success
+            }
+       
+            try {
+                server.showQueueList("admin");
+            } catch (SimpleWebException swe) {
+                // hdfs isn't hooked up right
+            } catch (Exception e) {
+                // hdfs isn't hooked up
+            }
+        } catch (SimpleWebException swe) {
+            swe.printStackTrace();
+            fail("describe table execution caused a failure");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("describe table execution caused a failure");
+        }
     }
 }
