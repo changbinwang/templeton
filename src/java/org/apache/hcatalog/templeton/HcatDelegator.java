@@ -26,6 +26,7 @@ import java.util.HashMap;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hcatalog.templeton.tool.TempletonUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -42,7 +43,8 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Run the local hcat executable.
      */
-    public ExecBean run(String exec, boolean format, String group, String permissions)
+    public ExecBean run(String user, String exec, boolean format,
+                        String group, String permissions)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
         ArrayList<String> args = new ArrayList<String>();
@@ -61,13 +63,16 @@ public class HcatDelegator extends LauncherDelegator {
             args.add("hive.format=json");
         }
 
-        return execService.run(appConf.clusterHcat(), args, null);
+        // Setup the hadoop vars to specify the user.
+        String cp = makeOverrideClasspath(appConf);
+        Map<String, String> env = TempletonUtils.hadoopUserEnv(user, cp);
+        return execService.run(appConf.clusterHcat(), args, env);
     }
 
     /**
      * Return a json description of the table.
      */
-    public String describeTable(String db, String table, boolean extended,
+    public String describeTable(String user, String db, String table, boolean extended,
                                 String group, String permissions)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
@@ -76,14 +81,14 @@ public class HcatDelegator extends LauncherDelegator {
             exec += "desc extended " + table + "; ";
         else
             exec += "desc " + table + "; ";
-        return jsonRun(exec, group, permissions);
+        return jsonRun(user, exec, group, permissions);
     }
 
     /**
      * Return a json "show table like".  This will return a list of
      * tables, unless single is true.
      */
-    public String showTable(String db, String table, boolean extended,
+    public String showTable(String user, String db, String table, boolean extended,
                             String group, String permissions, boolean single)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
@@ -93,7 +98,7 @@ public class HcatDelegator extends LauncherDelegator {
         else
             exec += "show table like  " + table + "; ";
 
-        String show = jsonRun(exec, group, permissions);
+        String show = jsonRun(user, exec, group, permissions);
 
         if (! single)
             return show;
@@ -117,35 +122,35 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Return a json description of the partitions.
      */
-    public String showPartitions(String db, String table,
+    public String showPartitions(String user, String db, String table,
                                  String group, String permissions)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
         String exec = "use " + db + "; ";
         exec += "show partitions " + table + "; ";
-        return jsonRun(exec, group, permissions);
+        return jsonRun(user, exec, group, permissions);
     }
 
     /**
      * Return a json description of one partition.
      */
-    public String showOnePartition(String db, String table, String partition,
+    public String showOnePartition(String user, String db, String table, String partition,
                                    String group, String permissions)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
         String exec = "use " + db + "; ";
         exec += "show table extended like " + table
             + " partition (" + partition + "); ";
-        return singleTable(jsonRun(exec, group, permissions));
+        return singleTable(jsonRun(user, exec, group, permissions));
     }
 
     /**
      * Run an hcat expression and return just the json outout.
      */
-    private String jsonRun(String exec, String group, String permissions)
+    private String jsonRun(String user, String exec, String group, String permissions)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
-        ExecBean res = run(exec, true, group, permissions);
+        ExecBean res = run(user, exec, true, group, permissions);
         if (res != null && res.exitcode == 0)
             return res.stdout;
         else

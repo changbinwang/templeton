@@ -151,7 +151,7 @@ public class Server {
         verifyParam(exec, "exec");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.run(exec, false, group, permissions);
+        return d.run(getUser(), exec, false, group, permissions);
     }
 
     /**
@@ -176,9 +176,9 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         if ("extended".equals(format))
-            return d.showTable(db, table, true, group, permissions, true);
+            return d.showTable(getUser(), db, table, true, group, permissions, true);
         else
-            return d.describeTable(db, table, false, group, permissions);
+            return d.describeTable(getUser(), db, table, false, group, permissions);
     }
 
     /**
@@ -199,7 +199,7 @@ public class Server {
         verifyDdlParam(table, ":table");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.showPartitions(db, table, group, permissions);
+        return d.showPartitions(getUser(), db, table, group, permissions);
     }
 
     /**
@@ -222,7 +222,7 @@ public class Server {
         verifyParam(partition, ":partition");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.showOnePartition(db, table, partition, group, permissions);
+        return d.showOnePartition(getUser(), db, table, partition, group, permissions);
     }
 
     /**
