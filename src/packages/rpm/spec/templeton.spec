@@ -114,20 +114,20 @@ mv ${RPM_BUILD_DIR}/%{_final_name}/* ${RPM_BUILD_DIR}%{_prefix}
 
 %pre
 
-%post
-bash ${RPM_INSTALL_PREFIX0}/sbin/update-templeton-env.sh \
-       --prefix=${RPM_INSTALL_PREFIX0} \
-       --bin-dir=${RPM_INSTALL_PREFIX0}/bin \
-       --conf-dir=${RPM_INSTALL_PREFIX1} \
-       --log-dir=${RPM_INSTALL_PREFIX2}
+# %post
+# bash ${RPM_INSTALL_PREFIX0}/sbin/update-templeton-env.sh \
+#        --prefix=${RPM_INSTALL_PREFIX0} \
+#        --bin-dir=${RPM_INSTALL_PREFIX0}/bin \
+#        --conf-dir=${RPM_INSTALL_PREFIX1} \
+#        --log-dir=${RPM_INSTALL_PREFIX2}
 
-%preun
-bash ${RPM_INSTALL_PREFIX0}/sbin/update-templeton-env.sh \
-       --prefix=${RPM_INSTALL_PREFIX0} \
-       --bin-dir=${RPM_INSTALL_PREFIX0}/bin \
-       --conf-dir=${RPM_INSTALL_PREFIX1} \
-       --log-dir=${RPM_INSTALL_PREFIX2} \
-       --uninstall
+# %preun
+# bash ${RPM_INSTALL_PREFIX0}/sbin/update-templeton-env.sh \
+#        --prefix=${RPM_INSTALL_PREFIX0} \
+#        --bin-dir=${RPM_INSTALL_PREFIX0}/bin \
+#        --conf-dir=${RPM_INSTALL_PREFIX1} \
+#        --log-dir=${RPM_INSTALL_PREFIX2} \
+#        --uninstall
 
 %files 
 %defattr(-,root,root)
