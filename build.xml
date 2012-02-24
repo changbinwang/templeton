@@ -233,6 +233,15 @@
   </target>
 
   <target name="compile" depends="compile-src, compile-resources">
+    <!-- Build the resourcedoc.xml file that the server needs to start -->
+    <javadoc access="public" classpathref="classpath">
+      <fileset dir="${src.dir}" defaultexcludes="yes">
+      </fileset>
+      <doclet name="com.sun.jersey.wadl.resourcedoc.ResourceDoclet" 
+         pathref="classpath">
+        <param name="-output" value="${build.classes}/resourcedoc.xml" />
+      </doclet>
+    </javadoc>
   </target>
 
   <!-- Build the templeton client jar -->

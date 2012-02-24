@@ -144,5 +144,14 @@
                 name="oro" 
                 rev="2.0.8"
                 conf="common->master"/>
+    <dependency org="com.sun.jersey.contribs" 
+                name="wadl-resourcedoc-doclet" 
+                rev="1.4"
+                conf="common->master"/>
+    <dependency org="xerces" 
+                name="xercesImpl" 
+                rev="2.9.1"
+                conf="common->master"/>
+
   </dependencies>
 </ivy-module>
