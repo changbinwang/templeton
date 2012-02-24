@@ -20,12 +20,17 @@ package org.apache.hcatalog.templeton;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hdfs.web.AuthFilter;
 import org.apache.hadoop.util.GenericOptionsParser;
+import org.eclipse.jetty.rewrite.handler.RedirectPatternRule;
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.FilterMapping;
@@ -105,7 +110,7 @@ public class Main {
         // Create the Jetty server
         Server server = new Server(port);
         ServletContextHandler root = new ServletContextHandler(server, "/");
-
+        
         // Add the Auth filter
         root.addFilter(AuthFilter.class, "/*", FilterMapping.REQUEST);
 
@@ -114,13 +119,41 @@ public class Main {
             = new PackagesResourceConfig("org.apache.hcatalog.templeton");
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
+        props.put("com.sun.jersey.config.property.WadlGeneratorConfig",
+                "org.apache.hcatalog.templeton.WadlConfig");
         rc.setPropertiesAndFeatures(props);
         root.addServlet(new ServletHolder(new ServletContainer(rc)),
                         "/" + SERVLET_PATH + "/*");
 
+        // Add any redirects
+        addRedirects(server);
+
         // Start the server
         server.start();
         return server;
+    }
+    
+    public void addRedirects(Server server) {
+        RewriteHandler rewrite = new RewriteHandler();
+       
+        RedirectPatternRule redirect = new RedirectPatternRule();
+        redirect.setPattern("/templeton/v1/application.wadl");
+        redirect.setLocation("/templeton/application.wadl"); 
+        rewrite.addRule(redirect);
+       
+        HandlerList handlerlist = new HandlerList();
+        ArrayList<Handler> handlers = new ArrayList<Handler>();
+        
+        // Any redirect handlers need to be added first
+        handlers.add(rewrite);
+        
+        // Now add all the default handlers
+        for (Handler handler : server.getHandlers()) {
+            handlers.add(handler);
+        }
+        Handler[] newlist = new Handler[handlers.size()];
+        handlerlist.setHandlers(handlers.toArray(newlist));
+        server.setHandler(handlerlist);
     }
 
     public static void main(String[] args) {
