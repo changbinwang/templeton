@@ -17,7 +17,6 @@
  */
 package org.apache.hcatalog.templeton;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,6 @@ import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Run hcat on the local server using the ExecService.  This is
@@ -81,7 +79,11 @@ public class HcatDelegator extends LauncherDelegator {
             exec += "desc extended " + table + "; ";
         else
             exec += "desc " + table + "; ";
-        return jsonRun(user, exec, group, permissions);
+        String res = jsonRun(user, exec, group, permissions);
+        return JsonBuilder.create(res)
+            .put("database", db)
+            .put("table", table)
+            .build();
     }
 
     /**
@@ -98,25 +100,25 @@ public class HcatDelegator extends LauncherDelegator {
         else
             exec += "show table like  " + table + "; ";
 
-        String show = jsonRun(user, exec, group, permissions);
-
-        if (! single)
-            return show;
-        else
-            return singleTable(show);
+        String res = jsonRun(user, exec, group, permissions);
+        if (single)
+            res = singleTable(res);
+        return JsonBuilder.create(res)
+            .remove("tableName")
+            .put("database", db)
+            .put("table", table)
+            .build();
     }
 
     // Pull out the first table from the "show extended" json.
-    private String singleTable(String json) {
-        try {
-            Map obj = jsonToMap(json);
-            List tables = (List) obj.get("tables");
-            if (tables == null || tables.size() == 0)
-                return json;
-            return mapToJson(tables.get(0));
-        } catch (Exception e) {
+    private String singleTable(String json)
+        throws IOException
+    {
+        Map obj = JsonBuilder.jsonToMap(json);
+        List tables = (List) obj.get("tables");
+        if (tables == null || tables.size() == 0)
             return json;
-        }
+        return JsonBuilder.mapToJson(tables.get(0));
     }
 
     /**
@@ -128,7 +130,11 @@ public class HcatDelegator extends LauncherDelegator {
     {
         String exec = "use " + db + "; ";
         exec += "show partitions " + table + "; ";
-        return jsonRun(user, exec, group, permissions);
+        String res = jsonRun(user, exec, group, permissions);
+        return JsonBuilder.create(res)
+            .put("database", db)
+            .put("table", table)
+            .build();
     }
 
     /**
@@ -141,7 +147,13 @@ public class HcatDelegator extends LauncherDelegator {
         String exec = "use " + db + "; ";
         exec += "show table extended like " + table
             + " partition (" + partition + "); ";
-        return singleTable(jsonRun(user, exec, group, permissions));
+        String res = singleTable(jsonRun(user, exec, group, permissions));
+        return JsonBuilder.create(res)
+            .remove("tableName")
+            .put("database", db)
+            .put("table", table)
+            .put("partition", partition)
+            .build();
     }
 
     /**
@@ -155,21 +167,5 @@ public class HcatDelegator extends LauncherDelegator {
             return res.stdout;
         else
             return null;
-    }
-
-    private Map jsonToMap(String json)
-        throws IOException
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, Map.class);
-    }
-
-    private String mapToJson(Object obj)
-        throws IOException
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        mapper.writeValue(out, obj);
-        return out.toString();
     }
 }

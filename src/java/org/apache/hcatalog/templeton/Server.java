@@ -208,11 +208,11 @@ public class Server {
     @GET
     @Path("ddl/database/{db}/table/{table}/partition/{partition}")
     @Produces("application/json")
-    public String showPartitions(@PathParam("db") String db,
-                                 @PathParam("table") String table,
-                                 @PathParam("partition") String partition,
-                                 @QueryParam("group") String group,
-                                 @QueryParam("permissions") String permissions)
+    public String descPartition(@PathParam("db") String db,
+                                @PathParam("table") String table,
+                                @PathParam("partition") String partition,
+                                @QueryParam("group") String group,
+                                @QueryParam("permissions") String permissions)
         throws NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
