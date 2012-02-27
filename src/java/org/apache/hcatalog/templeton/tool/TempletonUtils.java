@@ -198,6 +198,19 @@ public class TempletonUtils {
             return p.toString();
     }
 
+    /**
+     * @return true iff we are sure the file is not there.
+     */
+    public static boolean hadoopFsIsMissing(FileSystem fs, Path p) {
+        try {
+            return ! fs.exists(p);
+        } catch(Throwable t) {
+            // Got an error, might be there anyway due to a
+            // permissions problem.
+            return false;
+        }
+    }
+
     public static Path hadoopFsPath(String fname, Configuration conf, String user)
         throws URISyntaxException, FileNotFoundException, IOException,
         InterruptedException
@@ -210,7 +223,7 @@ public class TempletonUtils {
         Path p = new Path(u).makeQualified(defaultFs);
 
         FileSystem fs = p.getFileSystem(conf);
-        if (! fs.exists(p))
+        if (hadoopFsIsMissing(fs, p))
             throw new FileNotFoundException("File " + fname + " does not exist.");
 
         return p;
