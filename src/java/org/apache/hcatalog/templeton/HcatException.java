@@ -17,30 +17,17 @@
  */
 package org.apache.hcatalog.templeton;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
 
 /**
- * A description of the partition to create.
+ * Unable to hcat the job
  */
-@XmlRootElement
-public class PartitionDesc {
-    public String partition;
-    public String location;
-    public boolean ifNotExists = false;
+public class HcatException extends SimpleWebException {
+    public ExecBean execBean;
 
-    public PartitionDesc() {}
-
-    /**
-     * Create a new PartitionDesc
-     */
-    public PartitionDesc(String partition, String location, boolean ifNotExists) {
-        this.partition = partition;
-        this.location = location;
-        this.ifNotExists = ifNotExists;
+    public HcatException(String msg, final ExecBean bean) {
+        super(500, msg, new HashMap<String, Object>() {{ put("exec", bean); }});
+        execBean = bean;
     }
 
-    public String toString() {
-        return String.format("PartitionDesc(partition=%s, location=%s, ifNotExists=%s)",
-                             partition, location, ifNotExists);
-    }
 }

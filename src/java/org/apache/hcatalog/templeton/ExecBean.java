@@ -39,4 +39,9 @@ public class ExecBean {
         this.stderr = stderr;
         this.exitcode = exitcode;
     }
+
+    public String toString() {
+        return String.format("ExecBean(stdout=%s, stderr=%s, exitcode=%s)",
+                             stdout, stderr, exitcode);
+    }
 }

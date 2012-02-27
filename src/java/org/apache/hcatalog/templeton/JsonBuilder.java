@@ -19,6 +19,7 @@ package org.apache.hcatalog.templeton;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -34,7 +35,10 @@ public class JsonBuilder {
     private JsonBuilder(String json)
         throws IOException
     {
-        map = jsonToMap(json);
+        if (json == null)
+            map = new HashMap<String, Object>();
+        else
+            map = jsonToMap(json);
     }
 
     /**
@@ -44,6 +48,15 @@ public class JsonBuilder {
         throws IOException
     {
         return new JsonBuilder(json);
+    }
+
+    /**
+     * Create a new map object.
+     */
+    public static JsonBuilder create()
+        throws IOException
+    {
+        return new JsonBuilder(null);
     }
 
     /**

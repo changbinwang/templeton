@@ -169,7 +169,7 @@ public class Server {
                                 @QueryParam("format") String format,
                                 @QueryParam("group") String group,
                                 @QueryParam("permissions") String permissions)
-        throws NotAuthorizedException, BusyException,
+        throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
         verifyUser();
@@ -193,7 +193,7 @@ public class Server {
                                  @PathParam("table") String table,
                                  @QueryParam("group") String group,
                                  @QueryParam("permissions") String permissions)
-        throws NotAuthorizedException, BusyException,
+        throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
         verifyUser();
@@ -215,7 +215,7 @@ public class Server {
                                 @PathParam("partition") String partition,
                                 @QueryParam("group") String group,
                                 @QueryParam("permissions") String permissions)
-        throws NotAuthorizedException, BusyException,
+        throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
         verifyUser();
@@ -234,13 +234,13 @@ public class Server {
     @Path("ddl/database/{db}/table/{table}/partition/{partition}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String createPartition(@PathParam("db") String db,
+    public String addOnePartition(@PathParam("db") String db,
                                   @PathParam("table") String table,
                                   @PathParam("partition") String partition,
                                   PartitionDesc desc,
                                   String group,
                                   String permissions)
-        throws NotAuthorizedException, BusyException,
+        throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
         verifyUser();
