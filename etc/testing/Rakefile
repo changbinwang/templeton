@@ -139,7 +139,7 @@ namespace :ddl do
   task :create_table do
     curl("ddl",
          *USER,
-       "-d", "exec=create table test_table(id BIGINT, price float) \
+       "-d", "exec=create table test_table(id BIGINT, price float comment \"The unit price\") \
                 partitioned by (country STRING) \
                 stored as rcfile;")
   end
@@ -161,6 +161,31 @@ namespace :ddl do
     curl("ddl/database/default/table/test_table?user.name=#{USERNAME}&format=extended")
   end
 
+  desc "Describe all columns"
+  task :desc_columns do
+    curl("ddl/database/default/table/test_table/column?user.name=#{USERNAME}")
+  end
+
+  desc "Describe one column"
+  task :desc_one_column do
+    curl("ddl/database/default/table/test_table/column/price?user.name=#{USERNAME}")
+  end
+
+  desc "Create a new column"
+  task :create_column do
+    data = <<EOM
+{
+  "type": "string",
+  "comment": "The brand name"
+}
+EOM
+    curl("ddl/database/default/table/test_table/column/brand?user.name=#{USERNAME}",
+         "-X", "PUT",
+         "-H" "Content-type:application/json",
+         "-d", data)
+
+
+  end
   desc "Describe all partitions"
   task :desc_partitions do
     curl("ddl/database/default/table/test_table/partition?user.name=#{USERNAME}")

@@ -184,7 +184,7 @@ public class Server {
     }
 
     /**
-     * Describe the partitons in an hcat table.
+     * Describe the partitions in an hcat table.
      */
     @GET
     @Path("ddl/database/{db}/table/{table}/partition")
@@ -205,7 +205,7 @@ public class Server {
     }
 
     /**
-     * Describe a single partitons in an hcat table.
+     * Describe a single partition in an hcat table.
      */
     @GET
     @Path("ddl/database/{db}/table/{table}/partition/{partition}")
@@ -228,7 +228,7 @@ public class Server {
     }
 
     /**
-     * Create a partiton in an hcat table.
+     * Create a partition in an hcat table.
      */
     @PUT
     @Path("ddl/database/{db}/table/{table}/partition/{partition}")
@@ -251,6 +251,79 @@ public class Server {
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.addOnePartition(getUser(), db, table, desc,
                                  group, permissions);
+    }
+
+    /**
+     * Describe the columns in an hcat table.  Currently the same as
+     * describe table.
+     */
+    @GET
+    @Path("ddl/database/{db}/table/{table}/column")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String showColumns(@PathParam("db") String db,
+                              @PathParam("table") String table,
+                              @QueryParam("group") String group,
+                              @QueryParam("permissions") String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.showColumns(getUser(), db, table, group, permissions);
+    }
+
+    /**
+     * Describe a single column in an hcat table.  Basically the same
+     * as describe table.
+     */
+    @GET
+    @Path("ddl/database/{db}/table/{table}/column/{column}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String descColumn(@PathParam("db") String db,
+                             @PathParam("table") String table,
+                             @PathParam("column") String column,
+                             @QueryParam("group") String group,
+                             @QueryParam("permissions") String permissions)
+        throws SimpleWebException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+        verifyParam(column, ":column");
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.showOneColumn(getUser(), db, table, column, group, permissions);
+    }
+
+    /**
+     * Create a column in an hcat table.
+     */
+    @PUT
+    @Path("ddl/database/{db}/table/{table}/column/{column}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String addOneColumn(@PathParam("db") String db,
+                               @PathParam("table") String table,
+                               @PathParam("column") String column,
+                               ColumnDesc desc,
+                               String group,
+                               String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+        verifyParam(column, ":column");
+        verifyParam(desc.type, "type");
+        desc.name = column;
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.addOneColumn(getUser(), db, table, desc, group, permissions);
     }
 
     /**

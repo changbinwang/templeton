@@ -77,6 +77,13 @@ public class JsonBuilder {
     }
 
     /**
+     * Get the underlying map.
+     */
+    public Map getMap() {
+        return map;
+    }
+
+    /**
      * Turn the map back to json.
      */
     public String build()

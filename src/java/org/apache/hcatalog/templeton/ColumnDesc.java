@@ -17,16 +17,30 @@
  */
 package org.apache.hcatalog.templeton;
 
-import java.util.HashMap;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Unable to hcat the job
+ * A description of the column to create.
  */
-public class HcatException extends SimpleWebException {
-    public ExecBean execBean;
+@XmlRootElement
+public class ColumnDesc {
+    public String name;
+    public String type;
+    public String comment;
 
-    public HcatException(String msg, final ExecBean bean) {
-        super(500, msg, new HashMap<String, Object>() {{ put("exec", bean); }});
-        execBean = bean;
+    public ColumnDesc() {}
+
+    /**
+     * Create a new ColumnDesc
+     */
+    public ColumnDesc(String name, String type, String comment) {
+        this.name = name;
+        this.type = type;
+        this.comment = comment;
+    }
+
+    public String toString() {
+        return String.format("ColumnDesc(name=%s, type=%s, comment=%s)",
+                             name, type, comment);
     }
 }

@@ -209,6 +209,83 @@ public class HcatDelegator extends LauncherDelegator {
         }
     }
 
+    /**
+     * Return a json description of the columns.  Same as
+     * describeTable.
+     */
+    public String showColumns(String user, String db, String table,
+                              String group, String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        ExecuteException, IOException
+    {
+        try {
+            return describeTable(user, db, table, false, group, permissions);
+        } catch (HcatException e) {
+            throw new HcatException("unable to show columns for table: " + table,
+                                    e.execBean);
+        }
+    }
+
+    /**
+     * Return a json description of one column.
+     */
+    public String showOneColumn(String user, String db, String table, String column,
+                                String group, String permissions)
+        throws SimpleWebException, NotAuthorizedException, BusyException,
+        ExecuteException, IOException
+    {
+        String res = showColumns(user, db, table, group, permissions);
+        final JsonBuilder builder = JsonBuilder.create(res);
+        List<Map> cols = (List) (builder.getMap().get("columns"));
+
+        Map found = null;
+        for (Map col : cols) {
+            if (column.equals(col.get("name"))) {
+                found = col;
+                break;
+            }
+        }
+
+        if (found == null)
+            throw new SimpleWebException(500, "unable to find column " + column,
+                                         new HashMap<String, Object>() {{
+                                                 put("description", builder.getMap());
+                                             }});
+
+        return builder
+            .remove("columns")
+            .put("column", found)
+            .build();
+    }
+
+    /**
+     * Add one column.
+     */
+    public String addOneColumn(String user, String db, String table,
+                               ColumnDesc desc,
+                               String group, String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        ExecuteException, IOException
+    {
+        String exec = String.format("use %s; alter table %s add columns (%s %s",
+                                    db, table, desc.name, desc.type);
+        if (TempletonUtils.isset(desc.comment))
+            exec += String.format(" comment '%s'", desc.comment);
+        exec += ");";
+        try {
+            jsonRun(user, exec, group, permissions, true);
+
+            return JsonBuilder.create()
+                .put("database", db)
+                .put("table", table)
+                .put("column", desc.name)
+                .build();
+        } catch (HcatException e) {
+            throw new HcatException("unable to add column: " + desc,
+                                    e.execBean);
+        }
+    }
+
     // Check that the hcat result is valid and error free
     private boolean isValid(ExecBean eb, boolean checkOutput) {
         if (eb == null)
@@ -216,7 +293,7 @@ public class HcatDelegator extends LauncherDelegator {
         if (eb.exitcode != 0)
             return false;
         if (checkOutput)
-            if (! TempletonUtils.isset(eb.stdout))
+            if (TempletonUtils.isset(eb.stdout))
                 return false;
         return true;
     }
