@@ -42,9 +42,9 @@ import org.apache.zookeeper.ZooKeeper;
  * Data is stored with each key/value pair being a node in ZooKeeper.
  */
 public class ZooKeeperStorage implements TempletonStorage {
-    
+
     public static final String TRACKINGDIR = "/created";
-    
+
     // Locations for each of the storage types
     public String storage_root = null;
     public String job_path = null;
@@ -106,7 +106,7 @@ public class ZooKeeperStorage implements TempletonStorage {
             }
         }
     }
-    
+
     public void startCleanup(Configuration config) {
         try {
             ZooKeeperCleanup.startInstance(config);
@@ -170,7 +170,6 @@ public class ZooKeeperStorage implements TempletonStorage {
      * Get the path based on the job type.
      *
      * @param type
-     * @return
      */
     public String getPath(Type type) {
         String typepath = overhead_path;
@@ -184,7 +183,7 @@ public class ZooKeeperStorage implements TempletonStorage {
         }
         return typepath;
     }
-    
+
     public static String[] getPaths(String fullpath) {
         ArrayList<String> paths = new ArrayList<String>();
         if (fullpath.length() < 2) {
@@ -199,7 +198,7 @@ public class ZooKeeperStorage implements TempletonStorage {
         String[] strings = new String[paths.size()];
         return paths.toArray(strings);
     }
-    
+
     /**
      * A helper method that sets a field value.
      * @param type
@@ -364,7 +363,7 @@ public class ZooKeeperStorage implements TempletonStorage {
         job_path = storage_root + "/jobs";
         job_trackingpath = storage_root + TRACKINGDIR;
         overhead_path = storage_root + "/overhead";
-        
+
         if (zk == null) {
             zk = zkOpen(config);
         }

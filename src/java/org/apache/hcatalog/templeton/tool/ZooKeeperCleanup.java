@@ -67,7 +67,7 @@ public class ZooKeeperCleanup extends Thread {
         interval = appConf.getLong(ZK_CLEANUP_INTERVAL, interval);
         maxage = appConf.getLong(ZK_CLEANUP_MAX_AGE, maxage);
     }
-    
+
     public static ZooKeeperCleanup getInstance(Configuration appConf) {
         if (thisclass != null) {
             return thisclass;
@@ -137,7 +137,6 @@ public class ZooKeeperCleanup extends Thread {
     /**
      * Get the list of jobs from JobState
      *
-     * @return
      * @throws IOException
      */
     public List<String> getChildList(ZooKeeper zk) {

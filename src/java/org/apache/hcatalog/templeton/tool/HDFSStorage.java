@@ -35,21 +35,21 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 /**
- *  HDFS implementation of templeton storage. 
- * 
+ *  HDFS implementation of templeton storage.
+ *
  *  This implementation assumes that all keys in key/value pairs are
  *  chosen such that they don't have any newlines in them.
  *
  */
 public class HDFSStorage implements TempletonStorage {
     FileSystem fs = null;
-    
+
     public String storage_root = null;
-    
+
     public static final String JOB_PATH = "/jobs";
     public static final String JOB_TRACKINGPATH = "/created";
     public static final String OVERHEAD_PATH = "/overhead";
-    
+
     private static final Log LOG = LogFactory.getLog(HDFSStorage.class);
 
     public void startCleanup(Configuration config) {
@@ -74,7 +74,7 @@ public class HDFSStorage implements TempletonStorage {
             out = new PrintWriter(new OutputStreamWriter(fs.create(keyfile)));
             out.write(val);
         } catch (IOException e) {
-            LOG.info("Couldn't write to " + getPath(type) + "/" + id + ": " 
+            LOG.info("Couldn't write to " + getPath(type) + "/" + id + ": "
                     + e.getMessage());
         } finally {
             try {
@@ -198,9 +198,9 @@ public class HDFSStorage implements TempletonStorage {
         ArrayList<String> allNodes = new ArrayList<String>();
         HashMap<String, String> map = new HashMap<String, String>();
         try {
-            for (FileStatus status : 
+            for (FileStatus status :
                 fs.listStatus(new Path(getPath(type)))) {
-                    map = (HashMap<String, String>) 
+                    map = (HashMap<String, String>)
                             getFields(type, status.getPath().getName());
                     if (map.get(key).equals(value)) {
                         allNodes.add(status.getPath().getName());
@@ -225,22 +225,20 @@ public class HDFSStorage implements TempletonStorage {
     public void closeStorage() throws IOException {
         // Nothing to do here
     }
-    
+
     /**
      * Get the path to storage based on the type.
      * @param type
-     * @return
      */
     public String getPath(Type type) {
         return getPath(type, storage_root);
     }
-    
+
     /**
      * Static method to get the path based on the type.
-     * 
+     *
      * @param type
      * @param root
-     * @return
      */
     public static String getPath(Type type, String root) {
         String typepath = root + OVERHEAD_PATH;

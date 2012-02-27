@@ -64,7 +64,6 @@ public class JobState {
     /**
      * Get an instance of the selected storage class.  Defaults to
      * ZooKeeper storage if none is specified.
-     * @return
      */
     public static TempletonStorage getStorageInstance(Configuration conf) {
         TempletonStorage storage = null;
@@ -162,7 +161,6 @@ public class JobState {
 
     /**
      * Get a list of jobstates for jobs that are children of this job.
-     * @return
      * @throws IOException
      */
     public List<JobState> getChildren() throws IOException {
@@ -347,7 +345,6 @@ public class JobState {
      * a JobState object.
      *
      * @param conf
-     * @return
      * @throws IOException
      */
     public static List<String> getJobs(Configuration conf) throws IOException {

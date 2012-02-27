@@ -33,22 +33,22 @@ import org.apache.zookeeper.data.Stat;
 public class JobStateTracker {
     // The path to the tracking root
     private String job_trackingroot = null;
-    
+
     // The zookeeper connection to use
     private ZooKeeper zk;
-    
+
     // The id of the tracking node -- must be a SEQUENTIAL node
     private String trackingnode;
-    
+
     // The id of the job this tracking node represents
     private String jobid;
-    
+
     // The logger
     private static final Log LOG = LogFactory.getLog(JobStateTracker.class);
-    
+
     /**
      * Constructor for a new node -- takes the jobid of an existing job
-     * 
+     *
      * @param jobid
      * @param zk
      */
@@ -62,7 +62,7 @@ public class JobStateTracker {
         }
         job_trackingroot = job_trackingpath;
     }
-    
+
     /**
      * Create the parent znode for this job state.
      */
@@ -80,7 +80,7 @@ public class JobStateTracker {
             }
         }
         try {
-            trackingnode = zk.create(makeTrackingZnode(), jobid.getBytes(), 
+            trackingnode = zk.create(makeTrackingZnode(), jobid.getBytes(),
                     Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
         } catch (Exception e) {
             throw new IOException("Unable to create " + makeTrackingZnode());
@@ -97,15 +97,14 @@ public class JobStateTracker {
             LOG.info("Couldn't delete " + makeTrackingJobZnode(trackingnode));
         }
     }
-    
+
     /**
      * Get the jobid for this tracking node
-     * @return
      * @throws IOException
      */
     public String getJobID() throws IOException {
         try {
-            return new String(zk.getData(makeTrackingJobZnode(trackingnode), 
+            return new String(zk.getData(makeTrackingJobZnode(trackingnode),
                     false, new Stat()));
         } catch (KeeperException e) {
             // It was deleted during the transaction
@@ -114,26 +113,26 @@ public class JobStateTracker {
             throw new IOException("Couldn't read node " + trackingnode);
         }
     }
-    
+
     /**
      * Make a ZK path to a new tracking node
      */
     public String makeTrackingZnode() {
         return job_trackingroot + "/";
     }
-    
+
     /**
      * Make a ZK path to an existing tracking node
      */
     public String makeTrackingJobZnode(String nodename) {
         return job_trackingroot + "/" + nodename;
     }
-    
+
     /*
      * Get the list of tracking jobs.  These can be used to determine which jobs have
      * expired.
      */
-    public static List<String> getTrackingJobs(Configuration conf, ZooKeeper zk) 
+    public static List<String> getTrackingJobs(Configuration conf, ZooKeeper zk)
             throws IOException {
         ArrayList<String> jobs = new ArrayList<String>();
         try {
