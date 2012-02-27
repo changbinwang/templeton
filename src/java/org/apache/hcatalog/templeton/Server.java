@@ -21,18 +21,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.POST;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -90,7 +92,7 @@ public class Server {
     // Build the supported formats list
     private static List<String> createFormats() {
         ArrayList<String> res = new ArrayList<String>();
-        res.add("application/json");
+        res.add(MediaType.APPLICATION_JSON);
         return Collections.unmodifiableList(res);
     }
 
@@ -139,7 +141,7 @@ public class Server {
      * as the authenticated user and rate limited.
      */
     @POST
-    @Path("ddl.json")
+    @Path("ddl")
     @Produces({MediaType.APPLICATION_JSON})
     public ExecBean ddl(@FormParam("exec") String exec,
                         @FormParam("group") String group,
@@ -161,7 +163,7 @@ public class Server {
      */
     @GET
     @Path("ddl/database/{db}/table/{table}")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public String describeTable(@PathParam("db") String db,
                                 @PathParam("table") String table,
                                 @QueryParam("format") String format,
@@ -186,7 +188,7 @@ public class Server {
      */
     @GET
     @Path("ddl/database/{db}/table/{table}/partition")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public String showPartitions(@PathParam("db") String db,
                                  @PathParam("table") String table,
                                  @QueryParam("group") String group,
@@ -207,7 +209,7 @@ public class Server {
      */
     @GET
     @Path("ddl/database/{db}/table/{table}/partition/{partition}")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public String descPartition(@PathParam("db") String db,
                                 @PathParam("table") String table,
                                 @PathParam("partition") String partition,
@@ -223,6 +225,32 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.showOnePartition(getUser(), db, table, partition, group, permissions);
+    }
+
+    /**
+     * Create a partiton in an hcat table.
+     */
+    @PUT
+    @Path("ddl/database/{db}/table/{table}/partition/{partition}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String createPartition(@PathParam("db") String db,
+                                  @PathParam("table") String table,
+                                  @PathParam("partition") String partition,
+                                  PartitionDesc desc,
+                                  String group,
+                                  String permissions)
+        throws NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+        verifyParam(partition, ":partition");
+        desc.partition = partition;
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.addOnePartition(getUser(), db, table, desc,
+                                 group, permissions);
     }
 
     /**

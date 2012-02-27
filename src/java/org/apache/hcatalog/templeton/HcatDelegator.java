@@ -157,12 +157,36 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     /**
+     * Add one partition.
+     */
+    public String addOnePartition(String user, String db, String table,
+                                  PartitionDesc desc,
+                                  String group, String permissions)
+        throws NotAuthorizedException, BusyException, ExecuteException, IOException
+    {
+        String exec = String.format("use %s; alter table %s add partition (%s)",
+                                    db, table, desc.partition);
+        if (TempletonUtils.isset(desc.location))
+            exec += String.format(" location '%s'", desc.location);
+        exec += ";";
+        String res = jsonRun(user, exec, group, permissions);
+        return JsonBuilder.create(res)
+            .remove("tableName")
+            .put("database", db)
+            .put("table", table)
+            .put("partition", desc.partition)
+            .build();
+    }
+
+    /**
      * Run an hcat expression and return just the json outout.
      */
     private String jsonRun(String user, String exec, String group, String permissions)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
         ExecBean res = run(user, exec, true, group, permissions);
+        // System.err.println("raw hcat result: " + JsonBuilder.mapToJson(res));
+
         if (res != null && res.exitcode == 0)
             return res.stdout;
         else

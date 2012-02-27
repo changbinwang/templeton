@@ -26,7 +26,7 @@ SERVER = "http://localhost:8080/templeton/v1"
 USERNAME = `whoami`.chomp
 USER = ["-d", "user.name=#{USERNAME}"]
 
-TESTS = [:status, :ddl, :streaming, :jar, :pig, :hive,
+TESTS = [:status, :streaming, :jar, :pig, :hive,
          :queue, :queue_delete]
 
 task :default do
@@ -44,18 +44,6 @@ end
 desc "Run status"
 task :status do
   curl "status"
-end
-
-desc "Run ddl.json"
-task :ddl do
-  curl("ddl.json",
-       *USER,
-       "-d", "exec=show tables;")
-end
-
-desc "Run describe table"
-task :desc_table do
-  curl("ddl/database/default/table/my_table3?user.name=#{USERNAME}")
 end
 
 desc "Run mapreduce/streaming.json"
@@ -139,6 +127,57 @@ task :queue_list do
   curl("queue.json?user.name=#{USERNAME}")
 end
 
+namespace :ddl do
+  desc "Run the generic ddl"
+  task :plain do
+    curl("ddl",
+         *USER,
+       "-d", "exec=show tables;")
+  end
+
+  desc "Create a table"
+  task :create_table do
+    curl("ddl",
+         *USER,
+       "-d", "exec=create table test_table(id BIGINT, user STRING) stored as rcfile;")
+  end
+
+  desc "Describe table"
+  task :desc_table do
+    curl("ddl/database/default/table/test_table?user.name=#{USERNAME}")
+  end
+
+  desc "Describe table extended"
+  task :desc_table_ext do
+    curl("ddl/database/default/table/test_table?user.name=#{USERNAME}&format=extended")
+  end
+
+  desc "Describe all partitions"
+  task :desc_partitions do
+    curl("ddl/database/default/table/test_table/partition?user.name=#{USERNAME}")
+  end
+
+  desc "Describe one partitions"
+  task :desc_one_partition do
+    curl("ddl/database/default/table/test_table/partition/FOO?user.name=#{USERNAME}")
+  end
+
+  desc "Create a partition"
+  task :create_part do
+    data = <<EOM
+{
+  "location": "loc_a"
+}
+EOM
+    curl("ddl/database/default/table/test_table/partition/part_a?user.name=#{USERNAME}",
+         "-X", "PUT",
+         "-H" "Content-type:application/json",
+         "-d", data)
+
+
+  end
+
+end
 
 def curl(cmd, *opts)
   args =["curl", "-s",  *opts, "#{SERVER}/#{cmd}"]
