@@ -33,7 +33,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl</code></p>
   </section>
 
   <section>
@@ -89,7 +89,7 @@
 <source>
 % curl -d user.name=ctdean \
        -d 'exec=show tables;' \
-       'http://www.myserver.com/templeton/v1/ddl.json'
+       'http://www.myserver.com/templeton/v1/ddl'
 </source>
 
    <p><strong>JSON Output</strong></p>

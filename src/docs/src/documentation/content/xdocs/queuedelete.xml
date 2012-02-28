@@ -31,7 +31,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/queue/</code>:jobid<code>.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/queue/</code>:jobid<code></code></p>
   </section>
 
   <section>
@@ -104,7 +104,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X DELETE 'http://www.myserver.com/templeton/v1/queue/job_201111111311_0009.json?user.name=ctdean'
+% curl -X DELETE 'http://www.myserver.com/templeton/v1/queue/job_201111111311_0009?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>

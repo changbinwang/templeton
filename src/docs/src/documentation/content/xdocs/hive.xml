@@ -30,7 +30,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/hive.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/hive</code></p>
   </section>
 
   <section>
@@ -102,7 +102,7 @@
 % curl -d user.name=ctdean \
        -d execute="select+*+from+pokes;" \
        -d statusdir="pokes.output" \
-       'http://www.myserver.com/templeton/v1/hive.json'
+       'http://www.myserver.com/templeton/v1/hive'
 </source>
 
    <p><strong>JSON Output</strong></p>

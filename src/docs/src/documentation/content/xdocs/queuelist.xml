@@ -30,7 +30,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/queue.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/queue</code></p>
   </section>
 
   <section>
@@ -54,7 +54,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/queue.json?user.name=ctdean'
+% curl 'http://www.myserver.com/templeton/v1/queue?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>

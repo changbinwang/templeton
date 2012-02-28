@@ -33,7 +33,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/mapreduce/streaming.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/mapreduce/streaming</code></p>
   </section>
 
   <section>
@@ -154,7 +154,7 @@ Found 2 items
        -d output=mycounts \
        -d mapper=/bin/cat \
        -d reducer="/usr/bin/wc -w" \
-       'http://www.myserver.com/templeton/v1/mapreduce/streaming.json'
+       'http://www.myserver.com/templeton/v1/mapreduce/streaming'
 </source>
 
    <p><strong>JSON Output</strong></p>
