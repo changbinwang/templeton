@@ -229,7 +229,7 @@ public class Server {
      * Run a MapReduce Streaming job.
      */
     @POST
-    @Path("mapreduce/streaming.json")
+    @Path("mapreduce/streaming")
     @Produces({MediaType.APPLICATION_JSON})
     public EnqueueBean mapReduceStreaming(@FormParam("input") List<String> inputs,
                                           @FormParam("output") String output,
@@ -259,7 +259,7 @@ public class Server {
      * Run a MapReduce Jar job.
      */
     @POST
-    @Path("mapreduce/jar.json")
+    @Path("mapreduce/jar")
     @Produces({MediaType.APPLICATION_JSON})
     public EnqueueBean mapReduceJar(@FormParam("jar") String jar,
                                     @FormParam("class") String mainClass,
@@ -287,7 +287,7 @@ public class Server {
      * Run a Pig job.
      */
     @POST
-    @Path("pig.json")
+    @Path("pig")
     @Produces({MediaType.APPLICATION_JSON})
     public EnqueueBean pig(@FormParam("execute") String execute,
                            @FormParam("file") String srcFile,
@@ -313,7 +313,7 @@ public class Server {
      * Run a Hive job.
      */
     @POST
-    @Path("hive.json")
+    @Path("hive")
     @Produces({MediaType.APPLICATION_JSON})
     public EnqueueBean hive(@FormParam("execute") String execute,
                             @FormParam("file") String srcFile,
@@ -336,7 +336,7 @@ public class Server {
      * Return the status of the jobid.
      */
     @GET
-    @Path("queue/{jobid}.json")
+    @Path("queue/{jobid}")
     @Produces({MediaType.APPLICATION_JSON})
     public QueueStatusBean showQueueId(@PathParam("jobid") String jobid)
         throws NotAuthorizedException, BadParam, IOException
@@ -352,7 +352,7 @@ public class Server {
      * Kill a job in the queue.
      */
     @DELETE
-    @Path("queue/{jobid}.json")
+    @Path("queue/{jobid}")
     @Produces({MediaType.APPLICATION_JSON})
     public QueueStatusBean deleteQueueId(@PathParam("jobid") String jobid)
         throws NotAuthorizedException, BadParam, IOException
@@ -368,7 +368,7 @@ public class Server {
      * Return all the known job ids for this user.
      */
     @GET
-    @Path("queue.json")
+    @Path("queue")
     @Produces({MediaType.APPLICATION_JSON})
     public List<String> showQueueList()
         throws NotAuthorizedException, BadParam, IOException
@@ -383,7 +383,7 @@ public class Server {
      * Notify on a completed job.
      */
     @GET
-    @Path("internal/complete/{jobid}.json")
+    @Path("internal/complete/{jobid}")
     @Produces({MediaType.APPLICATION_JSON})
     public CompleteBean completeJob(@PathParam("jobid") String jobid)
         throws CallbackFailedException, IOException
@@ -463,7 +463,7 @@ public class Server {
         if (theUriInfo.getBaseUri() == null)
             return null;
         return theUriInfo.getBaseUri() + VERSION
-            + "/internal/complete/$jobId.json";
+            + "/internal/complete/$jobId";
     }
 
 }
