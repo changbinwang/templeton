@@ -25,8 +25,14 @@
      <table>
      <tr><th>Resource</th><th>Description</th></tr>
 
+     <tr><td><a href="responsetypes.html">:version</a></td>
+         <td>Returns a list of supported response types.</td></tr>
+ 
      <tr><td><a href="status.html">status</a></td>
          <td>Returns the Templeton server status.</td></tr>
+
+    <tr><td><a href="versions.html">version</a></td>
+         <td>Returns the a list of supported versions and the current version.</td></tr>
 
      <tr><td><a href="ddl.html">ddl</a></td>
          <td>Performs an HCatalog DDL command.</td></tr>

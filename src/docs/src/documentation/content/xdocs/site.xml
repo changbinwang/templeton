@@ -46,7 +46,9 @@ See http://forrest.apache.org/docs/linking.html for more info
     <index label="Configuration" href="configuration.html" />
     <index label="Reference">
      <index label="Resource List" href="resources.html" />
+     <index label=":version" href="responsetypes.html" />
      <index label="status" href="status.html" />
+     <index label="version" href="versions.html" />
      <index label="ddl" href="ddl.html" />
      <index label="mapreduce/streaming" href="mapreducestreaming.html" />
      <index label="mapreduce/jar" href="mapreducejar.html" />
