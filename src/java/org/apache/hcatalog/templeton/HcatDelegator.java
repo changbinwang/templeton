@@ -47,7 +47,7 @@ public class HcatDelegator extends LauncherDelegator {
     {
         ArrayList<String> args = new ArrayList<String>();
         args.add("-e");
-        args.add(exec);
+        args.add("\"" + exec + "\"");
         if (TempletonUtils.isset(group)) {
             args.add("-g");
             args.add(group);
@@ -66,6 +66,25 @@ public class HcatDelegator extends LauncherDelegator {
         Map<String, String> env = TempletonUtils.hadoopUserEnv(user, cp);
         return execService.run(appConf.clusterHcat(), args, env);
     }
+    
+    /**
+     * Return a json description of the database.
+     */
+    public String describeDatabase(String user, String db, boolean extended,
+                                String group, String permissions)
+        throws HcatException, NotAuthorizedException, BusyException, 
+            ExecuteException, IOException
+    {
+        String exec = "desc database " + db + "; ";
+        if (extended) {
+            exec = "desc database extended " + db + "; ";
+        }
+        String res = jsonRun(user, exec, group, permissions);
+        return JsonBuilder.create(res)
+            .put("database", db)
+            .build();
+    }
+
 
     /**
      * Return a json description of the table.
