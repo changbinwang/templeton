@@ -29,6 +29,7 @@ use Data::Dump qw(dump);
 use JSON;
 use HTTP::Daemon;
 use HTTP::Status;
+use Data::Compare;
 
 my $passedStr = 'passed';
 my $failedStr = 'failed';
@@ -269,6 +270,17 @@ sub replaceParameters
 	}
 	$testCmd->{'post_options'} = \@new_options;
     }    
+    if(defined $testCmd->{'json_field_substr_match'}){
+	my $json_matches = $testCmd->{'json_field_substr_match'};
+	my @keys = keys %{$json_matches};
+	
+	foreach my $key(@keys){
+	    my $new_value = $self->replaceParametersInArg($json_matches->{$key}, $testCmd, $log);
+	    $json_matches->{$key} = $new_value;
+	}
+    }    
+
+
 }
 
 ###############################################################################
@@ -474,10 +486,11 @@ sub compare
 
     my $json_hash;
     my %json_info;
-    if(defined $testCmd->{'json_field_match'}){
+    if(defined $testCmd->{'json_field_substr_match'} || $testCmd->{'json_field_match_object'}){
 	my $json = new JSON;
  	$json_hash = $json->utf8->decode($testResult->{'body'});
- 	my $json_matches = $testCmd->{'json_field_match'};
+ 	my $json_matches = $testCmd->{'json_field_substr_match'};
+ 	my $json_matches_object = $testCmd->{'json_field_match_object'};
 
 	%json_info = %$json_hash;
 	if(defined $json_info{'info'}){
@@ -495,7 +508,7 @@ sub compare
 	foreach my $key(keys %$json_matches){
 	    my $json_field_val = $json_info{$key};
 	    my $regex_expected_value = $json_matches->{$key};
-	    print $log "Comparing $key: $json_field_val !~ /$regex_expected_value\n";
+	    print $log "Comparing $key: $json_field_val with regex /$regex_expected_value/\n";
 
 	    if($json_field_val !~ /$regex_expected_value/){
 		print $log "$0::$subName INFO check failed:" 
@@ -506,6 +519,23 @@ sub compare
 		$result = 0;
 	    }
 	}
+
+	foreach my $key(keys %$json_matches_object){
+	    my $json_field_val = $json_info{$key};
+	    my $regex_expected_obj = $json->utf8->decode($json_matches_object->{$key});
+	    print $log "Comparing $key: " . dump($json_field_val) . ",expected value:  " . dump($regex_expected_obj);
+
+	    if(!Compare($json_field_val, $regex_expected_obj)){
+		print $log "$0::$subName INFO check failed:" 
+		    . " json compare failed. For field "
+		    . "$key, regex <" . $regex_expected_obj 
+		    . "> did not match the result <" . $json_field_val
+		    . ">\n";
+		$result = 0;
+	    }
+	}
+
+
     }
 
 
