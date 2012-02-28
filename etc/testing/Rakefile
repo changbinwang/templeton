@@ -161,6 +161,11 @@ namespace :ddl do
     curl("ddl/database/default/table/test_table?user.name=#{USERNAME}&format=extended")
   end
 
+  desc "Describe all tables"
+  task :desc_tables do
+    curl("ddl/database/default/table?user.name=#{USERNAME}")
+  end
+
   desc "Describe all columns"
   task :desc_columns do
     curl("ddl/database/default/table/test_table/column?user.name=#{USERNAME}")
@@ -186,6 +191,7 @@ EOM
 
 
   end
+
   desc "Describe all partitions"
   task :desc_partitions do
     curl("ddl/database/default/table/test_table/partition?user.name=#{USERNAME}")

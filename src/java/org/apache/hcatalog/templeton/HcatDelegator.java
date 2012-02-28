@@ -93,24 +93,40 @@ public class HcatDelegator extends LauncherDelegator {
 
     /**
      * Return a json "show table like".  This will return a list of
-     * tables, unless single is true.
+     * tables.
      */
-    public String showTable(String user, String db, String table, boolean extended,
-                            String group, String permissions, boolean single)
+    public String showTables(String user, String db, String tablePattern,
+                             String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
-        String exec = "use " + db + "; ";
-        if (extended)
-            exec += "show table extended like " + table + "; ";
-        else
-            exec += "show table like  " + table + "; ";
-
+        String exec = String.format("use %s; show tables like '%s';",
+                                    db, tablePattern);
         try {
             String res = jsonRun(user, exec, group, permissions);
-            if (single)
-                res = singleTable(res);
             return JsonBuilder.create(res)
+                .put("database", db)
+                .build();
+        } catch (HcatException e) {
+            throw new HcatException("unable to show tables for: " + tablePattern,
+                                    e.execBean);
+        }
+    }
+
+    /**
+     * Return a json "show table like".  This will return only the
+     * first single table.
+     */
+    public String showExtendedTable(String user, String db, String table,
+                                    String group, String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        ExecuteException, IOException
+    {
+        String exec = String.format("use %s; show table extended like %s;",
+                                    db, table);
+        try {
+            String res = jsonRun(user, exec, group, permissions);
+            return JsonBuilder.create(singleTable(res))
                 .remove("tableName")
                 .put("database", db)
                 .put("table", table)

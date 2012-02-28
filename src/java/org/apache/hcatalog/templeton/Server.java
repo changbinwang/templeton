@@ -45,6 +45,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.security.authentication.client.PseudoAuthenticator;
+import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
  * The Templeton Web API server.
@@ -157,6 +158,28 @@ public class Server {
     }
 
     /**
+     * Show all the tables in an hcat database.
+     */
+    @GET
+    @Path("ddl/database/{db}/table")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String showTables(@PathParam("db") String db,
+                             @QueryParam("like") String tablePattern,
+                             @QueryParam("group") String group,
+                             @QueryParam("permissions") String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        if (! TempletonUtils.isset(tablePattern))
+            tablePattern = "*";
+        return d.showTables(getUser(), db, tablePattern, group, permissions);
+    }
+
+    /**
      * Describe an hcat table.  This is normally a simple list of
      * columns (using "desc table"), but the extended format will show
      * more information (using "show table extended like").
@@ -178,13 +201,13 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         if ("extended".equals(format))
-            return d.showTable(getUser(), db, table, true, group, permissions, true);
+            return d.showExtendedTable(getUser(), db, table, group, permissions);
         else
             return d.describeTable(getUser(), db, table, false, group, permissions);
     }
 
     /**
-     * Describe the partitions in an hcat table.
+     * Show all the partitions in an hcat table.
      */
     @GET
     @Path("ddl/database/{db}/table/{table}/partition")
