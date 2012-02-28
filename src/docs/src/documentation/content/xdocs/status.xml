@@ -31,7 +31,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/status.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/status</code></p>
   </section>
 
   <section>
@@ -60,7 +60,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/status.json?user.name=charlotte'
+% curl 'http://www.myserver.com/templeton/v1/status?user.name=charlotte'
 </source>
 
    <p><strong>JSON Output</strong></p>

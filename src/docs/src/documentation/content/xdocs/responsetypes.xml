@@ -19,49 +19,57 @@
 
 <document>
   <header>
-    <title>GET queue </title>
+    <title>GET :version </title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Return a list of all job IDs registered to the user.</p>
+    <p>Returns a list of the response types supported by Templeton.</p>
   </section>
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/queue</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/</code>:version</p>
   </section>
 
   <section>
    <title>Parameters</title>
-    <p>Only the <a href="index.html#Standard+Parameters">standard parameters</a>
-       are accepted.</p>
+    <table>
+    <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
+    
+    <tr><td><strong>:version</strong></td>
+        <td>The Templeton version number</td>
+        <td>Required</td>
+        <td>None</td>
+    </tr>
+    </table>
   </section>
 
   <section>
    <title>Results</title>
     <table>
     <tr><th>Name</th><th>Description</th></tr>   
-    <tr><td><strong>ids</strong></td>
-        <td>A list of all job IDs registered to the user.</td>
+    
+    <tr><td><strong>responseTypes</strong></td>
+        <td>A list of all supported response types</td>
     </tr>
+
     </table>
- </section> 
+  </section>
 
   <section>
    <title>Example</title>
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/queue?user.name=ctdean'
+% curl 'http://www.myserver.com/templeton/v1'
 </source>
 
    <p><strong>JSON Output</strong></p>
 <source>
 {
- "job_201111111311_0008",
- "job_201111111311_0012"
+ "application/json"
 }
 </source>
   </section>

@@ -47,14 +47,13 @@
     <section>
        <title>URL format </title>
        <p>Templeton resources are accessed using the following URL format:</p>
-       <p><code>http://</code><em>yourserver</em><code>/templeton/v1/</code><em>resource.format</em></p>
+       <p><code>http://</code><em>yourserver</em><code>/templeton/v1/</code><em>resource</em></p>
        <p>where "<em>yourserver</em>" is replaced with your server name, and 
-          "<em>resource.format</em>" is replaced by the Templeton 
-          resource name and output response format.  Note that in Templeton 
-          version 0.1.0, JSON is the only supported response format.</p>
+          "<em>resource</em>" is replaced by the Templeton 
+          resource name.</p>
        <p>For example, to check if the Templeton server is running you could 
           access the following URL:</p>
-       <p><code>http://www.myserver.com/templeton/v1/status.json </code></p>
+       <p><code>http://www.myserver.com/templeton/v1/status</code></p>
     </section>
 
    <section>

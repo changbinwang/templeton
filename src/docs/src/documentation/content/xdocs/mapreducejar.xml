@@ -33,7 +33,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/mapreduce/jar.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/mapreduce/jar</code></p>
   </section>
 
   <section>
@@ -136,7 +136,7 @@ Found 2 items
        -d libjars=transform.jar \
        -d arg=wordcount/input \
        -d arg=wordcount/output \
-       'http://www.myserver.com/templeton/v1/mapreduce/jar.json'
+       'http://www.myserver.com/templeton/v1/mapreduce/jar'
 </source>
 
    <p><strong>JSON Output</strong></p>

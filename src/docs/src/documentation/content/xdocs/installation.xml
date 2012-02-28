@@ -73,7 +73,7 @@
   <li>Check that your local install works.  Assuming that Tomcat is running
       on port 8080, the following command would give output similar to that shown. 
 <source>
-% curl -i http://localhost:8080/templeton/v1/status.json
+% curl -i http://localhost:8080/templeton/v1/status
 HTTP/1.1 200 OK
 Server: Apache-Coyote/1.1
 Content-Type: application/json

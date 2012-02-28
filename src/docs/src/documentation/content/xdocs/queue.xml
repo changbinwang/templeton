@@ -31,7 +31,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/queue/</code>:jobid<code>.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/queue/</code>:jobid<code></code></p>
   </section>
 
   <section>
@@ -103,7 +103,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/queue/job_201112212038_0003.json?user.name=ctdean'
+% curl 'http://www.myserver.com/templeton/v1/queue/job_201112212038_0003?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>

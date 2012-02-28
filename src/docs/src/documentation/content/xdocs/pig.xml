@@ -30,7 +30,7 @@
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/pig.json</code></p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/pig</code></p>
   </section>
 
   <section>
@@ -124,7 +124,7 @@ dra:Deirdre McClure:marvelous
 % curl -d user.name=ctdean \
        -d file=id.pig \
        -d arg=-v \
-       'http://www.myserver.com/templeton/v1/pig.json' 
+       'http://www.myserver.com/templeton/v1/pig' 
 </source>
 
    <p><strong>JSON Output</strong></p>
