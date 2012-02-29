@@ -293,11 +293,10 @@ public class Server {
         verifyDdlParam(db, ":db");
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.describeDatabase(getUser(), db,
-                (format != null && format.toLowerCase().trim().
-                    equals("extended")?true:false),
-                group, permissions);
+                                  "extended".equals(format),
+                                  group, permissions);
     }
-    
+
     /**
      * Describe a database
      */
@@ -318,7 +317,7 @@ public class Server {
         return d.createDatabase(getUser(), db, desc,
                 group, permissions);
     }
-    
+
     /**
      * Describe a database
      */
@@ -336,7 +335,7 @@ public class Server {
         verifyUser();
         verifyDdlParam(db, ":db");
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.dropDatabase(getUser(), db, param, 
+        return d.dropDatabase(getUser(), db, param,
                 group, permissions);
     }
 
@@ -653,5 +652,4 @@ public class Server {
         return theUriInfo.getBaseUri() + VERSION
             + "/internal/complete/$jobId";
     }
-
 }
