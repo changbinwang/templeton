@@ -18,6 +18,7 @@
 package org.apache.hcatalog.templeton;
 
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -28,17 +29,68 @@ public class TableDesc {
     public boolean ifNotExists = false;
     public boolean external = false;
     public String table;
-    public List<ColumnDesc> columns;
     public String comment;
-    public List<ColumnDesc> partitions;
+    public List<ColumnDesc> columns;
+    public List<ColumnDesc> partitionedBy;
+    public StorageFormatDesc format;
+    public String location;
+    public Map<String, String> tableProperties;
 
     /**
-     * Create a new PartitionDesc
+     * Create a new TableDesc
      */
     public TableDesc() {}
 
     public String toString() {
-        return String.format("TableDesc(table=%s)",
-                             table);
+        return String.format("TableDesc(table=%s, columns=%s)", table, columns);
     }
+
+    /**
+     * The storage format.
+     */
+    @XmlRootElement
+    public static class StorageFormatDesc {
+        public RowFormatDesc rowFormat;
+        public String storedAs;
+        public StoredByDesc storedBy;
+
+        public StorageFormatDesc() {}
+    }
+
+    /**
+     * The Row Format.
+     */
+    @XmlRootElement
+    public static class RowFormatDesc {
+        public char fieldsTerminatedBy;
+        public char collectionItemsTerminatedBy;
+        public char mapKeysTerminatedBy;
+        public char linesTerminatedBy;
+        public SerdeDesc serde;
+
+        public RowFormatDesc() {}
+    }
+
+    /**
+     * The SERDE Row Format.
+     */
+    @XmlRootElement
+    public static class SerdeDesc {
+        public String name;
+        public Map<String, String> properties;
+
+        public SerdeDesc() {}
+    }
+
+    /**
+     * How to store the table.
+     */
+    @XmlRootElement
+    public static class StoredByDesc {
+        public String className;
+        public Map<String, String> properties;
+
+        public StoredByDesc() {}
+    }
+
 }

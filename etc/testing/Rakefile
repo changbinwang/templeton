@@ -135,8 +135,8 @@ namespace :ddl do
        "-d", "exec=show tables;")
   end
 
-  desc "Create a table"
-  task :create_table do
+  desc "Create a table using the plain ddl resource"
+  task :create_table_ddl do
     curl("ddl",
          *USER,
        "-d", "exec=create table test_table(id BIGINT, price float comment \"The unit price\") \
@@ -144,6 +144,41 @@ namespace :ddl do
                 stored as rcfile;")
   end
 
+  desc "Create a table"
+  task :create_table do
+    data = <<EOM
+{
+  "table": "test_table",
+  "comment": "Best table made today",
+  "columns": [
+    {
+      "name": "id",
+      "type": "bigint"
+    },
+    {
+      "name": "price",
+      "type": "float",
+      "comment": "The unit price"
+    }
+  ],
+  "partitionedBy": [
+    {
+      "name": "country",
+      "type": "string"
+    }
+  ],
+  "format": {
+    "storedAs": "rcfile"
+  }
+}
+EOM
+    curl("ddl/database/default/table/test_table?user.name=#{USERNAME}",
+         "-X", "PUT",
+         "-H" "Content-type:application/json",
+         "-d", data)
+
+
+  end
   desc "Drop the test table"
   task :drop_table do
   curl("ddl/database/default/table/test_table?user.name=#{USERNAME}",

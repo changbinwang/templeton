@@ -25,7 +25,7 @@ import java.util.HashMap;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
@@ -91,7 +91,7 @@ public class HcatDelegator extends LauncherDelegator {
      * databases.
      */
     public String showDatabases(String user, String dbPattern,
-                             String group, String permissions)
+                                String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -102,7 +102,7 @@ public class HcatDelegator extends LauncherDelegator {
             return JsonBuilder.create(res)
                 .build();
         } catch (HcatException e) {
-            throw new HcatException("unable to show databases for: " + 
+            throw new HcatException("unable to show databases for: " +
                 dbPattern, e.execBean);
         }
     }
@@ -118,13 +118,11 @@ public class HcatDelegator extends LauncherDelegator {
     {
         String exec = "create database if not exists " + db;
         if (desc != null) {
-            if (desc.comment != null && !desc.comment.trim().equals("")) {
+            if (TempletonUtils.isset(desc.comment))
                 exec += " comment '" + desc.comment + "'";
-            }
-            if (desc.location != null && !desc.location.trim().equals("")) {
+            if (TempletonUtils.isset(desc.location))
                 exec += " location '" + desc.location + "'";
-            }
-            if (desc.properties != null && !desc.properties.isEmpty()) {
+            if (TempletonUtils.isset(desc.properties)) {
                 exec += " with dbproperties (";
                 for (String key : desc.properties.keySet()) {
                     exec += "'" + key + "'='" + desc.properties.get(key) + "', ";
@@ -172,10 +170,45 @@ public class HcatDelegator extends LauncherDelegator {
     public String createTable(String user, String db,
                               TableDesc desc,
                               String group, String permissions)
-        throws HcatException, NotAuthorizedException, BusyException,
+        throws SimpleWebException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
-        throw new HcatException("not implemented", null);
+        String exec = String.format("use %s; create", db);
+
+        if (desc.external)
+            exec += " external";
+        exec += " table";
+        if (desc.ifNotExists)
+            exec += " if not exists";
+        exec += " " + desc.table;
+
+        if (TempletonUtils.isset(desc.columns))
+            exec += String.format("(%s)", makeCols(desc.columns));
+        if (TempletonUtils.isset(desc.comment))
+            exec += String.format(" comment '%s'", desc.comment);
+        if (TempletonUtils.isset(desc.partitionedBy))
+            exec += String.format(" partitioned by (%s)", makeCols(desc.partitionedBy));
+        if (desc.format != null)
+            exec += " " + makeStorageFormat(desc.format);
+        if (TempletonUtils.isset(desc.location))
+            exec += String.format(" location '%s'", desc.location);
+        exec += ";";
+
+        try {
+            jsonRun(user, exec, group, permissions, true);
+
+            return JsonBuilder.create()
+                .put("database", db)
+                .put("table", desc.table)
+                .build();
+        } catch (final HcatException e) {
+            final String fexec = exec;
+            throw new SimpleWebException(500, "unable to create table: " + desc.table,
+                                         new HashMap<String, Object>() {{
+                                                 put("statement", fexec);
+                                                 put("exec", e.execBean);
+                                             }});
+        }
     }
 
     /**
@@ -245,6 +278,86 @@ public class HcatDelegator extends LauncherDelegator {
         } catch (HcatException e) {
             throw new HcatException("unable to show table: " + table, e.execBean);
         }
+    }
+
+    // Format a list of Columns for a create statement
+    private String makeCols(List<ColumnDesc> cols) {
+        ArrayList<String> res = new ArrayList<String>();
+        for (ColumnDesc col : cols)
+            res.add(makeOneCol(col));
+        return StringUtils.join(res, ", ");
+    }
+
+    // Format a Column for a create statement
+    private String makeOneCol(ColumnDesc col) {
+        String res = String.format("%s %s", col.name, col.type);
+        if (TempletonUtils.isset(col.comment))
+            res += String.format(" comment '%s'", col.comment);
+        return res;
+    }
+
+    // Format the storage format statements
+    private String makeStorageFormat(TableDesc.StorageFormatDesc desc) {
+        String res = "";
+
+        if (desc.rowFormat != null)
+            res += makeRowFormat(desc.rowFormat);
+        if (TempletonUtils.isset(desc.storedAs))
+            res += String.format(" stored as %s", desc.storedAs);
+        if (desc.storedBy != null)
+            res += " " + makeStoredBy(desc.storedBy);
+
+        return res;
+    }
+
+    // Format the row format statement
+    private String makeRowFormat(TableDesc.RowFormatDesc desc) {
+        String res =
+            makeTermBy(desc.fieldsTerminatedBy, "fields")
+            + makeTermBy(desc.collectionItemsTerminatedBy, "collection items")
+            + makeTermBy(desc.mapKeysTerminatedBy, "map keys")
+            + makeTermBy(desc.linesTerminatedBy, "lines");
+
+        if (TempletonUtils.isset(res))
+            return "delimited" + res;
+        else if (desc.serde != null)
+            return makeSerdeFormat(desc.serde);
+        else
+            return "";
+    }
+
+    // A row format terminated by clause
+    private String makeTermBy(char ch, String fieldName) {
+        if (TempletonUtils.isset(ch))
+            return String.format(" %s terminated by '%c'", fieldName, ch);
+        else
+            return "";
+    }
+
+    // Format the serde statement
+    private String makeSerdeFormat(TableDesc.SerdeDesc desc) {
+        String res = "serde " + desc.name;
+        if (TempletonUtils.isset(desc.properties))
+            res += String.format(" with serdeproperties (%s)",
+                                 makePropertiesStatement(desc.properties));
+        return res;
+    }
+
+    // Format the properties statement
+    private String makePropertiesStatement(Map<String, String> properties) {
+        ArrayList<String> res = new ArrayList<String>();
+        for (Map.Entry<String, String> e : properties.entrySet())
+            res.add(String.format("'%s'='%s'", e.getKey(), e.getValue()));
+        return StringUtils.join(res, ", ");
+    }
+
+    // Format the stored by statement
+    private String makeStoredBy(TableDesc.StoredByDesc desc) {
+        String res = String.format("stored by '%s'", desc.className);
+        if (TempletonUtils.isset(desc.properties))
+            res += String.format(" with serdeproperties (%s)",
+                                 makePropertiesStatement(desc.properties));
+        return res;
     }
 
     // Pull out the first table from the "show extended" json.
@@ -478,17 +591,6 @@ public class HcatDelegator extends LauncherDelegator {
             throw new HcatException("unable to add column: " + desc,
                                     e.execBean);
         }
-    }
-
-    /**
-     * Drop a column.
-     */
-    public String dropColumn(String user, String db, String table,
-                             String column, String group, String permissions)
-        throws HcatException, NotAuthorizedException, BusyException,
-        ExecuteException, IOException
-    {
-        throw new HcatException("not implemented", null);
     }
 
     // Check that the hcat result is valid and error free

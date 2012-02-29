@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +53,30 @@ public class TempletonUtils {
     /**
      * Is the object non-empty?
      */
+    public static boolean isset(char ch) {
+        return (ch != 0);
+    }
+
+    /**
+     * Is the object non-empty?
+     */
     public static <T> boolean isset(T[] a) {
         return (a != null) && (a.length > 0);
+    }
+
+
+    /**
+     * Is the object non-empty?
+     */
+    public static <T> boolean isset(Collection<T> col) {
+        return (col != null) && (! col.isEmpty());
+    }
+
+    /**
+     * Is the object non-empty?
+     */
+    public static <K, V> boolean isset(Map<K, V> col) {
+        return (col != null) && (! col.isEmpty());
     }
 
 

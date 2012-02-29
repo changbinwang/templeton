@@ -189,7 +189,7 @@ public class Server {
                               TableDesc desc,
                               @QueryParam("group") String group,
                               @QueryParam("permissions") String permissions)
-        throws HcatException, NotAuthorizedException, BusyException,
+        throws SimpleWebException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
         verifyUser();
@@ -520,30 +520,6 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.addOneColumn(getUser(), db, table, desc, group, permissions);
-    }
-
-    /**
-     * Drop a column in an hcat table.
-     */
-    @DELETE
-    @Path("ddl/database/{db}/table/{table}/column/{column}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public String addOneColumn(@PathParam("db") String db,
-                               @PathParam("table") String table,
-                               @PathParam("column") String column,
-                               @QueryParam("group") String group,
-                               @QueryParam("permissions") String permissions)
-        throws HcatException, NotAuthorizedException, BusyException,
-        BadParam, ExecuteException, IOException
-    {
-        verifyUser();
-        verifyDdlParam(db, ":db");
-        verifyDdlParam(table, ":table");
-        verifyParam(column, ":column");
-
-        HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.dropColumn(getUser(), db, table, column, group, permissions);
     }
 
     /**
