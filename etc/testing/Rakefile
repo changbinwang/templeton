@@ -217,6 +217,12 @@ EOM
 
   end
 
+  desc "Describe database"
+  task :desc_db do
+    curl("ddl/database/default?user.name=#{USERNAME}")
+  end
+
+
 end
 
 def curl(cmd, *opts)

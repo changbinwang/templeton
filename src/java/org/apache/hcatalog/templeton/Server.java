@@ -274,7 +274,7 @@ public class Server {
         return d.addOnePartition(getUser(), db, table, desc,
                                  group, permissions);
     }
-    
+
     /**
      * Describe a database
      */
@@ -283,15 +283,15 @@ public class Server {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String describeDatabase(@PathParam("db") String db,
-                                  String group,
-                                  String permissions)
+                                   @QueryParam("group") String group,
+                                   @QueryParam("permissions") String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
         verifyUser();
         verifyDdlParam(db, ":db");
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.describeDatabase(getUser(), db, false, 
+        return d.describeDatabase(getUser(), db, false,
                 group, permissions);
     }
 
