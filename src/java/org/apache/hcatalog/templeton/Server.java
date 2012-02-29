@@ -83,7 +83,7 @@ public class Server {
         versions.add(VERSION);
 
         HashMap<String, Object> res = new HashMap<String, Object>();
-        res.put("supported-versions", versions);
+        res.put("supportedVersions", versions);
         res.put("version", VERSION);
 
         return Collections.unmodifiableMap(res);
