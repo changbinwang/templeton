@@ -206,6 +206,29 @@ public class Server {
     }
 
     /**
+     * Describe an hcat table.  This is normally a simple list of
+     * columns (using "desc table"), but the extended format will show
+     * more information (using "show table extended like").
+     */
+    @DELETE
+    @Path("ddl/database/{db}/table/{table}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String dropTable(@PathParam("db") String db,
+                            @PathParam("table") String table,
+                            @QueryParam("group") String group,
+                            @QueryParam("permissions") String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.dropTable(getUser(), db, table, group, permissions);
+    }
+
+    /**
      * Show all the partitions in an hcat table.
      */
     @GET

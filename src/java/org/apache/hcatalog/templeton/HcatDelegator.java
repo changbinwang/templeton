@@ -191,8 +191,8 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     /**
-     * Return a json "show table like".  This will return only the
-     * first single table.
+     * Return a json "show table extended like".  This will return
+     * only the first single table.
      */
     public String showExtendedTable(String user, String db, String table,
                                     String group, String permissions)
@@ -222,6 +222,26 @@ public class HcatDelegator extends LauncherDelegator {
         if (tables == null || tables.size() == 0)
             return json;
         return JsonBuilder.mapToJson(tables.get(0));
+    }
+
+    /**
+     * Drop a table.
+     */
+    public String dropTable(String user, String db, String table,
+                            String group, String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        ExecuteException, IOException
+    {
+        String exec = String.format("use %s; drop table;", db, table);
+        try {
+            String res = jsonRun(user, exec, group, permissions);
+            return JsonBuilder.create(res)
+                .put("database", db)
+                .put("table", table)
+                .build();
+        } catch (HcatException e) {
+            throw new HcatException("unable to create table: " + table, e.execBean);
+        }
     }
 
     /**
