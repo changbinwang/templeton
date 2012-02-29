@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -274,6 +273,26 @@ public class Server {
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.addOnePartition(getUser(), db, table, desc,
                                  group, permissions);
+    }
+    
+    /**
+     * Describe a database
+     */
+    @GET
+    @Path("ddl/database/{db}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String describeDatabase(@PathParam("db") String db,
+                                  String group,
+                                  String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.describeDatabase(getUser(), db, false, 
+                group, permissions);
     }
 
     /**
