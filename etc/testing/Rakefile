@@ -144,11 +144,10 @@ namespace :ddl do
                 stored as rcfile;")
   end
 
-  desc "drop the test table"
+  desc "Drop the test table"
   task :drop_table do
-    curl("ddl",
-         *USER,
-       "-d", "exec=drop table test_table;")
+  curl("ddl/database/default/table/test_table?user.name=#{USERNAME}",
+       "-X", "DELETE")
   end
 
   desc "Describe table"
@@ -159,6 +158,13 @@ namespace :ddl do
   desc "Describe table extended"
   task :desc_table_ext do
     curl("ddl/database/default/table/test_table?user.name=#{USERNAME}&format=extended")
+  end
+
+  desc "Rename the test table"
+  task :rename_table do
+    curl("ddl/database/default/table/test_table",
+         *USER,
+         "-d", "rename=test_table_2")
   end
 
   desc "Describe all tables"
@@ -188,8 +194,6 @@ EOM
          "-X", "PUT",
          "-H" "Content-type:application/json",
          "-d", data)
-
-
   end
 
   desc "Describe all partitions"
@@ -203,7 +207,7 @@ EOM
   end
 
   desc "Create a partition"
-  task :create_part do
+  task :create_partition do
     data = <<EOM
 {
   "location": "loc_a"
@@ -217,11 +221,15 @@ EOM
 
   end
 
+  desc "Drop a partition"
+  task :drop_partition do
+    curl("ddl/database/default/table/test_table/partition/country=%27algeria%27?user.name=#{USERNAME}", "-X", "DELETE")
+  end
+
   desc "Describe database"
   task :desc_db do
     curl("ddl/database/default?user.name=#{USERNAME}")
   end
-
 
 end
 

@@ -17,16 +17,28 @@
  */
 package org.apache.hcatalog.templeton;
 
-import java.util.HashMap;
+import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Unable to run hcat on the job.
+ * A description of the table to create.
  */
-public class HcatException extends SimpleWebException {
-    public ExecBean execBean;
+@XmlRootElement
+public class TableDesc {
+    public boolean ifNotExists = false;
+    public boolean external = false;
+    public String table;
+    public List<ColumnDesc> columns;
+    public String comment;
+    public List<ColumnDesc> partitions;
 
-    public HcatException(String msg, final ExecBean bean) {
-        super(500, msg, new HashMap<String, Object>() {{ put("exec", bean); }});
-        execBean = bean;
+    /**
+     * Create a new PartitionDesc
+     */
+    public TableDesc() {}
+
+    public String toString() {
+        return String.format("TableDesc(table=%s)",
+                             table);
     }
 }

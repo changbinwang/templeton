@@ -179,6 +179,29 @@ public class Server {
     }
 
     /**
+     * Create a new table.
+     */
+    @PUT
+    @Path("ddl/database/{db}/table/{table}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String createTable(@PathParam("db") String db,
+                              @PathParam("table") String table,
+                              TableDesc desc,
+                              @QueryParam("group") String group,
+                              @QueryParam("permissions") String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+        desc.table = table;
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.createTable(getUser(), db, desc, group, permissions);
+    }
+
+    /**
      * Describe an hcat table.  This is normally a simple list of
      * columns (using "desc table"), but the extended format will show
      * more information (using "show table extended like").
@@ -206,9 +229,7 @@ public class Server {
     }
 
     /**
-     * Describe an hcat table.  This is normally a simple list of
-     * columns (using "desc table"), but the extended format will show
-     * more information (using "show table extended like").
+     * Delete an hcat table.
      */
     @DELETE
     @Path("ddl/database/{db}/table/{table}")
@@ -226,6 +247,29 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.dropTable(getUser(), db, table, group, permissions);
+    }
+
+    /**
+     * Rename an hcat table.
+     */
+    @POST
+    @Path("ddl/database/{db}/table/{table}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String dropTable(@PathParam("db") String db,
+                            @PathParam("table") String oldTable,
+                            @FormParam("rename") String newTable,
+                            @FormParam("group") String group,
+                            @FormParam("permissions") String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(oldTable, ":table");
+        verifyDdlParam(newTable, "rename");
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.renameTable(getUser(), db, oldTable, newTable, group, permissions);
     }
 
     /**
@@ -299,6 +343,30 @@ public class Server {
     }
 
     /**
+     * Drop a partition in an hcat table.
+     */
+    @DELETE
+    @Path("ddl/database/{db}/table/{table}/partition/{partition}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String addOnePartition(@PathParam("db") String db,
+                                  @PathParam("table") String table,
+                                  @PathParam("partition") String partition,
+                                  @QueryParam("group") String group,
+                                  @QueryParam("permissions") String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+        verifyParam(partition, ":partition");
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.dropPartition(getUser(), db, table, partition,
+                               group, permissions);
+    }
+
+    /**
      * Describe a database
      */
     @GET
@@ -321,7 +389,7 @@ public class Server {
     }
 
     /**
-     * Describe a database
+     * Create a database
      */
     @PUT
     @Path("ddl/database/{db}")
@@ -342,16 +410,16 @@ public class Server {
     }
 
     /**
-     * Describe a database
+     * Delete a database
      */
     @DELETE
     @Path("ddl/database/{db}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String dropDatabase(@PathParam("db") String db,
-                                @QueryParam("param") String param,
-                                @QueryParam("group") String group,
-                                @QueryParam("permissions") String permissions)
+                               @QueryParam("param") String param,
+                               @QueryParam("group") String group,
+                               @QueryParam("permissions") String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -433,6 +501,30 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.addOneColumn(getUser(), db, table, desc, group, permissions);
+    }
+
+    /**
+     * Drop a column in an hcat table.
+     */
+    @DELETE
+    @Path("ddl/database/{db}/table/{table}/column/{column}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String addOneColumn(@PathParam("db") String db,
+                               @PathParam("table") String table,
+                               @PathParam("column") String column,
+                               @QueryParam("group") String group,
+                               @QueryParam("permissions") String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+        verifyParam(column, ":column");
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.dropColumn(getUser(), db, table, column, group, permissions);
     }
 
     /**
