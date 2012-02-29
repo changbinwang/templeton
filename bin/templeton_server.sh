@@ -187,7 +187,7 @@ fi
 export HADOOP_USER_CLASSPATH_FIRST=true
 export HADOOP_OPTS="-Dlog4j.configuration=templeton-log4j.properties"
 
-start_cmd="$HADOOP_PREFIX/bin/hadoop jar $JAR org.apache.hcatalog.templeton.Main"
+start_cmd="$HADOOP_PREFIX/bin/hadoop -Dtempleton.log.dir=$TEMPLETON_LOG_DIR jar $JAR org.apache.hcatalog.templeton.Main"
 
 cmd=$1
 case $cmd in
