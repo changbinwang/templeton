@@ -85,6 +85,64 @@ public class HcatDelegator extends LauncherDelegator {
             .build();
     }
 
+    /**
+     * Create a database with the given name
+     */
+    public String createDatabase(String user, String db,
+                                DatabaseDesc desc, 
+                                String group, String permissions)
+        throws HcatException, NotAuthorizedException, BusyException, 
+            ExecuteException, IOException
+    {
+        String exec = "create database if not exists " + db;
+        if (desc != null) {
+            if (!desc.comment.trim().equals("")) {
+                exec += " COMMENT '" + desc.comment + "'";
+            }
+            if (!desc.location.trim().equals("")) {
+                exec += " LOCATION '" + desc.location + "'";
+            }
+            if (desc.properties != null && !desc.properties.isEmpty()) {
+                exec += " WITH DBPROPERTIES (";
+                for (String key : desc.properties.keySet()) {
+                    exec += "'" + key + "'='" + desc.properties.get(key) + "', ";
+                }
+                exec = exec.substring(0, exec.length() - 2);
+                exec += ");";
+            } else {
+                exec += ";";
+            }
+        }
+        String res = jsonRun(user, exec, group, permissions);
+        return JsonBuilder.create()
+            .put("database", db)
+            .build();
+    }
+    
+    /**
+     * Drop the listed database
+     */
+    public String dropDatabase(String user, String db, String param,
+                                String group, String permissions)
+        throws HcatException, NotAuthorizedException, BusyException, 
+            ExecuteException, IOException
+    {
+        String exec = "drop database if exists " + db;
+        if (param == null) {
+            param = "";
+        }
+        if (param.toLowerCase().trim().equals("restrict")) {
+            exec += " RESTRICT;";
+        } else if (param.toLowerCase().trim().equals("cascade")) {
+            exec += " CASCADE;";
+        } else {
+            exec += ";";
+        }
+        String res = jsonRun(user, exec, group, permissions);
+        return JsonBuilder.create()
+                .put("database", db)
+                .build();
+    }
 
     /**
      * Return a json description of the table.

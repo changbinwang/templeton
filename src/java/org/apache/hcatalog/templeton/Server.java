@@ -283,6 +283,7 @@ public class Server {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String describeDatabase(@PathParam("db") String db,
+                                   @QueryParam("format") String format,
                                    @QueryParam("group") String group,
                                    @QueryParam("permissions") String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
@@ -291,7 +292,51 @@ public class Server {
         verifyUser();
         verifyDdlParam(db, ":db");
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.describeDatabase(getUser(), db, false,
+        return d.describeDatabase(getUser(), db,
+                (format != null && format.toLowerCase().trim().
+                    equals("extended")?true:false),
+                group, permissions);
+    }
+    
+    /**
+     * Describe a database
+     */
+    @PUT
+    @Path("ddl/database/{db}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String createDatabase(@PathParam("db") String db,
+                                  DatabaseDesc desc,
+                                  @QueryParam("group") String group,
+                                  @QueryParam("permissions") String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.createDatabase(getUser(), db, desc,
+                group, permissions);
+    }
+    
+    /**
+     * Describe a database
+     */
+    @DELETE
+    @Path("ddl/database/{db}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String dropDatabase(@PathParam("db") String db,
+                                @QueryParam("param") String param,
+                                @QueryParam("group") String group,
+                                @QueryParam("permissions") String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.dropDatabase(getUser(), db, param, 
                 group, permissions);
     }
 
