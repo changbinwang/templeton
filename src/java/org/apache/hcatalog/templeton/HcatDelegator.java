@@ -97,10 +97,10 @@ public class HcatDelegator extends LauncherDelegator {
     {
         String exec = "create database if not exists " + db;
         if (desc != null) {
-            if (!desc.comment.trim().equals("")) {
+            if (desc.comment != null && !desc.comment.trim().equals("")) {
                 exec += " comment '" + desc.comment + "'";
             }
-            if (!desc.location.trim().equals("")) {
+            if (desc.location != null && !desc.location.trim().equals("")) {
                 exec += " location '" + desc.location + "'";
             }
             if (desc.properties != null && !desc.properties.isEmpty()) {
