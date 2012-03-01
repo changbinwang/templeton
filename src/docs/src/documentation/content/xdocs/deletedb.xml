@@ -48,7 +48,7 @@
         <td>Parameter set to either "restrict" or "cascade".  Restrict will remove the
             schema if all the tables are empty.  Cascade removes everything including
             data and definitions.</td>
-        <td>Required</td>
+        <td>Optional</td>
         <td>None</td>
     </tr>
 
