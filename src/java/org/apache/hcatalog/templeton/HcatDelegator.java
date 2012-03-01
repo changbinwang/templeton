@@ -87,6 +87,27 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     /**
+     * Return a json "show databases like".  This will return a list of
+     * databases.
+     */
+    public String showDatabases(String user, String dbPattern,
+                             String group, String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        ExecuteException, IOException
+    {
+        String exec = String.format("show databases like '%s';",
+                                    dbPattern);
+        try {
+            String res = jsonRun(user, exec, group, permissions);
+            return JsonBuilder.create(res)
+                .build();
+        } catch (HcatException e) {
+            throw new HcatException("unable to show databases for: " + 
+                dbPattern, e.execBean);
+        }
+    }
+
+    /**
      * Create a database with the given name
      */
     public String createDatabase(String user, String db,
