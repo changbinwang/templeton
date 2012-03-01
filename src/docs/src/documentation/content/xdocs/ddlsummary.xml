@@ -28,6 +28,9 @@
      <tr><td><a href="ddl.html">ddl</a></td>
          <td>Performs an HCatalog DDL command.</td></tr>
 
+     <tr><td><a href="listdbs.html">ddl/database</a></td>
+         <td>List HCatalog databases.</td></tr>
+
      <tr><td><a href="descdb.html">ddl/database/:db</a></td>
          <td>Describe an HCatalog database.</td></tr>
 
