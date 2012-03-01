@@ -40,6 +40,9 @@
      <tr><td><a href="desctable.html">ddl/database/:db/table/:table</a></td>
          <td>Describe an HCatalog table.</td></tr>
 
+     <tr><td><a href="listpartitions.html">ddl/database/:db/table/:table/partion</a></td>
+         <td>Show all partitions in an HCatalog table.</td></tr>
+
      <tr><td><a href="mapreducestreaming.html">mapreduce/streaming</a></td>
          <td>Creates and queues Hadoop streaming MapReduce jobs.</td></tr>
 
