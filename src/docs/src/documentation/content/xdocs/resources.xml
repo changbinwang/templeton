@@ -49,6 +49,9 @@
      <tr><td><a href="listcolumns.html">ddl/database/:db/table/:table/column</a></td>
          <td>List the columns in an HCatalog table.</td></tr>
 
+     <tr><td><a href="desccolumn.html">ddl/database/:db/table/:table/column/:column</a></td>
+         <td>Describe a single column in an HCatalog table.</td></tr>
+
      <tr><td><a href="mapreducestreaming.html">mapreduce/streaming</a></td>
          <td>Creates and queues Hadoop streaming MapReduce jobs.</td></tr>
 
