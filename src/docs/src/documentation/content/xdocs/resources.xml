@@ -37,11 +37,14 @@
      <tr><td><a href="ddl.html">ddl</a></td>
          <td>Performs an HCatalog DDL command.</td></tr>
 
+     <tr><td><a href="descdb.html">ddl/database/:db</a></td>
+         <td>Describe an HCatalog database.</td></tr>
+
      <tr><td><a href="desctable.html">ddl/database/:db/table/:table</a></td>
          <td>Describe an HCatalog table.</td></tr>
 
      <tr><td><a href="listpartitions.html">ddl/database/:db/table/:table/partion</a></td>
-         <td>Show all partitions in an HCatalog table.</td></tr>
+         <td>List all partitions in an HCatalog table.</td></tr>
 
      <tr><td><a href="descpartition.html">ddl/database/:db/table/:table/partion/:partition</a></td>
          <td>Describe a single partition in an HCatalog table.</td></tr>
