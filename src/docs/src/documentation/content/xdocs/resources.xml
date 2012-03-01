@@ -43,19 +43,22 @@
      <tr><td><a href="listtables.html">ddl/database/:db/table</a></td>
          <td>List the tables in an HCatalog database.</td></tr>
 
-     <tr><td><a href="desctable.html">GET ddl/database/:db/table/:table</a></td>
+     <tr><td><a href="desctable.html">ddl/database/:db/table/:table (GET)</a></td>
          <td>Describe an HCatalog table.</td></tr>
 
-     <tr><td><a href="renametable.html">POST ddl/database/:db/table/:table</a></td>
+     <tr><td><a href="renametable.html">ddl/database/:db/table/:table (POST)</a></td>
          <td>Rename an HCatalog table.</td></tr>
 
      <tr><td><a href="listpartitions.html">ddl/database/:db/table/:table/partion</a></td>
          <td>List all partitions in an HCatalog table.</td></tr>
 
-     <tr><td><a href="descpartition.html">GET ddl/database/:db/table/:table/partion/:partition</a></td>
+     <tr><td><a href="descpartition.html">ddl/database/:db/table/:table/partion/:partition (GET)</a></td>
          <td>Describe a single partition in an HCatalog table.</td></tr>
 
-     <tr><td><a href="deletepartition.html">DELETE ddl/database/:db/table/:table/partion/:partition</a></td>
+     <tr><td><a href="createpartition.html">ddl/database/:db/table/:table/partion/:partition (PUT)</a></td>
+         <td>Create a partition in an HCatalog table.</td></tr>
+
+     <tr><td><a href="deletepartition.html">ddl/database/:db/table/:table/partion/:partition (DELETE)</a></td>
          <td>Delete (drop) a partition in an HCatalog table.</td></tr>
 
      <tr><td><a href="listcolumns.html">ddl/database/:db/table/:table/column</a></td>
@@ -79,10 +82,10 @@
      <tr><td><a href="queuelist.html">queue</a></td>
          <td>Returns a list of all jobids registered for the user.</td></tr>
 
-     <tr><td><a href="queue.html">GET queue/:jobid</a></td>
+     <tr><td><a href="queue.html">queue/:jobid (GET)</a></td>
          <td>Returns the status of a job given its ID.</td></tr>
 
-     <tr><td><a href="queuedelete.html">DELETE queue/:jobid</a></td>
+     <tr><td><a href="queuedelete.html">queue/:jobid (DELETE)</a></td>
          <td>Kill a job given its ID.</td></tr>
 
      </table>     
