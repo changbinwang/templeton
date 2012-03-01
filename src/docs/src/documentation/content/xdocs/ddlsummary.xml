@@ -34,6 +34,9 @@
      <tr><td><a href="listpartitions.html">ddl/database/:db/table/:table/partion</a></td>
          <td>Show all partitions in an HCatalog table.</td></tr>
 
+     <tr><td><a href="descpartition.html">ddl/database/:db/table/:table/partion/:partition</a></td>
+         <td>Describe a single partition in an HCatalog table.</td></tr>
+
      </table>     
   </body>
 </document>
