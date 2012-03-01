@@ -31,6 +31,9 @@
      <tr><td><a href="descdb.html">ddl/database/:db</a></td>
          <td>Describe an HCatalog database.</td></tr>
 
+     <tr><td><a href="listtables.html">ddl/database/:db/table</a></td>
+         <td>List the tables in an HCatalog database.</td></tr>
+
      <tr><td><a href="desctable.html">ddl/database/:db/table/:table</a></td>
          <td>Describe an HCatalog table.</td></tr>
 
