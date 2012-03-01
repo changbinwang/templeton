@@ -49,7 +49,7 @@ See http://forrest.apache.org/docs/linking.html for more info
      <index label=":version" href="responsetypes.html" />
      <index label="status" href="status.html" />
      <index label="version" href="versions.html" />
-     <index label="ddl" href="ddl.html" />
+     <index label="ddl (summary)" href="ddlsummary.html" />
      <index label="mapreduce/streaming" href="mapreducestreaming.html" />
      <index label="mapreduce/jar" href="mapreducejar.html" />
      <index label="pig" href="pig.html" />

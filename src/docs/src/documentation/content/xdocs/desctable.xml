@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+
+<document>
+  <header>
+    <title>GET ddl/database/:db/table/:table</title>
+  </header>
+
+  <body>
+  <section>
+   <title>Description</title>
+    <p>Describe an HCatalog table.  Normally returns a simple list of columns 
+     (using "desc table"), but the extended format will show more information (using
+     "show table extended like").</p>
+  </section>
+
+  <section>
+   <title>URL</title>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl/database/</code>:db<code>/table/</code>:table</p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl/database/</code>:db<code>/table/</code>:table<code>?format=extended</code></p>
+  </section>
+
+  <section>
+   <title>Parameters</title>
+    <table>
+    <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
+    
+    <tr><td><strong>:db</strong></td>
+        <td>The database name</td>
+        <td>Required</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>:table</strong></td>
+        <td>The table name</td>
+        <td>Required</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>format</strong></td>
+        <td>Set "format=extended" to see additional information (using "show table 
+            extended like")</td>
+        <td>Optional</td>
+        <td>Not extended</td>
+    </tr>
+    </table>
+  </section>
+
+  <section>
+   <title>Results</title>
+    <table>
+    <tr><th>Name</th><th>Description</th></tr>   
+
+    <tr><td><strong>columns</strong></td>
+        <td>A list of column names and types</td>
+    </tr>
+
+    <tr><td><strong>database</strong></td>
+        <td>The database name</td>
+    </tr>
+
+    <tr><td><strong>table</strong></td>
+        <td>The table name</td>
+    </tr>
+
+    <tr><td><strong>minFileSize</strong> (extended only)</td>
+        <td>Mininum file size</td>
+    </tr>
+
+    <tr><td><strong>totalNumberFiles</strong> (extended only)</td>
+        <td>Number of files</td>
+    </tr>
+
+   <tr><td><strong>location</strong> (extended only)</td>
+        <td>Location of table</td>
+    </tr>
+
+   <tr><td><strong>lastUpdateTime</strong> (extended only)</td>
+        <td>Last update time</td>
+    </tr>
+
+   <tr><td><strong>lastAccessTime</strong> (extended only)</td>
+        <td>Last access time</td>
+    </tr>
+
+   <tr><td><strong>partitionColumns</strong> (extended only)</td>
+        <td>A list of the partition columns</td>
+    </tr>
+
+   <tr><td><strong>maxFileSize</strong> (extended only)</td>
+        <td>Maximum file size</td>
+    </tr>
+
+   <tr><td><strong>inputformat</strong> (extended only)</td>
+        <td>Input format</td>
+    </tr>
+
+   <tr><td><strong>partitioned</strong> (extended only)</td>
+        <td>True if the table is partitioned</td>
+    </tr>
+
+   <tr><td><strong>owner</strong> (extended only)</td>
+        <td>The table owner</td>
+    </tr>
+
+   <tr><td><strong>totalFileSize</strong> (extended only)</td>
+        <td>Total File Size</td>
+    </tr>
+
+   <tr><td><strong>outputformat</strong> (extended only)</td>
+        <td>Output format</td>
+    </tr>
+
+    </table>
+ </section> 
+
+  <section>
+   <title>Example</title>
+
+   <p><strong>Curl Command (simple)</strong></p>
+<source>
+% curl 'http://www.myserver.com/templeton/v1/ddl/database/default/table/my_table' 
+</source>
+
+   <p><strong>JSON Output (simple)</strong></p>
+<source>
+{
+ "columns": [
+   {
+     "name": "id",
+     "type": "bigint"
+   },
+   {
+     "name": "user",
+     "type": "string"
+   },
+   {
+     "name": "my_p",
+     "type": "string"
+   },
+   {
+     "name": "my_q",
+     "type": "string"
+   }
+ ],
+ "database": "default",
+ "table": "my_table"
+}
+</source>
+
+   <p><strong>Curl Command (extended)</strong></p>
+<source>
+% curl 'http://www.myserver.com/templeton/v1/ddl/database/default/table/my_table?format=extended'
+</source>
+
+   <p><strong>JSON Output (extended)</strong></p>
+<source>
+{
+ "minFileSize": 184,
+ "totalNumberFiles": 1,
+ "location": "hdfs://localhost:9000/user/hive/warehouse/my_table",
+ "lastUpdateTime": 1329980827336,
+ "lastAccessTime": 1329980816220,
+ "columns": [
+   {
+     "name": "id",
+     "type": "bigint"
+   },
+   {
+     "name": "user",
+     "type": "string"
+   }
+ ],
+ "partitionColumns": [
+   {
+     "name": "my_p",
+     "type": "string"
+   },
+   {
+     "name": "my_q",
+     "type": "string"
+   }
+ ],
+ "maxFileSize": 184,
+ "inputformat": "org.apache.hadoop.hive.ql.io.RCFileInputFormat",
+ "partitioned": true,
+ "owner": "ctdean",
+ "totalFileSize": 184,
+ "outputformat": "org.apache.hadoop.hive.ql.io.RCFileOutputFormat",
+ "database": "default",
+ "table": "my_table"
+}
+</source>
+  </section>
+ </body>
+</document>
