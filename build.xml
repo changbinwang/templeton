@@ -372,6 +372,10 @@
     <copy file="${resources.dir}/templeton-default.xml"
           tofile="${dist.dir}/conf/templeton-site.xml" />
 
+    <copy file="${resources.dir}/templeton-log4j.properties"
+          todir="${dist.dir}/conf/" />
+
+
     <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${dist.dir}/" />
 
     <copy todir="${dist.dir}/docs">
@@ -380,11 +384,12 @@
         <exclude name="tmp/**" />
       </fileset>
     </copy>
-    <copy todir="${dist.dir}/lib">
+    <copy todir="${dist.dir}/share/templeton/lib">
         <fileset dir="${ivy.lib.dir}" >
           <exclude name="hadoop*jar"/>
           <exclude name="hadoop*jar"/>
           <exclude name="junit*jar"/>
+          <exclude name="cobertura*jar"/>
         </fileset>  
     </copy>
 
@@ -432,11 +437,14 @@
   <!-- ================================================================== -->
   <!-- Copy files to a releasable structure                               -->
   <!-- ================================================================== -->
-  <target name="package-rpm" depends="docs">
+  <target name="package-rpm" depends="jar">
     <mkdir dir="${build.docs}" /> 
 
     <copy file="${resources.dir}/templeton-default.xml"
           tofile="${dist.dir}/etc/templeton/templeton-site.xml" />
+
+    <copy file="${resources.dir}/templeton-log4j.properties"
+          todir="${dist.dir}/etc/templeton/" />
 
     <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${dist.dir}/share/templeton/" />
 
@@ -447,11 +455,12 @@
       </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/lib">
+    <copy todir="${dist.dir}/share/templeton/lib/">
         <fileset dir="${ivy.lib.dir}" >
           <exclude name="hadoop*jar"/>
           <exclude name="hadoop*jar"/>
           <exclude name="junit*jar"/>
+          <exclude name="cobertura*jar"/>
         </fileset>  
     </copy>
 

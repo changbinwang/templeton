@@ -58,8 +58,8 @@ function log() {
 
 # Find the templeton jar
 function find_jar_path() {
-        for dir in "." "lib" "build/templeton" "share/templeton/"; do
-                local jar="$this_bin/../$dir/$TEMPLETON_JAR"
+        for dir in "." "build/templeton" "share/templeton/"; do
+                local jar="$base_dir/$dir/$TEMPLETON_JAR"
                 if [[ -f $jar ]]; then
                         echo $jar
                         break
@@ -70,8 +70,13 @@ function find_jar_path() {
 # Find the templeton classpath
 function find_classpath() {
         local classpath=""
-        for dir in "lib" "build/ivy/lib/templeton" "conf" $TEMPLETON_CONF_DIR; do
-                local path="$this_bin/../$dir"
+        for dir in "share/templeton/lib" "build/ivy/lib/templeton" "conf" $TEMPLETON_CONF_DIR; do
+                local path=""
+                if [[ $dir == /* ]]; then
+                        path=$dir
+                else
+                        path="$base_dir/$dir"
+                fi
                 if [[ -d $path ]]; then
                         for jar_or_conf in $path/*; do
                                 if [[ -z "$classpath" ]]; then
@@ -82,8 +87,11 @@ function find_classpath() {
                         done
                 fi
         done
+
         echo $classpath
 }
+
+
 
 # Check if the pid is running
 function check_pid() {
@@ -112,6 +120,7 @@ function start_templeton() {
         fi
 
         log "starting ..."
+        log "$start_cmd"
         nohup $start_cmd >>$CONSOLE_LOG 2>>$ERROR_LOG &
         local pid=$!
 
@@ -160,9 +169,10 @@ function stop_templeton() {
 
 this=`real_script_name "${BASH_SOURCE-$0}"`
 this_bin=`dirname $this`
+base_dir="$this_bin/.."
 
-if [[ -f "$this_bin/../libexec/templeton_config.sh" ]]; then
-        . "$this_bin/../libexec/templeton_config.sh"
+if [[ -f "$base_dir/libexec/templeton_config.sh" ]]; then
+        . "$base_dir/libexec/templeton_config.sh"
 else
         . "$this_bin/templeton_config.sh"
 fi
@@ -184,10 +194,24 @@ else
         export HADOOP_CLASSPATH="$CLASSPATH:$HADOOP_CLASSPATH"
 fi
 
-export HADOOP_USER_CLASSPATH_FIRST=true
-export HADOOP_OPTS="-Dlog4j.configuration=templeton-log4j.properties"
+if [[ -z "TEMPLETON_LOG4J" ]]; then
+        if [[ -f "$base_dir/conf/templeton-log4j.properties" ]]; then
+                TEMPLETON_LOG4J="$base_dir/conf/templeton-log4j.properties";
+        elif [[ -f "$base_dir/conf/templeton-log4j.properties" ]]; then
+                TEMPLETON_LOG4J="$base_dir/conf/templeton-log4j.properties";
+        else 
+                TEMPLETON_LOG4J="templeton-log4j.properties";
+        fi
+fi
 
-start_cmd="$HADOOP_PREFIX/bin/hadoop jar $JAR org.apache.hcatalog.templeton.Main"
+export HADOOP_USER_CLASSPATH_FIRST=true
+export HADOOP_OPTS="-Dtempleton.log.dir=$TEMPLETON_LOG_DIR -Dlog4j.configuration=templeton-log4j.properties "
+
+start_cmd="$HADOOP_PREFIX/bin/hadoop jar $JAR org.apache.hcatalog.templeton.Main  "
+
+echo "classpath $HADOOP_CLASSPATH"
+echo "cmd $start_cmd"
+
 
 cmd=$1
 case $cmd in

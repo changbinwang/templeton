@@ -22,11 +22,14 @@
 # The file containing the running pid
 PID_FILE=./templeton.pid
 
+#default log directory
+TEMPLETON_LOG_DIR=${TEMPLETON_LOG_DIR:-.}
+
 # The console error log
-ERROR_LOG=./templeton-console-error.log
+ERROR_LOG=${TEMPLETON_LOG_DIR}/templeton-console-error.log
 
 # The console log
-CONSOLE_LOG=./templeton-console.log
+CONSOLE_LOG=${TEMPLETON_LOG_DIR}/templeton-console.log
 
 # The name of the templeton jar file
 TEMPLETON_JAR=templeton-0.1.0-dev.jar
