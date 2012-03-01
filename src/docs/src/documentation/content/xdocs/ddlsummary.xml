@@ -31,8 +31,14 @@
      <tr><td><a href="listdbs.html">ddl/database</a></td>
          <td>List HCatalog databases.</td></tr>
 
-     <tr><td><a href="descdb.html">ddl/database/:db</a></td>
+     <tr><td><a href="descdb.html">ddl/database/:db (GET)</a></td>
          <td>Describe an HCatalog database.</td></tr>
+
+     <tr><td><a href="createdb.html">ddl/database/:db (PUT)</a></td>
+         <td>Create an HCatalog database.</td></tr>
+
+     <tr><td><a href="deletedb.html">ddl/database/:db (DELETE)</a></td>
+         <td>Delete (drop) an HCatalog database.</td></tr>
 
      <tr><td><a href="listtables.html">ddl/database/:db/table</a></td>
          <td>List the tables in an HCatalog database.</td></tr>
