@@ -44,7 +44,7 @@ limitations under the License.
   <property>
     <name>templeton.libjars</name>
     <value>${env.TEMPLETON_HOME}/lib/zookeeper-3.3.4.jar</value>
-    <description>Jars to add the the classpath.</description>
+    <description>Jars to add to the classpath.</description>
   </property>
 
   <property>

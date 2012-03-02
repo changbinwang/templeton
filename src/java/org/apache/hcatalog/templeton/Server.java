@@ -473,8 +473,7 @@ public class Server {
     }
 
     /**
-     * Describe a single column in an hcat table.  Basically the same
-     * as describe table.
+     * Describe a single column in an hcat table.
      */
     @GET
     @Path("ddl/database/{db}/table/{table}/column/{column}")
