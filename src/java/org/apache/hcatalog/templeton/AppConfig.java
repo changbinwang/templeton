@@ -20,13 +20,13 @@ package org.apache.hcatalog.templeton;
 import java.io.File;
 import java.net.URL;
 import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.VersionInfo;
 import org.apache.hcatalog.templeton.tool.JobState;
+import org.apache.hcatalog.templeton.tool.TempletonStorage;
 import org.apache.hcatalog.templeton.tool.ZooKeeperCleanup;
 import org.apache.hcatalog.templeton.tool.ZooKeeperStorage;
 
@@ -154,10 +154,10 @@ public class AppConfig extends Configuration {
     }
 
     private boolean loadOneClasspathConfig(String fname) {
-        URL fUrl = AppConfig.class.getClassLoader().getResource(fname);
-        if (fUrl != null) {
-            addResource(fUrl);
-            LOG.info("loaded config from classpath " + fUrl);
+        URL x = getResource(fname);
+        if (x != null) {
+            addResource(x);
+            LOG.info("loaded config from classpath " + x);
             return true;
         }
 
