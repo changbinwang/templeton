@@ -643,7 +643,7 @@ sub getJobResult{
     $testCmdBasics->{'method'} = 'GET';
     $testCmdBasics->{'num'} = $testCmdBasics->{'num'} . "_jobStatusCheck";
     $testCmdBasics->{'url'} = ':TEMPLETON_URL:/templeton/v1/queue/' 
-	. $jobid . '.json?' . "user.name=:UNAME:" ;
+	. $jobid . '?' . "user.name=:UNAME:" ;
     return $self->execCurlCmd($testCmdBasics, $log);
 }
 ###############################################################################
