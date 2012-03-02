@@ -70,13 +70,9 @@ function find_jar_path() {
 # Find the templeton classpath
 function find_classpath() {
         local classpath=""
-        for dir in "share/templeton/lib" "build/ivy/lib/templeton" "conf" $TEMPLETON_CONF_DIR; do
-                local path=""
-                if [[ $dir == /* ]]; then
-                        path=$dir
-                else
-                        path="$base_dir/$dir"
-                fi
+        for dir in  "share/templeton/lib" "build/ivy/lib/templeton" "conf" ; do
+                local path="$base_dir/$dir"
+
                 if [[ -d $path ]]; then
                         for jar_or_conf in $path/*; do
                                 if [[ -z "$classpath" ]]; then
@@ -87,6 +83,14 @@ function find_classpath() {
                         done
                 fi
         done
+
+        if [[ -n "$TEMPLETON_CONF_DIR" ]]; then
+                if [[ -z "$classpath" ]]; then
+                        classpath="$TEMPLETON_CONF_DIR"
+                else
+                        classpath="$classpath:$TEMPLETON_CONF_DIR"
+                fi
+        fi
 
         echo $classpath
 }
@@ -208,9 +212,6 @@ export HADOOP_USER_CLASSPATH_FIRST=true
 export HADOOP_OPTS="-Dtempleton.log.dir=$TEMPLETON_LOG_DIR -Dlog4j.configuration=templeton-log4j.properties "
 
 start_cmd="$HADOOP_PREFIX/bin/hadoop jar $JAR org.apache.hcatalog.templeton.Main  "
-
-echo "classpath $HADOOP_CLASSPATH"
-echo "cmd $start_cmd"
 
 
 cmd=$1
