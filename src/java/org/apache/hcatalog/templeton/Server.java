@@ -367,6 +367,26 @@ public class Server {
     }
 
     /**
+     * Show all databases, or those that match a pattern.
+     */
+    @GET
+    @Path("ddl/database/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String showDatabases(@QueryParam("like") String dbPattern,
+                             @QueryParam("group") String group,
+                             @QueryParam("permissions") String permissions)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        if (! TempletonUtils.isset(dbPattern))
+            dbPattern = "*";
+        return d.showDatabases(getUser(), dbPattern, group, permissions);
+    }
+
+    /**
      * Describe a database
      */
     @GET
