@@ -46,7 +46,7 @@
 
     <tr><td><strong>location</strong></td>
         <td>The database location</td>
-        <td>Required</td>
+        <td>Optional</td>
         <td>None</td>
     </tr>
 
@@ -58,7 +58,7 @@
 
     <tr><td><strong>properties</strong></td>
         <td>The database properties</td>
-        <td>Required</td>
+        <td>Optional</td>
         <td>None</td>
     </tr>
 
