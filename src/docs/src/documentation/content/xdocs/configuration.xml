@@ -49,7 +49,7 @@
   <p>The configuration files are loaded in this order with later files overriding 
      earlier ones.</p>
 
-  <p>Note: the Tomcat server will require restart after any change to the Templeton 
+  <p>Note: the Templeton server will require restart after any change to the 
      configuration.</p>
 
   <p>To find the configuration files, Templeton first attempts to load a file from the 
@@ -72,6 +72,12 @@ ${env.PIG_HOME}/bin/pig
   <title>Variables</title>
   <table>
   <tr><th>Name</th><th>Default</th><th>Description</th></tr>
+
+  <tr>
+    <td><strong>templeton.port</strong></td>
+    <td><code>8080</code></td>
+    <td>The HTTP port for the main server.</td> 
+  </tr>
 
   <tr>
     <td><strong>templeton.hadoop.config.dir</strong></td>
@@ -203,6 +209,30 @@ hive.metastore.sasl.enabled=false</code></td>
     <td><strong>templeton.callback.retry.attempts</strong></td>
     <td><code>5</code></td>
     <td>How many times to retry the callback</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.storage.class</strong></td>
+    <td><code>org.apache.hcatalog.templeton.tool.ZooKeeperStorage</code></td>
+    <td>The class to use as storage</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.storage.root</strong></td>
+    <td><code>/templeton-hadoop</code></td>
+    <td>The path to the directory to use for storage</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.hdfs.cleanup.interval</strong></td>
+    <td><code>43200000</code></td>
+    <td>The maximum delay between a thread's cleanup checks</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.hdfs.cleanup.maxage</strong></td>
+    <td><code>604800000</code></td>
+    <td>The maximum age of a templeton job</td>
   </tr>
 
   <tr>
