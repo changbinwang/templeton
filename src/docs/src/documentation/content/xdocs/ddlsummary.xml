@@ -19,20 +19,11 @@
 
 <document>
   <header>
-    <title>Templeton Resources </title>
+    <title>Templeton DDL Resources </title>
   </header>
   <body>
      <table>
      <tr><th>Resource</th><th>Description</th></tr>
-
-     <tr><td><a href="responsetypes.html">:version</a></td>
-         <td>Returns a list of supported response types.</td></tr>
- 
-     <tr><td><a href="status.html">status</a></td>
-         <td>Returns the Templeton server status.</td></tr>
-
-    <tr><td><a href="versions.html">version</a></td>
-         <td>Returns the a list of supported versions and the current version.</td></tr>
 
      <tr><td><a href="ddl.html">ddl</a></td>
          <td>Performs an HCatalog DDL command.</td></tr>
@@ -78,27 +69,6 @@
 
      <tr><td><a href="createcolumn.html">ddl/database/:db/table/:table/column/:column (PUT)</a></td>
          <td>Create a column in an HCatalog table.</td></tr>
-
-     <tr><td><a href="mapreducestreaming.html">mapreduce/streaming</a></td>
-         <td>Creates and queues Hadoop streaming MapReduce jobs.</td></tr>
-
-     <tr><td><a href="mapreducejar.html">mapreduce/jar</a></td>
-         <td>Creates and queues standard Hadoop MapReduce jobs.</td></tr>
-
-     <tr><td><a href="pig.html">pig</a></td>
-         <td>Creates and queues Pig jobs.</td></tr>
-
-     <tr><td><a href="hive.html">hive</a></td>
-         <td>Runs Hive queries and commands.</td></tr>
-
-     <tr><td><a href="queuelist.html">queue</a></td>
-         <td>Returns a list of all jobids registered for the user.</td></tr>
-
-     <tr><td><a href="queue.html">queue/:jobid (GET)</a></td>
-         <td>Returns the status of a job given its ID.</td></tr>
-
-     <tr><td><a href="queuedelete.html">queue/:jobid (DELETE)</a></td>
-         <td>Kill a job given its ID.</td></tr>
 
      </table>     
   </body>

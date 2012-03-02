@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+
+<document>
+  <header>
+    <title>GET ddl/database/:db/table</title>
+  </header>
+
+  <body>
+  <section>
+   <title>Description</title>
+    <p>List the tables in an HCatalog database.</p>
+  </section>
+
+  <section>
+   <title>URL</title>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl/database/</code>:db<code>/table</code></p>
+  </section>
+
+  <section>
+   <title>Parameters</title>
+    <table>
+    <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
+    
+    <tr><td><strong>:db</strong></td>
+        <td>The database name</td>
+        <td>Required</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>like</strong></td>
+        <td>List only tables whose names match the specified pattern</td>
+        <td>Optional</td>
+        <td>"*" (List all tables)</td>
+    </tr>
+    </table>
+  </section>
+
+  <section>
+   <title>Results</title>
+    <table>
+    <tr><th>Name</th><th>Description</th></tr>   
+
+    <tr><td><strong>tables</strong></td>
+        <td>A list of table names</td>
+    </tr>
+
+    <tr><td><strong>database</strong></td>
+        <td>The database name</td>
+    </tr>
+
+    </table>
+ </section> 
+
+  <section>
+   <title>Example</title>
+
+   <p><strong>Curl Command</strong></p>
+<source>
+% curl 'http://www.myserver.com/templeton/v1/ddl/database/default/table?user.name=ctdean' 
+</source>
+
+   <p><strong>JSON Output</strong></p>
+<source>
+{
+ "tables": [
+   "my_table",
+   "my_table_2",
+   "my_table_3",
+   "pokes",
+   "test_table"
+ ],
+ "database": "default"
+}
+</source>
+  </section>
+ </body>
+</document>
