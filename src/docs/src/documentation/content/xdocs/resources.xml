@@ -58,6 +58,9 @@
      <tr><td><a href="renametable.html">ddl/database/:db/table/:table (POST)</a></td>
          <td>Rename an HCatalog table.</td></tr>
 
+     <tr><td><a href="deletetable.html">ddl/database/:db/table/:table (DELETE)</a></td>
+         <td>Delete (drop) an HCatalog table.</td></tr>
+
      <tr><td><a href="listpartitions.html">ddl/database/:db/table/:table/partion</a></td>
          <td>List all partitions in an HCatalog table.</td></tr>
 
