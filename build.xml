@@ -437,7 +437,7 @@
   <!-- ================================================================== -->
   <!-- Copy files to a releasable structure                               -->
   <!-- ================================================================== -->
-  <target name="package-rpm" depends="jar">
+  <target name="package-rpm" depends="docs">
     <mkdir dir="${build.docs}" /> 
 
     <copy file="${resources.dir}/templeton-default.xml"
