@@ -19,18 +19,18 @@
 
 <document>
   <header>
-    <title>PUT ddl/database/:db</title>
+    <title>DELETE ddl/database/:db/table/:table</title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Create a database.</p>
+    <p>Delete (drop) an HCatalog table.</p>
   </section>
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl/database/</code>:db</p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl/database/</code>:db<code>/table/</code>:table</p>
   </section>
 
   <section>
@@ -44,21 +44,9 @@
         <td>None</td>
     </tr>
 
-    <tr><td><strong>location</strong></td>
-        <td>The database location</td>
-        <td>Optional</td>
-        <td>None</td>
-    </tr>
-
-    <tr><td><strong>comment</strong></td>
-        <td>A comment for the database, like a description</td>
-        <td>Optional</td>
-        <td>None</td>
-    </tr>
-
-    <tr><td><strong>properties</strong></td>
-        <td>The database properties</td>
-        <td>Optional</td>
+    <tr><td><strong>:table</strong></td>
+        <td>The table name</td>
+        <td>Required</td>
         <td>None</td>
     </tr>
 
@@ -69,6 +57,10 @@
    <title>Results</title>
     <table>
     <tr><th>Name</th><th>Description</th></tr>   
+
+    <tr><td><strong>table</strong></td>
+        <td>The table name</td>
+    </tr>
 
     <tr><td><strong>database</strong></td>
         <td>The database name</td>
@@ -82,15 +74,14 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X PUT -HContent-type:application/json \
-       -d '{"comment":"Hello there", "location":"", "properties":{"a":"b"}}' \
-       'http://www.myserver.com/templeton/v1/ddl/database/newdb?user.name=rachel'
+% curl -X DELETE 'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table'
 </source>
 
    <p><strong>JSON Output</strong></p>
 <source>
 {
- "database":"newdb"
+ "table": "test_table",
+ "database": "default"
 }
 </source>
   </section>
