@@ -46,7 +46,8 @@
   <property name="build.classes" value="${build.dir}/classes" />
   <property name="build.docs" value="${build.dir}/docs" />
   <property name="build.javadoc" value="${build.docs}/api" />
-  <property name="dist.dir" value="${build.dir}/${final.name}" />
+  <property name="tar.dist.dir" value="${build.dir}/tar/${final.name}" />
+  <property name="rpm.dist.dir" value="${build.dir}/rpm/${final.name}" />
   <property name="webapp.dir" value="${basedir}/src/webapp"/>
   <property name="build.webapp" value="${build.dir}/webapp"/>
   <property name="build.instrumented" value="${build.dir}/instrumented" />
@@ -201,7 +202,8 @@
   </target>
 
   <target name="init" depends="ivy-compile, ivy-package" >
-    <mkdir dir="${dist.dir}" />
+<!--    <mkdir dir="${dist.dir}" />
+-->
     <mkdir dir="${build.classes}" />
     <mkdir dir="${test.build.classes}" />
   </target>
@@ -370,21 +372,21 @@
   <target name="package-tar" depends="docs">
 
     <copy file="${resources.dir}/templeton-default.xml"
-          tofile="${dist.dir}/conf/templeton-site.xml" />
+          tofile="${tar.dist.dir}/conf/templeton-site.xml" />
 
     <copy file="${resources.dir}/templeton-log4j.properties"
-          todir="${dist.dir}/conf/" />
+          todir="${tar.dist.dir}/conf/" />
 
 
-    <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${dist.dir}/" />
+    <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${tar.dist.dir}/" />
 
-    <copy todir="${dist.dir}/docs">
+    <copy todir="${tar.dist.dir}/docs">
       <fileset dir="${build.docs}"> 
         <exclude name="webapp/**" />
         <exclude name="tmp/**" />
       </fileset>
     </copy>
-    <copy todir="${dist.dir}/share/templeton/lib">
+    <copy todir="${tar.dist.dir}/share/templeton/lib">
         <fileset dir="${ivy.lib.dir}" >
           <exclude name="hadoop*jar"/>
           <exclude name="hadoop*jar"/>
@@ -393,17 +395,17 @@
         </fileset>  
     </copy>
 
-    <copy todir="${dist.dir}/">
+    <copy todir="${tar.dist.dir}/">
       <fileset dir="${basedir}/src/hadoop_temp_fix" >
         <include name="ugi.jar" />
       </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/src" includeEmptyDirs="true">
+    <copy todir="${tar.dist.dir}/src" includeEmptyDirs="true">
         <fileset dir="${src.dir}" />
     </copy>
 
-    <copy todir="${dist.dir}/sbin" >
+    <copy todir="${tar.dist.dir}/sbin" >
       <fileset dir="${package.dir}">
         <include name="*.sh"/>
       </fileset>
@@ -412,25 +414,25 @@
       </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/libexec" >
+    <copy todir="${tar.dist.dir}/libexec" >
       <fileset dir="${bin.dir}">
         <include name="templeton_config.sh"/>
       </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/test" includeEmptyDirs="true">
+    <copy todir="${tar.dist.dir}/test" includeEmptyDirs="true">
       <fileset dir="${test.src.dir}" />
     </copy>
 
-    <copy todir="${dist.dir}/docs">
+    <copy todir="${tar.dist.dir}/docs">
       <fileset dir=".">
         <include name="*.txt" />
        </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/" file="build.xml" /> 
+    <copy todir="${tar.dist.dir}/" file="build.xml" /> 
 
-    <chmod perm="ugo+x" dir= "${dist.dir}/sbin/" includes="**/*.sh" />
+    <chmod perm="ugo+x" dir= "${tar.dist.dir}/sbin/" includes="**/*.sh" />
 
   </target>
 
@@ -441,21 +443,21 @@
     <mkdir dir="${build.docs}" /> 
 
     <copy file="${resources.dir}/templeton-default.xml"
-          tofile="${dist.dir}/etc/templeton/templeton-site.xml" />
+          tofile="${rpm.dist.dir}/etc/templeton/templeton-site.xml" />
 
     <copy file="${resources.dir}/templeton-log4j.properties"
-          todir="${dist.dir}/etc/templeton/" />
+          todir="${rpm.dist.dir}/etc/templeton/" />
 
-    <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${dist.dir}/share/templeton/" />
+    <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${rpm.dist.dir}/share/templeton/" />
 
-    <copy todir="${dist.dir}/share/doc/templeton">
+    <copy todir="${rpm.dist.dir}/share/doc/templeton">
       <fileset dir="${build.docs}"> 
         <exclude name="webapp/**" />
         <exclude name="tmp/**" />
       </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/share/templeton/lib/">
+    <copy todir="${rpm.dist.dir}/share/templeton/lib/">
         <fileset dir="${ivy.lib.dir}" >
           <exclude name="hadoop*jar"/>
           <exclude name="hadoop*jar"/>
@@ -464,13 +466,13 @@
         </fileset>  
     </copy>
 
-    <copy todir="${dist.dir}/libexec" >
+    <copy todir="${rpm.dist.dir}/libexec" >
       <fileset dir="${bin.dir}">
         <include name="templeton_config.sh"/>
       </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/sbin" >
+    <copy todir="${rpm.dist.dir}/sbin" >
       <fileset dir="${package.dir}">
         <include name="*.sh"/>
       </fileset>
@@ -480,27 +482,27 @@
     </copy>
 
 
-    <copy todir="${dist.dir}/share/templeton/">
+    <copy todir="${rpm.dist.dir}/share/templeton/">
       <fileset dir="${basedir}/src/hadoop_temp_fix" >
         <include name="ugi.jar" />
       </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/share/templeton/test" includeEmptyDirs="true">
+    <copy todir="${rpm.dist.dir}/share/templeton/test" includeEmptyDirs="true">
         <fileset dir="${test.src.dir}" />
     </copy>
 
-    <copy todir="${dist.dir}/share/doc/templeton">
+    <copy todir="${rpm.dist.dir}/share/doc/templeton">
         <fileset dir=".">
           <include name="*.txt" />
         </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/share/templeton/templates/conf">
+    <copy todir="${rpm.dist.dir}/share/templeton/templates/conf">
       <fileset dir="src/packages/templates/conf"/>
     </copy>
 
-    <chmod perm="ugo+x" dir= "${dist.dir}/sbin/" includes="**/*.sh" />
+    <chmod perm="ugo+x" dir= "${rpm.dist.dir}/sbin/" includes="**/*.sh" />
 
   </target>
 
@@ -511,11 +513,11 @@
   <target name="tar" depends="package-tar">
     <tar compression="gzip" longfile="gnu" destfile="${build.dir}/${final.name}.tar.gz">
 
-      <tarfileset dir="${build.dir}" mode="664">
+      <tarfileset dir="${build.dir}/tar" mode="664">
           <exclude name="${final.name}/sbin/*" />
           <include name="${final.name}/**" />
       </tarfileset>
-      <tarfileset dir="${build.dir}" mode="755">
+      <tarfileset dir="${build.dir}/tar" mode="755">
           <include name="${final.name}/sbin/*" />
       </tarfileset>
 
@@ -524,11 +526,11 @@
 
   <target name="tar-rpm" depends="package-rpm" description="Create rpm package tarball">
     <tar compression="gzip" longfile="gnu" destfile="${build.dir}/${final.name}.tar.gz">
-      <tarfileset dir="${build.dir}" mode="664">
+      <tarfileset dir="${build.dir}/rpm" mode="664">
         <exclude name="${final.name}/sbin/*" />
         <include name="${final.name}/**" />
       </tarfileset>
-      <tarfileset dir="${build.dir}" mode="755">
+      <tarfileset dir="${build.dir}/rpm" mode="755">
         <include name="${final.name}/sbin/*" />
       </tarfileset>
     </tar>
