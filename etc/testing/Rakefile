@@ -46,10 +46,10 @@ task :status do
   curl "status"
 end
 
-desc "Run mapreduce/streaming.json"
+desc "Run mapreduce/streaming"
 task :streaming do
   stamp = `date '+%H%M%S'`.chomp
-  curl("mapreduce/streaming.json",
+  curl("mapreduce/streaming",
        *USER,
        "-d", "input=mydata",
        "-d", "output=myoutput-#{stamp}",
@@ -58,10 +58,10 @@ task :streaming do
        "-d", "reducer=/usr/bin/wc -w")
 end
 
-desc "Run mapreduce/jar.json"
+desc "Run mapreduce/jar"
 task :jar do
   stamp = `date '+%H%M%S'`.chomp
-  curl("mapreduce/jar.json",
+  curl("mapreduce/jar",
        *USER,
        "-d", "jar=wordcount.jar",
        "-d", "class=org.myorg.WordCount",
@@ -71,7 +71,7 @@ task :jar do
        "-d", "arg=wordcount/output-#{stamp}")
 end
 
-desc "Run pig.json"
+desc "Run pig"
 task :pig do
   script = <<EOS
 A = load 'passwd' using PigStorage(':');
@@ -79,17 +79,17 @@ B = foreach A generate $0 as id;
 dump B;
 EOS
 
-  curl("pig.json",
+  curl("pig",
        *USER,
        #"-d", "arg=-secretDebugCmd",
        "-d", "execute=#{CGI.escape script}")
 end
 
-desc "Run hive.json"
+desc "Run hive"
 task :hive do
   script = "select * from pokes;"
 
-  curl("hive.json",
+  curl("hive",
        *USER,
        "-d", "execute=#{CGI.escape script}")
 end
@@ -97,13 +97,13 @@ end
 desc "Prepare the hive table"
 task :hive_prepare do
   script = "create table pokes(id INT, bar STRING);"
-  curl("hive.json",
+  curl("hive",
        *USER,
        "-d", "execute=#{CGI.escape script}")
 
   script = "LOAD DATA LOCAL INPATH '#{Dir.pwd}/etc/testing/pokes.data' " +
     "OVERWRITE INTO TABLE pokes;"
-  curl("hive.json",
+  curl("hive",
        *USER,
        "-d", "execute=#{CGI.escape script}")
 end
@@ -112,19 +112,19 @@ end
 desc "Run queue status"
 task :queue, :job_id do |t, args|
   job_id = args[:job_id] || "job_201112140012_0069"
-  curl("queue/#{job_id}.json?user.name=#{USERNAME}")
+  curl("queue/#{job_id}?user.name=#{USERNAME}")
 end
 
 # Run like rake 'queue[job_201111061521_0019]'
 desc "Run queue delete"
 task :queue_delete, :job_id do |t, args|
   job_id = args[:job_id] || "job_201111061521_0019"
-  curl("queue/#{job_id}.json?user.name=#{USERNAME}", "-X", "DELETE")
+  curl("queue/#{job_id}?user.name=#{USERNAME}", "-X", "DELETE")
 end
 
 desc "Run queue list"
 task :queue_list do
-  curl("queue.json?user.name=#{USERNAME}")
+  curl("queue?user.name=#{USERNAME}")
 end
 
 namespace :ddl do
