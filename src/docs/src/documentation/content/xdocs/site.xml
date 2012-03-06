@@ -49,14 +49,32 @@ See http://forrest.apache.org/docs/linking.html for more info
      <index label=":version" href="responsetypes.html" />
      <index label="status" href="status.html" />
      <index label="version" href="versions.html" />
-     <index label="ddl (summary)" href="ddlsummary.html" />
+     <index label="ddl">
+      <index label="ddl (summary)" href="ddlsummary.html" />
+      <index label="ddl" href="ddl.html" />
+      <index label="database" href="listdbs.html" />
+      <index label=":db (GET)" href="descdb.html" />
+      <index label=":db (PUT)" href="createdb.html" />
+      <index label=":db (DELETE)" href="deletedb.html" />
+      <index label="table" href="listtables.html" />
+      <index label=":table (GET)" href="desctable.html" />
+      <index label=":table (POST)" href="renametable.html" />
+      <index label=":table (DELETE)" href="deletetable.html" />
+      <index label="partition" href="listpartitions.html" />
+      <index label=":partition (GET)" href="descpartition.html" />
+      <index label=":partition (PUT)" href="createpartition.html" />
+      <index label=":partition (DELETE)" href="deletepartition.html" />
+      <index label="column" href="listcolumns.html" />
+      <index label=":column (GET)" href="desccolumn.html" />
+      <index label=":column (PUT)" href="createcolumn.html" />
+     </index>
      <index label="mapreduce/streaming" href="mapreducestreaming.html" />
      <index label="mapreduce/jar" href="mapreducejar.html" />
      <index label="pig" href="pig.html" />
      <index label="hive" href="hive.html" />
      <index label="queue" href="queuelist.html" />
-     <index label="GET queue/:jobid" href="queue.html" />
-     <index label="DELETE queue/:jobid" href="queuedelete.html" />
+     <index label=":jobid (GET)" href="queue.html" />
+     <index label=":jobid (DELETE)" href="queuedelete.html" />
     </index>
     <about tab="home" label="PDF" href="">
      <all_sitePDF label="Full PDF" href="wholesite.pdf" />
