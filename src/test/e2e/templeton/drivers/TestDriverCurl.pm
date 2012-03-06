@@ -365,6 +365,10 @@ sub execCurlCmd(){
   $self->replaceParameters($testCmd, $log );
   my $url = $testCmd->{'url'};
 
+  if (defined $testCmd->{'format_header'}) {
+    push @curl_cmd, ('-H', $testCmd->{'format_header'});
+  }
+
   if (defined $testCmd->{'upload_file'}) {
     push @curl_cmd, ('-T', $testCmd->{'upload_file'});
   }
@@ -504,6 +508,11 @@ sub compare
 
       foreach my $key (keys %$json_matches) {
         my $json_field_val = $json_info{$key};
+        if( (ref($json_field_val) && ! UNIVERSAL::isa($json_field_val,'SCALAR')) ||
+            (!ref($json_field_val) && ! UNIVERSAL::isa(\$json_field_val,'SCALAR')) ){
+          #flatten the object into a string
+          $json_field_val = dump($json_field_val);
+        }
         my $regex_expected_value = $json_matches->{$key};
         print $log "Comparing $key: $json_field_val with regex /$regex_expected_value/\n";
 
