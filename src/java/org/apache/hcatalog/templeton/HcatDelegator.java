@@ -139,22 +139,15 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Drop the listed database
      */
-    public String dropDatabase(String user, String db, String param,
+    public String dropDatabase(String user, String db, String option,
                                String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
         String exec = "drop database if exists " + db;
-        if (param == null) {
-            param = "";
-        }
-        if (param.toLowerCase().trim().equals("restrict")) {
-            exec += " restrict;";
-        } else if (param.toLowerCase().trim().equals("cascade")) {
-            exec += " cascade;";
-        } else {
-            exec += ";";
-        }
+        if (TempletonUtils.isset(option))
+            exec += " " + option;
+        exec += ";";
         String res = jsonRun(user, exec, group, permissions);
         return JsonBuilder.create()
             .put("database", db)

@@ -415,7 +415,7 @@ public class Server {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String dropDatabase(@PathParam("db") String db,
-                               @QueryParam("param") String param,
+                               @QueryParam("param") String option,
                                @QueryParam("group") String group,
                                @QueryParam("permissions") String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
@@ -423,8 +423,10 @@ public class Server {
     {
         verifyUser();
         verifyDdlParam(db, ":db");
+        if (TempletonUtils.isset(option))
+            verifyDdlParam(option, "option");
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.dropDatabase(getUser(), db, param,
+        return d.dropDatabase(getUser(), db, option,
                               group, permissions);
     }
 
