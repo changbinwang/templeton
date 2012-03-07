@@ -111,7 +111,7 @@ public class HcatDelegator extends LauncherDelegator {
     public String createDatabase(String user, String db,
                                  DatabaseDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
-            ExecuteException, IOException
+        ExecuteException, IOException
     {
         String exec = "create database if not exists " + db;
         if (desc != null) {
@@ -140,9 +140,9 @@ public class HcatDelegator extends LauncherDelegator {
      * Drop the listed database
      */
     public String dropDatabase(String user, String db, String param,
-                                String group, String permissions)
+                               String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
-            ExecuteException, IOException
+        ExecuteException, IOException
     {
         String exec = "drop database if exists " + db;
         if (param == null) {
@@ -157,8 +157,8 @@ public class HcatDelegator extends LauncherDelegator {
         }
         String res = jsonRun(user, exec, group, permissions);
         return JsonBuilder.create()
-                .put("database", db)
-                .build();
+            .put("database", db)
+            .build();
     }
 
     /**
