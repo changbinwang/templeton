@@ -20,27 +20,11 @@ package org.apache.hcatalog.templeton;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * A description of the column to create.
+ * The base create permissions for ddl objects.
  */
-@XmlRootElement
-public class ColumnDesc extends GroupPermissionsDesc {
-    public String name;
-    public String type;
-    public String comment;
+public abstract class GroupPermissionsDesc {
+    public String group;
+    public String permissions;
 
-    public ColumnDesc() {}
-
-    /**
-     * Create a new ColumnDesc
-     */
-    public ColumnDesc(String name, String type, String comment) {
-        this.name = name;
-        this.type = type;
-        this.comment = comment;
-    }
-
-    public String toString() {
-        return String.format("ColumnDesc(name=%s, type=%s, comment=%s)",
-                             name, type, comment);
-    }
+    public GroupPermissionsDesc() {}
 }

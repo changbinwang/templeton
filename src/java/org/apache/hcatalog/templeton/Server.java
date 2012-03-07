@@ -163,9 +163,7 @@ public class Server {
     @Path("ddl/database/{db}/table")
     @Produces(MediaType.APPLICATION_JSON)
     public String showTables(@PathParam("db") String db,
-                             @QueryParam("like") String tablePattern,
-                             @QueryParam("group") String group,
-                             @QueryParam("permissions") String permissions)
+                             @QueryParam("like") String tablePattern)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -175,7 +173,7 @@ public class Server {
         HcatDelegator d = new HcatDelegator(appConf, execService);
         if (! TempletonUtils.isset(tablePattern))
             tablePattern = "*";
-        return d.showTables(getUser(), db, tablePattern, group, permissions);
+        return d.showTables(getUser(), db, tablePattern);
     }
 
     /**
@@ -186,9 +184,7 @@ public class Server {
     @Produces(MediaType.APPLICATION_JSON)
     public String createTable(@PathParam("db") String db,
                               @PathParam("table") String table,
-                              TableDesc desc,
-                              @QueryParam("group") String group,
-                              @QueryParam("permissions") String permissions)
+                              TableDesc desc)
         throws SimpleWebException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -198,7 +194,7 @@ public class Server {
         desc.table = table;
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.createTable(getUser(), db, desc, group, permissions);
+        return d.createTable(getUser(), db, desc);
     }
 
     /**
@@ -211,9 +207,7 @@ public class Server {
     @Produces(MediaType.APPLICATION_JSON)
     public String describeTable(@PathParam("db") String db,
                                 @PathParam("table") String table,
-                                @QueryParam("format") String format,
-                                @QueryParam("group") String group,
-                                @QueryParam("permissions") String permissions)
+                                @QueryParam("format") String format)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -223,9 +217,9 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         if ("extended".equals(format))
-            return d.showExtendedTable(getUser(), db, table, group, permissions);
+            return d.showExtendedTable(getUser(), db, table);
         else
-            return d.describeTable(getUser(), db, table, false, group, permissions);
+            return d.describeTable(getUser(), db, table, false);
     }
 
     /**
@@ -279,9 +273,7 @@ public class Server {
     @Path("ddl/database/{db}/table/{table}/partition")
     @Produces(MediaType.APPLICATION_JSON)
     public String showPartitions(@PathParam("db") String db,
-                                 @PathParam("table") String table,
-                                 @QueryParam("group") String group,
-                                 @QueryParam("permissions") String permissions)
+                                 @PathParam("table") String table)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -290,7 +282,7 @@ public class Server {
         verifyDdlParam(table, ":table");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.showPartitions(getUser(), db, table, group, permissions);
+        return d.showPartitions(getUser(), db, table);
     }
 
     /**
@@ -301,9 +293,7 @@ public class Server {
     @Produces(MediaType.APPLICATION_JSON)
     public String descPartition(@PathParam("db") String db,
                                 @PathParam("table") String table,
-                                @PathParam("partition") String partition,
-                                @QueryParam("group") String group,
-                                @QueryParam("permissions") String permissions)
+                                @PathParam("partition") String partition)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -313,7 +303,7 @@ public class Server {
         verifyParam(partition, ":partition");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.showOnePartition(getUser(), db, table, partition, group, permissions);
+        return d.showOnePartition(getUser(), db, table, partition);
     }
 
     /**
@@ -326,9 +316,7 @@ public class Server {
     public String addOnePartition(@PathParam("db") String db,
                                   @PathParam("table") String table,
                                   @PathParam("partition") String partition,
-                                  PartitionDesc desc,
-                                  String group,
-                                  String permissions)
+                                  PartitionDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -338,8 +326,7 @@ public class Server {
         verifyParam(partition, ":partition");
         desc.partition = partition;
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.addOnePartition(getUser(), db, table, desc,
-                                 group, permissions);
+        return d.addOnePartition(getUser(), db, table, desc);
     }
 
     /**
@@ -372,9 +359,7 @@ public class Server {
     @GET
     @Path("ddl/database/")
     @Produces(MediaType.APPLICATION_JSON)
-    public String showDatabases(@QueryParam("like") String dbPattern,
-                             @QueryParam("group") String group,
-                             @QueryParam("permissions") String permissions)
+    public String showDatabases(@QueryParam("like") String dbPattern)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -383,7 +368,7 @@ public class Server {
         HcatDelegator d = new HcatDelegator(appConf, execService);
         if (! TempletonUtils.isset(dbPattern))
             dbPattern = "*";
-        return d.showDatabases(getUser(), dbPattern, group, permissions);
+        return d.showDatabases(getUser(), dbPattern);
     }
 
     /**
@@ -394,18 +379,14 @@ public class Server {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String describeDatabase(@PathParam("db") String db,
-                                   @QueryParam("format") String format,
-                                   @QueryParam("group") String group,
-                                   @QueryParam("permissions") String permissions)
+                                   @QueryParam("format") String format)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
         verifyUser();
         verifyDdlParam(db, ":db");
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.describeDatabase(getUser(), db,
-                                  "extended".equals(format),
-                                  group, permissions);
+        return d.describeDatabase(getUser(), db, "extended".equals(format));
     }
 
     /**
@@ -416,17 +397,14 @@ public class Server {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String createDatabase(@PathParam("db") String db,
-                                  DatabaseDesc desc,
-                                  @QueryParam("group") String group,
-                                  @QueryParam("permissions") String permissions)
+                                 DatabaseDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
         verifyUser();
         verifyDdlParam(db, ":db");
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.createDatabase(getUser(), db, desc,
-                group, permissions);
+        return d.createDatabase(getUser(), db, desc);
     }
 
     /**
@@ -458,9 +436,7 @@ public class Server {
     @Path("ddl/database/{db}/table/{table}/column")
     @Produces(MediaType.APPLICATION_JSON)
     public String showColumns(@PathParam("db") String db,
-                              @PathParam("table") String table,
-                              @QueryParam("group") String group,
-                              @QueryParam("permissions") String permissions)
+                              @PathParam("table") String table)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -469,7 +445,7 @@ public class Server {
         verifyDdlParam(table, ":table");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.showColumns(getUser(), db, table, group, permissions);
+        return d.showColumns(getUser(), db, table);
     }
 
     /**
@@ -480,9 +456,7 @@ public class Server {
     @Produces(MediaType.APPLICATION_JSON)
     public String descColumn(@PathParam("db") String db,
                              @PathParam("table") String table,
-                             @PathParam("column") String column,
-                             @QueryParam("group") String group,
-                             @QueryParam("permissions") String permissions)
+                             @PathParam("column") String column)
         throws SimpleWebException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -492,7 +466,7 @@ public class Server {
         verifyParam(column, ":column");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.showOneColumn(getUser(), db, table, column, group, permissions);
+        return d.showOneColumn(getUser(), db, table, column);
     }
 
     /**
@@ -505,9 +479,7 @@ public class Server {
     public String addOneColumn(@PathParam("db") String db,
                                @PathParam("table") String table,
                                @PathParam("column") String column,
-                               ColumnDesc desc,
-                               String group,
-                               String permissions)
+                               ColumnDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -519,7 +491,7 @@ public class Server {
         desc.name = column;
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.addOneColumn(getUser(), db, table, desc, group, permissions);
+        return d.addOneColumn(getUser(), db, table, desc);
     }
 
     /**

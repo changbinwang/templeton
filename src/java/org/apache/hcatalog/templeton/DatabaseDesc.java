@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * A description of the database to create.
  */
 @XmlRootElement
-public class DatabaseDesc {
+public class DatabaseDesc extends GroupPermissionsDesc {
     public String comment;
     public String location;
     public Map<String, String> properties;
@@ -35,7 +35,7 @@ public class DatabaseDesc {
     /**
      * Create a new DatabaseDesc
      */
-    public DatabaseDesc(String comment, String location, 
+    public DatabaseDesc(String comment, String location,
             Map<String, String> properties) {
         this.comment = comment;
         this.location = location;

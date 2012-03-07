@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * A description of the table to create.
  */
 @XmlRootElement
-public class TableDesc {
+public class TableDesc extends GroupPermissionsDesc {
     public boolean ifNotExists = false;
     public boolean external = false;
     public String table;

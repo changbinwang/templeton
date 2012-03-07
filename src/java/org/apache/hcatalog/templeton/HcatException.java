@@ -24,9 +24,14 @@ import java.util.HashMap;
  */
 public class HcatException extends SimpleWebException {
     public ExecBean execBean;
+    public String statement;
 
-    public HcatException(String msg, final ExecBean bean) {
-        super(500, msg, new HashMap<String, Object>() {{ put("exec", bean); }});
+    public HcatException(String msg, final ExecBean bean, final String statement) {
+        super(500, msg, new HashMap<String, Object>() {{
+                    put("exec", bean);
+                    put("statement", statement);
+                }});
         execBean = bean;
+        this.statement = statement;
     }
 }

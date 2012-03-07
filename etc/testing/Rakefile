@@ -22,7 +22,7 @@ require 'cgi'
 
 RakeFileUtils.verbose(true)
 
-SERVER = "http://localhost:8080/templeton/v1"
+SERVER = "http://localhost:50111/templeton/v1"
 USERNAME = `whoami`.chomp
 USER = ["-d", "user.name=#{USERNAME}"]
 
@@ -169,7 +169,7 @@ namespace :ddl do
   ],
   "format": {
     "storedAs": "rcfile"
-  }
+  },
 }
 EOM
     curl("ddl/database/default/table/test_table?user.name=#{USERNAME}",

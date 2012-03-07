@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * A description of the partition to create.
  */
 @XmlRootElement
-public class PartitionDesc {
+public class PartitionDesc extends GroupPermissionsDesc {
     public String partition;
     public String location;
     public boolean ifNotExists = false;
