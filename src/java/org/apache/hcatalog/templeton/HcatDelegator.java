@@ -71,7 +71,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Return a json description of the database.
      */
-    public String describeDatabase(String user, String db, boolean extended)
+    public String descDatabase(String user, String db, boolean extended)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -89,7 +89,7 @@ public class HcatDelegator extends LauncherDelegator {
      * Return a json "show databases like".  This will return a list of
      * databases.
      */
-    public String showDatabases(String user, String dbPattern)
+    public String listDatabases(String user, String dbPattern)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -205,7 +205,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Return a json description of the table.
      */
-    public String describeTable(String user, String db, String table, boolean extended)
+    public String descTable(String user, String db, String table, boolean extended)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -230,7 +230,7 @@ public class HcatDelegator extends LauncherDelegator {
      * Return a json "show table like".  This will return a list of
      * tables.
      */
-    public String showTables(String user, String db, String tablePattern)
+    public String listTables(String user, String db, String tablePattern)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -251,7 +251,7 @@ public class HcatDelegator extends LauncherDelegator {
      * Return a json "show table extended like".  This will return
      * only the first single table.
      */
-    public String showExtendedTable(String user, String db, String table)
+    public String descExtendedTable(String user, String db, String table)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -406,7 +406,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Return a json description of the partitions.
      */
-    public String showPartitions(String user, String db, String table)
+    public String listPartitions(String user, String db, String table)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -427,7 +427,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Return a json description of one partition.
      */
-    public String showOnePartition(String user, String db, String table,
+    public String descOnePartition(String user, String db, String table,
                                    String partition)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
@@ -508,12 +508,12 @@ public class HcatDelegator extends LauncherDelegator {
      * Return a json description of the columns.  Same as
      * describeTable.
      */
-    public String showColumns(String user, String db, String table)
+    public String listColumns(String user, String db, String table)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
         try {
-            return describeTable(user, db, table, false);
+            return descTable(user, db, table, false);
         } catch (HcatException e) {
             throw new HcatException("unable to show columns for table: " + table,
                                     e.execBean, e.statement);
@@ -523,11 +523,11 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Return a json description of one column.
      */
-    public String showOneColumn(String user, String db, String table, String column)
+    public String descOneColumn(String user, String db, String table, String column)
         throws SimpleWebException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
-        String res = showColumns(user, db, table);
+        String res = listColumns(user, db, table);
         final JsonBuilder builder = JsonBuilder.create(res);
         List<Map> cols = (List) (builder.getMap().get("columns"));
 
