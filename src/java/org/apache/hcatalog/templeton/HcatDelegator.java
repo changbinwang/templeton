@@ -161,28 +161,7 @@ public class HcatDelegator extends LauncherDelegator {
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
-        String exec = String.format("use %s; create", db);
-
-        if (desc.external)
-            exec += " external";
-        exec += " table";
-        if (desc.ifNotExists)
-            exec += " if not exists";
-        exec += " " + desc.table;
-
-        if (TempletonUtils.isset(desc.columns))
-            exec += String.format("(%s)", makeCols(desc.columns));
-        if (TempletonUtils.isset(desc.comment))
-            exec += String.format(" comment '%s'", desc.comment);
-        if (TempletonUtils.isset(desc.partitionedBy))
-            exec += String.format(" partitioned by (%s)", makeCols(desc.partitionedBy));
-        if (desc.clusteredBy != null)
-            exec += String.format(" clustered by %s", makeClusteredBy(desc.clusteredBy));
-        if (desc.format != null)
-            exec += " " + makeStorageFormat(desc.format);
-        if (TempletonUtils.isset(desc.location))
-            exec += String.format(" location '%s'", desc.location);
-        exec += ";";
+        String exec = makeCreateTable(db, desc);
 
         try {
             jsonRun(user, exec, desc.group, desc.permissions, true);
@@ -278,6 +257,34 @@ public class HcatDelegator extends LauncherDelegator {
         if (TempletonUtils.isset(col.comment))
             res += String.format(" comment '%s'", col.comment);
         return res;
+    }
+
+    // Make a create table statement
+    private String makeCreateTable(String db, TableDesc desc) {
+        String exec = String.format("use %s; create", db);
+
+        if (desc.external)
+            exec += " external";
+        exec += " table";
+        if (desc.ifNotExists)
+            exec += " if not exists";
+        exec += " " + desc.table;
+
+        if (TempletonUtils.isset(desc.columns))
+            exec += String.format("(%s)", makeCols(desc.columns));
+        if (TempletonUtils.isset(desc.comment))
+            exec += String.format(" comment '%s'", desc.comment);
+        if (TempletonUtils.isset(desc.partitionedBy))
+            exec += String.format(" partitioned by (%s)", makeCols(desc.partitionedBy));
+        if (desc.clusteredBy != null)
+            exec += String.format(" clustered by %s", makeClusteredBy(desc.clusteredBy));
+        if (desc.format != null)
+            exec += " " + makeStorageFormat(desc.format);
+        if (TempletonUtils.isset(desc.location))
+            exec += String.format(" location '%s'", desc.location);
+        exec += ";";
+
+        return exec;
     }
 
     // Format a clustered by statement
