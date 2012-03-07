@@ -176,6 +176,8 @@ public class HcatDelegator extends LauncherDelegator {
             exec += String.format(" comment '%s'", desc.comment);
         if (TempletonUtils.isset(desc.partitionedBy))
             exec += String.format(" partitioned by (%s)", makeCols(desc.partitionedBy));
+        if (desc.clusteredBy != null)
+            exec += String.format(" clustered by %s", makeClusteredBy(desc.clusteredBy));
         if (desc.format != null)
             exec += " " + makeStorageFormat(desc.format);
         if (TempletonUtils.isset(desc.location))
@@ -276,6 +278,29 @@ public class HcatDelegator extends LauncherDelegator {
         if (TempletonUtils.isset(col.comment))
             res += String.format(" comment '%s'", col.comment);
         return res;
+    }
+
+    // Format a clustered by statement
+    private String makeClusteredBy(TableDesc.ClusteredByDesc desc) {
+        String res = String.format("(%s)", StringUtils.join(desc.columnNames, ", "));
+        if (TempletonUtils.isset(desc.sortedBy))
+            res += String.format(" sorted by %s", makeClusterSortList(desc.sortedBy));
+        res += String.format(" into %s buckets", desc.numberOfBuckets);
+
+        return res;
+    }
+
+    // Format a sorted by statement
+    private String makeClusterSortList(List<TableDesc.ClusterSortOrderDesc> descs) {
+        ArrayList<String> res = new ArrayList<String>();
+        for (TableDesc.ClusterSortOrderDesc desc : descs)
+            res.add(makeOneClusterSort(desc));
+        return StringUtils.join(res, ", ");
+    }
+
+    // Format a single cluster sort statement
+    private String makeOneClusterSort(TableDesc.ClusterSortOrderDesc desc) {
+        return String.format("%s %s", desc.columnName, desc.order.toString());
     }
 
     // Format the storage format statements

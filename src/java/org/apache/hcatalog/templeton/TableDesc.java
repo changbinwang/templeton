@@ -32,6 +32,7 @@ public class TableDesc extends GroupPermissionsDesc {
     public String comment;
     public List<ColumnDesc> columns;
     public List<ColumnDesc> partitionedBy;
+    public ClusteredByDesc clusteredBy;
     public StorageFormatDesc format;
     public String location;
     public Map<String, String> tableProperties;
@@ -43,6 +44,49 @@ public class TableDesc extends GroupPermissionsDesc {
 
     public String toString() {
         return String.format("TableDesc(table=%s, columns=%s)", table, columns);
+    }
+
+    /**
+     * How to cluster the table.
+     */
+    @XmlRootElement
+    public static class ClusteredByDesc {
+        public List<String> columnNames;
+        public List<ClusterSortOrderDesc> sortedBy;
+        public int numberOfBuckets;
+
+        public ClusteredByDesc() {}
+
+        public String toString() {
+            String fmt
+                = "ClusteredByDesc(columnNames=%s, sortedBy=%s, numberOfBuckets=%s)";
+            return String.format(fmt, columnNames, sortedBy, numberOfBuckets);
+        }
+    }
+
+    /**
+     * The clustered sort order.
+     */
+    @XmlRootElement
+    public static class ClusterSortOrderDesc {
+        public String columnName;
+        public SortDirectionDesc order;
+
+        public ClusterSortOrderDesc() {}
+
+        public String toString() {
+            return String
+                .format("ClusterSortOrderDesc(columnName=%s, order=%s)",
+                        columnName, order);
+        }
+    }
+
+    /**
+     * Ther ASC or DESC sort order.
+     */
+    @XmlRootElement
+    public static enum SortDirectionDesc {
+        ASC, DESC
     }
 
     /**
