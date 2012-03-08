@@ -62,7 +62,7 @@ public class HDFSStorage implements TempletonStorage {
 
     @Override
     public void saveField(Type type, String id, String key, String val)
-            throws NotFoundException {
+        throws NotFoundException {
         if (val == null) {
             return;
         }
@@ -75,7 +75,7 @@ public class HDFSStorage implements TempletonStorage {
             out.write(val);
         } catch (IOException e) {
             LOG.info("Couldn't write to " + getPath(type) + "/" + id + ": "
-                    + e.getMessage());
+                     + e.getMessage());
         } finally {
             try {
                 out.flush();
@@ -91,19 +91,20 @@ public class HDFSStorage implements TempletonStorage {
         BufferedReader in = null;
         try {
             in = new BufferedReader(new InputStreamReader
-                    (fs.open(new Path(getPath(type) + "/" + id + "/" + key))));
+                                    (fs.open(new Path(getPath(type) + "/" +
+                                                      id + "/" + key))));
             String line = null;
             String val = "";
             while ((line = in.readLine()) != null) {
-                if (!val.equals("")) {
+                if (! val.equals("")) {
                     val += "\n";
                 }
                 val += line;
             }
             return val;
         } catch (IOException e) {
-            LOG.info("Couldn't find " + getPath(type) + "/" + id + "/" + key
-                    + ": " + e.getMessage());
+            LOG.trace("Couldn't find " + getPath(type) + "/" + id + "/" + key
+                      + ": " + e.getMessage());
         } finally {
             try {
                 in.close();
@@ -120,9 +121,9 @@ public class HDFSStorage implements TempletonStorage {
         BufferedReader in = null;
         try {
             for (FileStatus status : fs.listStatus
-                    (new Path(getPath(type) + "/" + id))) {
+                     (new Path(getPath(type) + "/" + id))) {
                 in = new BufferedReader(new InputStreamReader
-                    (fs.open(status.getPath())));
+                                        (fs.open(status.getPath())));
                 String line = null;
                 String val = "";
                 while ((line = in.readLine()) != null) {
@@ -134,7 +135,7 @@ public class HDFSStorage implements TempletonStorage {
                 map.put(status.getPath().getName(), val);
             }
         } catch (IOException e) {
-            LOG.info("Couldn't find " + getPath(type) + "/" + id);
+            LOG.trace("Couldn't find " + getPath(type) + "/" + id);
         } finally {
             try {
                 in.close();
@@ -151,7 +152,7 @@ public class HDFSStorage implements TempletonStorage {
             fs.delete(new Path(getPath(type) + "/" + id), true);
         } catch (IOException e) {
             throw new NotFoundException("Node " + id + " was not found: " +
-                    e.getMessage());
+                                        e.getMessage());
         }
         return false;
     }
@@ -174,7 +175,7 @@ public class HDFSStorage implements TempletonStorage {
             }
             return null;
         } catch (Exception e) {
-            LOG.info("Couldn't find children for type " + type.toString());
+            LOG.trace("Couldn't find children for type " + type.toString());
         }
         return allNodes;
     }
@@ -187,8 +188,8 @@ public class HDFSStorage implements TempletonStorage {
                 allNodes.addAll(getAllForTypeAndKey(type, key, value));
             }
         } catch (Exception e) {
-            LOG.info("Couldn't find children for key " + key + ": " +
-                    e.getMessage());
+            LOG.trace("Couldn't find children for key " + key + ": " +
+                      e.getMessage());
         }
         return allNodes;
     }
@@ -199,16 +200,16 @@ public class HDFSStorage implements TempletonStorage {
         HashMap<String, String> map = new HashMap<String, String>();
         try {
             for (FileStatus status :
-                fs.listStatus(new Path(getPath(type)))) {
-                    map = (HashMap<String, String>)
-                            getFields(type, status.getPath().getName());
-                    if (map.get(key).equals(value)) {
-                        allNodes.add(status.getPath().getName());
-                    }
+                     fs.listStatus(new Path(getPath(type)))) {
+                map = (HashMap<String, String>)
+                    getFields(type, status.getPath().getName());
+                if (map.get(key).equals(value)) {
+                    allNodes.add(status.getPath().getName());
+                }
             }
         } catch (Exception e) {
-            LOG.info("Couldn't find children for key " + key + ": " +
-                    e.getMessage());
+            LOG.trace("Couldn't find children for key " + key + ": " +
+                      e.getMessage());
         }
         return allNodes;
     }
