@@ -559,6 +559,7 @@ public class HcatDelegator extends LauncherDelegator {
             return JsonBuilder.create()
                 .put("database", db)
                 .put("table", table)
+                .put("partition", partition)
                 .build();
         } catch (HcatException e) {
             throw new HcatException("unable to drop partition: " + partition,
