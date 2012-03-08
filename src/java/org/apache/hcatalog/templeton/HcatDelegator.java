@@ -108,46 +108,46 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Create a database with the given name
      */
-    public String createDatabase(String user, String db,
-                                 DatabaseDesc desc)
+    public String createDatabase(String user, DatabaseDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
-        String exec = "create database if not exists " + db;
-        if (desc != null) {
-            if (TempletonUtils.isset(desc.comment))
-                exec += " comment '" + desc.comment + "'";
-            if (TempletonUtils.isset(desc.location))
-                exec += " location '" + desc.location + "'";
-            if (TempletonUtils.isset(desc.properties)) {
-                exec += " with dbproperties (";
-                for (String key : desc.properties.keySet()) {
-                    exec += "'" + key + "'='" + desc.properties.get(key) + "', ";
-                }
-                exec = exec.substring(0, exec.length() - 2);
-                exec += ");";
-            } else {
-                exec += ";";
-            }
-        }
+        String exec = "create database";
+        if (desc.ifNotExists)
+            exec += " if not exists";
+        exec += " " + desc.database;
+        if (TempletonUtils.isset(desc.comment))
+            exec += String.format(" comment '%s'", desc.comment);
+        if (TempletonUtils.isset(desc.location))
+            exec += String.format(" location '%s'", desc.location);
+        if (TempletonUtils.isset(desc.properties))
+            exec += String.format(" with dbproperties (%s)",
+                                  makePropertiesStatement(desc.properties));
+        exec += ";";
+
         String res = jsonRun(user, exec, desc.group, desc.permissions);
         return JsonBuilder.create()
-            .put("database", db)
+            .put("database", desc.database)
             .build();
     }
 
     /**
      * Drop the listed database
      */
-    public String dropDatabase(String user, String db, String option,
+    public String dropDatabase(String user, String db,
+                               boolean ifExists, String option,
                                String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
-        String exec = "drop database if exists " + db;
+        String exec = "drop database";
+        if (ifExists)
+            exec += " if exists";
+        exec += " " + db;
         if (TempletonUtils.isset(option))
             exec += " " + option;
         exec += ";";
+
         String res = jsonRun(user, exec, group, permissions);
         return JsonBuilder.create()
             .put("database", db)
@@ -388,12 +388,17 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Drop a table.
      */
-    public String dropTable(String user, String db, String table,
+    public String dropTable(String user, String db,
+                            String table, boolean ifExists,
                             String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
-        String exec = String.format("use %s; drop table %s;", db, table);
+        String exec = String.format("use %s; drop table", db);
+        if (ifExists)
+            exec += " if exists";
+        exec += String.format(" %s;", table);
+
         try {
             jsonRun(user, exec, group, permissions, true);
             return JsonBuilder.create()
@@ -508,14 +513,17 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Drop a partition.
      */
-    public String dropPartition(String user, String db, String table, String partition,
+    public String dropPartition(String user, String db,
+                                String table, String partition, boolean ifExists,
                                 String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
-        String exec
-            = String.format("use %s; alter table %s drop if exists partition (%s)",
-                            db, table, partition);
+        String exec = String.format("use %s; alter table %s drop", db, table);
+        if (ifExists)
+            exec += " if exists";
+        exec += String.format(" partition (%s);", partition);
+
         try {
             jsonRun(user, exec, group, permissions, true);
 

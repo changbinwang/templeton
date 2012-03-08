@@ -230,6 +230,7 @@ public class Server {
     @Produces(MediaType.APPLICATION_JSON)
     public String dropTable(@PathParam("db") String db,
                             @PathParam("table") String table,
+                            @QueryParam("ifExists") boolean ifExists,
                             @QueryParam("group") String group,
                             @QueryParam("permissions") String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
@@ -240,7 +241,7 @@ public class Server {
         verifyDdlParam(table, ":table");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.dropTable(getUser(), db, table, group, permissions);
+        return d.dropTable(getUser(), db, table, ifExists, group, permissions);
     }
 
     /**
@@ -339,6 +340,7 @@ public class Server {
     public String dropPartition(@PathParam("db") String db,
                                 @PathParam("table") String table,
                                 @PathParam("partition") String partition,
+                                @QueryParam("ifExists") boolean ifExists,
                                 @QueryParam("group") String group,
                                 @QueryParam("permissions") String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
@@ -349,7 +351,7 @@ public class Server {
         verifyDdlParam(table, ":table");
         verifyParam(partition, ":partition");
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.dropPartition(getUser(), db, table, partition,
+        return d.dropPartition(getUser(), db, table, partition, ifExists,
                                group, permissions);
     }
 
@@ -403,8 +405,9 @@ public class Server {
     {
         verifyUser();
         verifyDdlParam(db, ":db");
+        desc.database = db;
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.createDatabase(getUser(), db, desc);
+        return d.createDatabase(getUser(), desc);
     }
 
     /**
@@ -415,7 +418,8 @@ public class Server {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String dropDatabase(@PathParam("db") String db,
-                               @QueryParam("param") String option,
+                               @QueryParam("ifExists") boolean ifExists,
+                               @QueryParam("option") String option,
                                @QueryParam("group") String group,
                                @QueryParam("permissions") String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
@@ -426,7 +430,7 @@ public class Server {
         if (TempletonUtils.isset(option))
             verifyDdlParam(option, "option");
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.dropDatabase(getUser(), db, option,
+        return d.dropDatabase(getUser(), db, ifExists, option,
                               group, permissions);
     }
 
