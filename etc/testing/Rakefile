@@ -210,9 +210,24 @@ EOM
          "-d", "rename=test_table_2")
   end
 
-  desc "Describe all tables"
-  task :desc_tables do
+  desc "List all tables"
+  task :list_tables do
     curl("ddl/database/default/table?user.name=#{USERNAME}")
+  end
+
+  desc "List some tables"
+  task :list_tables_like do
+    curl("ddl/database/default/table?user.name=#{USERNAME}&like=my_.*")
+  end
+
+  desc "List some more tables"
+  task :list_tables_like2 do
+    curl("ddl/database/default/table?user.name=#{USERNAME}&like=my_table.")
+  end
+
+  desc "List some more tables"
+  task :list_tables_like3 do
+    curl("ddl/database/default/table?user.name=#{USERNAME}&like=.*_table_.")
   end
 
   desc "Describe all columns"
