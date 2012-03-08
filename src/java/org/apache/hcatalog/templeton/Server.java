@@ -209,7 +209,6 @@ public class Server {
         throws SimpleWebException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
-        System.err.println("--- desc " + desc);
         verifyUser();
         verifyDdlParam(db, ":db");
         verifyDdlParam(existingTable, ":existingTable");
