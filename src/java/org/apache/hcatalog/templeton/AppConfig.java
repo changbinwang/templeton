@@ -98,6 +98,7 @@ public class AppConfig extends Configuration {
     public static final String STREAMING_JAR_NAME  = "templeton.streaming.jar";
     public static final String TEMPLETON_JAR_NAME  = "templeton.jar";
     public static final String OVERRIDE_JARS_NAME  = "templeton.override.jars";
+    public static final String OVERRIDE_JARS_ENABLED = "templeton.override.enabled";
 
     public static final String CALLBACK_INTERVAL_NAME
         = "templeton.callback.retry.interval";
@@ -174,10 +175,16 @@ public class AppConfig extends Configuration {
     public String streamingJar()     { return get(STREAMING_JAR_NAME); }
 
     public String[] overrideJars() {
-        return getStrings(OVERRIDE_JARS_NAME);
+        if (getBoolean(OVERRIDE_JARS_ENABLED, true))
+            return getStrings(OVERRIDE_JARS_NAME);
+        else
+            return null;
     }
     public String overrideJarsString() {
-        return get(OVERRIDE_JARS_NAME);
+        if (getBoolean(OVERRIDE_JARS_ENABLED, true))
+            return get(OVERRIDE_JARS_NAME);
+        else
+            return null;
     }
 
     public long zkCleanupInterval()  {
