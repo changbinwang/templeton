@@ -63,7 +63,7 @@ public class JobState {
 
     /**
      * Get an instance of the selected storage class.  Defaults to
-     * ZooKeeper storage if none is specified.
+     * HDFS storage if none is specified.
      */
     public static TempletonStorage getStorageInstance(Configuration conf) {
         TempletonStorage storage = null;
@@ -74,7 +74,7 @@ public class JobState {
         } catch (Exception e) {
             LOG.warn("No storage method found: " + e.getMessage());
             try {
-                storage = new ZooKeeperStorage();
+                storage = new HDFSStorage();
             } catch (Exception ex) {
                 LOG.error("Couldn't create storage.");
             }
@@ -84,7 +84,7 @@ public class JobState {
 
     /**
      * Get an open instance of the selected storage class.  Defaults
-     * to ZooKeeper storage if none is specified.
+     * to HDFS storage if none is specified.
      */
     public static TempletonStorage getStorage(Configuration conf) throws IOException {
         TempletonStorage storage = getStorageInstance(conf);
@@ -285,7 +285,7 @@ public class JobState {
     //
 
     /**
-     * Fetch an integer field from the ZK strore.
+     * Fetch an integer field from the store.
      */
     public Long getLongField(String name)
         throws IOException
@@ -304,7 +304,7 @@ public class JobState {
     }
 
     /**
-     * Store a String field from the ZK store.
+     * Store a String field from the store.
      */
     public void setField(String name, String val)
         throws IOException
