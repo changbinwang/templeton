@@ -20,18 +20,20 @@ package org.apache.hcatalog.templeton;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * A description of the partition to create.
+ * A description of the table to create that's like another table.
  */
 @XmlRootElement
-public class PartitionDesc extends GroupPermissionsDesc {
-    public String partition;
-    public String location;
+public class TableLikeDesc extends GroupPermissionsDesc {
+    public boolean external = false;
     public boolean ifNotExists = false;
+    public String location;
+    public String existingTable;
+    public String newTable;
 
-    public PartitionDesc() {}
+    public TableLikeDesc() {}
 
     public String toString() {
-        return String.format("PartitionDesc(partition=%s, location=%s, ifNotExists=%s)",
-                             partition, location, ifNotExists);
+        return String.format("TableLikeDesc(existingTable=%s, newTable=%s, location=%s",
+                             existingTable, newTable, location);
     }
 }

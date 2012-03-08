@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class TableDesc extends GroupPermissionsDesc {
-    public boolean ifNotExists = false;
     public boolean external = false;
+    public boolean ifNotExists = false;
     public String table;
     public String comment;
     public List<ColumnDesc> columns;

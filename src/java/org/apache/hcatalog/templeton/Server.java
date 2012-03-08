@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -198,6 +197,32 @@ public class Server {
     }
 
     /**
+     * Create a new table like another table.
+     */
+    @PUT
+    @Path("ddl/database/{db}/table/{existingTable}/like/{newTable}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String createTableLike(@PathParam("db") String db,
+                                  @PathParam("existingTable") String existingTable,
+                                  @PathParam("newTable") String newTable,
+                                  TableLikeDesc desc)
+        throws SimpleWebException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        System.err.println("--- desc " + desc);
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(existingTable, ":existingTable");
+        verifyDdlParam(newTable, ":newTable");
+        desc.existingTable = existingTable;
+        desc.newTable = newTable;
+
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.createTableLike(getUser(), db, desc);
+    }
+
+    /**
      * Describe an hcat table.  This is normally a simple list of
      * columns (using "desc table"), but the extended format will show
      * more information (using "show table extended like").
@@ -312,7 +337,6 @@ public class Server {
      */
     @PUT
     @Path("ddl/database/{db}/table/{table}/partition/{partition}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String addOnePartition(@PathParam("db") String db,
                                   @PathParam("table") String table,
@@ -335,7 +359,6 @@ public class Server {
      */
     @DELETE
     @Path("ddl/database/{db}/table/{table}/partition/{partition}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String dropPartition(@PathParam("db") String db,
                                 @PathParam("table") String table,
@@ -378,7 +401,6 @@ public class Server {
      */
     @GET
     @Path("ddl/database/{db}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String descDatabase(@PathParam("db") String db,
                                @QueryParam("format") String format)
@@ -396,7 +418,6 @@ public class Server {
      */
     @PUT
     @Path("ddl/database/{db}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String createDatabase(@PathParam("db") String db,
                                  DatabaseDesc desc)
@@ -415,7 +436,6 @@ public class Server {
      */
     @DELETE
     @Path("ddl/database/{db}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String dropDatabase(@PathParam("db") String db,
                                @QueryParam("ifExists") boolean ifExists,
@@ -480,7 +500,6 @@ public class Server {
      */
     @PUT
     @Path("ddl/database/{db}/table/{table}/column/{column}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String addOneColumn(@PathParam("db") String db,
                                @PathParam("table") String table,

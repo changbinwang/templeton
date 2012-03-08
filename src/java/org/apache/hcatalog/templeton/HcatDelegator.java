@@ -177,6 +177,35 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     /**
+     * Create a table.
+     */
+    public String createTableLike(String user, String db, TableLikeDesc desc)
+        throws HcatException, NotAuthorizedException, BusyException,
+        ExecuteException, IOException
+    {
+        String exec = String.format("use %s; create", db);
+
+        if (desc.external)
+            exec += " external";
+        exec += String.format(" table %s like %s", desc.newTable, desc.existingTable);
+        if (TempletonUtils.isset(desc.location))
+            exec += String.format(" location '%s'", desc.location);
+        exec += ";";
+
+        try {
+            jsonRun(user, exec, desc.group, desc.permissions, true);
+
+            return JsonBuilder.create()
+                .put("database", db)
+                .put("table", desc.newTable)
+                .build();
+        } catch (final HcatException e) {
+            throw new HcatException("unable to create table: " + desc.newTable,
+                                    e.execBean, exec);
+        }
+    }
+
+    /**
      * Return a json description of the table.
      */
     public String descTable(String user, String db, String table, boolean extended)
