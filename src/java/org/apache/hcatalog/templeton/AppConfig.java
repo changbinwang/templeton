@@ -26,7 +26,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.VersionInfo;
 import org.apache.hcatalog.templeton.tool.JobState;
-import org.apache.hcatalog.templeton.tool.TempletonStorage;
 import org.apache.hcatalog.templeton.tool.ZooKeeperCleanup;
 import org.apache.hcatalog.templeton.tool.ZooKeeperStorage;
 
@@ -146,7 +145,7 @@ public class AppConfig extends Configuration {
             File f = new File(dir, fname);
             if (f.exists()) {
                 addResource(new Path(f.getAbsolutePath()));
-                LOG.info("loaded config file " + f.getAbsolutePath());
+                LOG.debug("loaded config file " + f.getAbsolutePath());
                 return true;
             }
         }
@@ -157,7 +156,7 @@ public class AppConfig extends Configuration {
         URL x = getResource(fname);
         if (x != null) {
             addResource(x);
-            LOG.info("loaded config from classpath " + x);
+            LOG.debug("loaded config from classpath " + x);
             return true;
         }
 

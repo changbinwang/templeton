@@ -63,7 +63,6 @@
     <dependency org="org.apache.zookeeper" name="zookeeper" rev="3.3.4"
                 conf="common->master"/>
 
-
     <dependency org="commons-logging" name="commons-logging" rev="1.0.4"
                 conf="common->master"/>
     <dependency org="log4j" name="log4j" rev="1.2.15"
@@ -71,6 +70,8 @@
     <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.6.4"
                 conf="common->master"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="1.6.4"
+                conf="common->master"/>
+    <dependency org="org.slf4j" name="jul-to-slf4j" rev="1.6.4"
                 conf="common->master"/>
                 
     <dependency org="org.eclipse.jetty.aggregate"
