@@ -198,18 +198,18 @@ else
         export HADOOP_CLASSPATH="$CLASSPATH:$HADOOP_CLASSPATH"
 fi
 
-if [[ -z "TEMPLETON_LOG4J" ]]; then
+if [[ -z "$TEMPLETON_LOG4J" ]]; then
         if [[ -f "$base_dir/conf/templeton-log4j.properties" ]]; then
                 TEMPLETON_LOG4J="$base_dir/conf/templeton-log4j.properties";
         elif [[ -f "$base_dir/conf/templeton-log4j.properties" ]]; then
                 TEMPLETON_LOG4J="$base_dir/conf/templeton-log4j.properties";
-        else 
+        else
                 TEMPLETON_LOG4J="templeton-log4j.properties";
         fi
 fi
 
 export HADOOP_USER_CLASSPATH_FIRST=true
-export HADOOP_OPTS="-Dtempleton.log.dir=$TEMPLETON_LOG_DIR -Dlog4j.configuration=templeton-log4j.properties "
+export HADOOP_OPTS="-Dtempleton.log.dir=$TEMPLETON_LOG_DIR -Dlog4j.configuration=$TEMPLETON_LOG4J"
 
 start_cmd="$HADOOP_PREFIX/bin/hadoop jar $JAR org.apache.hcatalog.templeton.Main  "
 
