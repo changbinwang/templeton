@@ -95,25 +95,9 @@ public class LauncherDelegator extends TempletonDelegator {
         args.add(appConf.libJars());
         addCacheFiles(args, appConf);
 
-        // Set user
+        // Hadoop vars
         addDef(args, "user.name", runAs);
-
-        // Storage vars
-        addDef(args, TempletonStorage.STORAGE_CLASS,
-               appConf.get(TempletonStorage.STORAGE_CLASS));
-        addDef(args, TempletonStorage.STORAGE_ROOT,
-                appConf.get(TempletonStorage.STORAGE_ROOT));
-        addDef(args, ZooKeeperStorage.ZK_HOSTS,
-                appConf.get(ZooKeeperStorage.ZK_HOSTS));
-        addDef(args, ZooKeeperStorage.ZK_SESSION_TIMEOUT,
-                appConf.get(ZooKeeperStorage.ZK_SESSION_TIMEOUT));
-
-        // Completion notifier vars
-        addDef(args, AppConfig.HADOOP_END_RETRY_NAME,
-               appConf.get(AppConfig.CALLBACK_RETRY_NAME));
-        addDef(args, AppConfig.HADOOP_END_INTERVAL_NAME,
-               appConf.get(AppConfig.CALLBACK_INTERVAL_NAME));
-        addDef(args, AppConfig.HADOOP_END_URL_NAME, completedUrl);
+        addDef(args, AppConfig.HADOOP_SPECULATIVE_NAME, "false");
 
         // Internal vars
         addDef(args, TempletonControllerJob.STATUSDIR_NAME, statusdir);
@@ -122,7 +106,32 @@ public class LauncherDelegator extends TempletonDelegator {
         addDef(args, TempletonControllerJob.OVERRIDE_CLASSPATH,
                makeOverrideClasspath(appConf));
 
+        // Job vars
+        addStorageVars(args);
+        addCompletionVars(args, completedUrl);
+
         return args;
+    }
+
+    // Storage vars
+    private void addStorageVars(List<String> args) {
+        addDef(args, TempletonStorage.STORAGE_CLASS,
+               appConf.get(TempletonStorage.STORAGE_CLASS));
+        addDef(args, TempletonStorage.STORAGE_ROOT,
+                appConf.get(TempletonStorage.STORAGE_ROOT));
+        addDef(args, ZooKeeperStorage.ZK_HOSTS,
+                appConf.get(ZooKeeperStorage.ZK_HOSTS));
+        addDef(args, ZooKeeperStorage.ZK_SESSION_TIMEOUT,
+                appConf.get(ZooKeeperStorage.ZK_SESSION_TIMEOUT));
+    }
+
+    // Completion notifier vars
+    private void addCompletionVars(List<String> args, String completedUrl) {
+        addDef(args, AppConfig.HADOOP_END_RETRY_NAME,
+               appConf.get(AppConfig.CALLBACK_RETRY_NAME));
+        addDef(args, AppConfig.HADOOP_END_INTERVAL_NAME,
+               appConf.get(AppConfig.CALLBACK_INTERVAL_NAME));
+        addDef(args, AppConfig.HADOOP_END_URL_NAME, completedUrl);
     }
 
     /**

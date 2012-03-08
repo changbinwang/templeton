@@ -107,6 +107,8 @@ public class AppConfig extends Configuration {
     public static final String HADOOP_END_INTERVAL_NAME = "job.end.retry.interval";
     public static final String HADOOP_END_RETRY_NAME    = "job.end.retry.attempts";
     public static final String HADOOP_END_URL_NAME      = "job.end.notification.url";
+    public static final String HADOOP_SPECULATIVE_NAME
+        = "mapred.map.tasks.speculative.execution";
 
     private static final Log LOG = LogFactory.getLog(AppConfig.class);
 
