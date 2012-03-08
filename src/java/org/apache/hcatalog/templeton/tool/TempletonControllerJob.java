@@ -141,12 +141,11 @@ public class TempletonControllerJob extends Configured implements Tool {
             state.setCompleteStatus("done");
             state.close();
 
-            if (proc.exitValue() != 0) {
+            if (proc.exitValue() != 0)
                 System.err.println("templeton: job failed with exit code "
                                    + proc.exitValue());
-                System.exit(proc.exitValue());
-            }
-            System.err.println("templeton: job completed with exit code 0");
+            else
+                System.err.println("templeton: job completed with exit code 0");
         }
 
         private void executeWatcher(ExecutorService pool, Configuration conf,
