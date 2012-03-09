@@ -19,13 +19,14 @@ package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+import javax.ws.rs.core.Response;
 import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.lang.StringUtils;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
@@ -71,7 +72,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Return a json description of the database.
      */
-    public String descDatabase(String user, String db, boolean extended)
+    public Response descDatabase(String user, String db, boolean extended)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -89,7 +90,7 @@ public class HcatDelegator extends LauncherDelegator {
      * Return a json "show databases like".  This will return a list of
      * databases.
      */
-    public String listDatabases(String user, String dbPattern)
+    public Response listDatabases(String user, String dbPattern)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -108,7 +109,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Create a database with the given name
      */
-    public String createDatabase(String user, DatabaseDesc desc)
+    public Response createDatabase(String user, DatabaseDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -134,7 +135,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Drop the listed database
      */
-    public String dropDatabase(String user, String db,
+    public Response dropDatabase(String user, String db,
                                boolean ifExists, String option,
                                String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
@@ -157,7 +158,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Create a table.
      */
-    public String createTable(String user, String db, TableDesc desc)
+    public Response createTable(String user, String db, TableDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -179,7 +180,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Create a table.
      */
-    public String createTableLike(String user, String db, TableLikeDesc desc)
+    public Response createTableLike(String user, String db, TableLikeDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -208,7 +209,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Return a json description of the table.
      */
-    public String descTable(String user, String db, String table, boolean extended)
+    public Response descTable(String user, String db, String table, boolean extended)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -233,7 +234,7 @@ public class HcatDelegator extends LauncherDelegator {
      * Return a json "show table like".  This will return a list of
      * tables.
      */
-    public String listTables(String user, String db, String tablePattern)
+    public Response listTables(String user, String db, String tablePattern)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -254,7 +255,7 @@ public class HcatDelegator extends LauncherDelegator {
      * Return a json "show table extended like".  This will return
      * only the first single table.
      */
-    public String descExtendedTable(String user, String db, String table)
+    public Response descExtendedTable(String user, String db, String table)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -417,7 +418,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Drop a table.
      */
-    public String dropTable(String user, String db,
+    public Response dropTable(String user, String db,
                             String table, boolean ifExists,
                             String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
@@ -442,7 +443,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Drop a table.
      */
-    public String renameTable(String user, String db,
+    public Response renameTable(String user, String db,
                               String oldTable, String newTable,
                               String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
@@ -465,7 +466,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Return a json description of the partitions.
      */
-    public String listPartitions(String user, String db, String table)
+    public Response listPartitions(String user, String db, String table)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -486,7 +487,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Return a json description of one partition.
      */
-    public String descOnePartition(String user, String db, String table,
+    public Response descOnePartition(String user, String db, String table,
                                    String partition)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
@@ -513,7 +514,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Add one partition.
      */
-    public String addOnePartition(String user, String db, String table,
+    public Response addOnePartition(String user, String db, String table,
                                   PartitionDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
@@ -542,7 +543,7 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Drop a partition.
      */
-    public String dropPartition(String user, String db,
+    public Response dropPartition(String user, String db,
                                 String table, String partition, boolean ifExists,
                                 String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
@@ -571,7 +572,7 @@ public class HcatDelegator extends LauncherDelegator {
      * Return a json description of the columns.  Same as
      * describeTable.
      */
-    public String listColumns(String user, String db, String table)
+    public Response listColumns(String user, String db, String table)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -586,38 +587,45 @@ public class HcatDelegator extends LauncherDelegator {
     /**
      * Return a json description of one column.
      */
-    public String descOneColumn(String user, String db, String table, String column)
+    public Response descOneColumn(String user, String db, String table, String column)
         throws SimpleWebException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
-        String res = listColumns(user, db, table);
-        final JsonBuilder builder = JsonBuilder.create(res);
-        List<Map> cols = (List) (builder.getMap().get("columns"));
+        Response res = listColumns(user, db, table);
+        if (res.getStatus() != JsonBuilder.OK)
+            return res;
 
+        Object o = res.getEntity();
+        final Map fields = (o != null && (o instanceof Map)) ? (Map) o : null;
+        if (fields == null)
+            throw new SimpleWebException(500, "Internal error, unable to find column "
+                                         + column);
+
+
+        List<Map> cols = (List) fields.get("columns");
         Map found = null;
-        for (Map col : cols) {
-            if (column.equals(col.get("name"))) {
-                found = col;
-                break;
+        if (cols != null) {
+            for (Map col : cols) {
+                if (column.equals(col.get("name"))) {
+                    found = col;
+                    break;
+                }
             }
         }
-
         if (found == null)
             throw new SimpleWebException(500, "unable to find column " + column,
                                          new HashMap<String, Object>() {{
-                                                 put("description", builder.getMap());
+                                                 put("description", fields);
                                              }});
-
-        return builder
-            .remove("columns")
-            .put("column", found)
-            .build();
+        fields.remove("columns");
+        fields.put("column", found);
+        return Response.fromResponse(res).entity(fields).build();
     }
 
     /**
      * Add one column.
      */
-    public String addOneColumn(String user, String db, String table,
+    public Response addOneColumn(String user, String db, String table,
                                ColumnDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException

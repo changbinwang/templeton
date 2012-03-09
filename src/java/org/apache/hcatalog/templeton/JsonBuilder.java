@@ -21,6 +21,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -28,6 +30,9 @@ import org.codehaus.jackson.map.ObjectMapper;
  * properties.  Only add non-null entries.
  */
 public class JsonBuilder {
+    static final int OK = 200;
+    static final int SERVER_ERROR = 500;
+
     // The map we're building.
     private Map map;
 
@@ -84,12 +89,36 @@ public class JsonBuilder {
     }
 
     /**
+     * Turn the map back to response object.
+     */
+    public Response build() {
+        return buildResponse();
+    }
+
+    /**
      * Turn the map back to json.
      */
-    public String build()
+    public String buildJson()
         throws IOException
     {
         return mapToJson(map);
+    }
+
+    /**
+     * Turn the map back to response object.
+     */
+    public Response buildResponse() {
+        int status = OK;        // Server ok.
+        if (map.containsKey("error"))
+            status = SERVER_ERROR; // Generic http server error.
+        Object o = map.get("errorCode");
+        if (o != null && (o instanceof Number))
+            status = ((Number) o).intValue();
+
+        return Response.status(status)
+            .entity(map)
+            .type(MediaType.APPLICATION_JSON)
+            .build();
     }
 
     /**

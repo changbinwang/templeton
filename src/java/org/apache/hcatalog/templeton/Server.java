@@ -36,6 +36,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.exec.ExecuteException;
@@ -161,8 +162,8 @@ public class Server {
     @GET
     @Path("ddl/database/{db}/table")
     @Produces(MediaType.APPLICATION_JSON)
-    public String listTables(@PathParam("db") String db,
-                             @QueryParam("like") String tablePattern)
+    public Response listTables(@PathParam("db") String db,
+                               @QueryParam("like") String tablePattern)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -181,9 +182,9 @@ public class Server {
     @PUT
     @Path("ddl/database/{db}/table/{table}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String createTable(@PathParam("db") String db,
-                              @PathParam("table") String table,
-                              TableDesc desc)
+    public Response createTable(@PathParam("db") String db,
+                                @PathParam("table") String table,
+                                TableDesc desc)
         throws SimpleWebException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -202,10 +203,10 @@ public class Server {
     @PUT
     @Path("ddl/database/{db}/table/{existingTable}/like/{newTable}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String createTableLike(@PathParam("db") String db,
-                                  @PathParam("existingTable") String existingTable,
-                                  @PathParam("newTable") String newTable,
-                                  TableLikeDesc desc)
+    public Response createTableLike(@PathParam("db") String db,
+                                    @PathParam("existingTable") String existingTable,
+                                    @PathParam("newTable") String newTable,
+                                    TableLikeDesc desc)
         throws SimpleWebException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -229,9 +230,9 @@ public class Server {
     @GET
     @Path("ddl/database/{db}/table/{table}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String descTable(@PathParam("db") String db,
-                            @PathParam("table") String table,
-                            @QueryParam("format") String format)
+    public Response descTable(@PathParam("db") String db,
+                              @PathParam("table") String table,
+                              @QueryParam("format") String format)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -252,11 +253,11 @@ public class Server {
     @DELETE
     @Path("ddl/database/{db}/table/{table}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String dropTable(@PathParam("db") String db,
-                            @PathParam("table") String table,
-                            @QueryParam("ifExists") boolean ifExists,
-                            @QueryParam("group") String group,
-                            @QueryParam("permissions") String permissions)
+    public Response dropTable(@PathParam("db") String db,
+                              @PathParam("table") String table,
+                              @QueryParam("ifExists") boolean ifExists,
+                              @QueryParam("group") String group,
+                              @QueryParam("permissions") String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -274,11 +275,11 @@ public class Server {
     @POST
     @Path("ddl/database/{db}/table/{table}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String renameTable(@PathParam("db") String db,
-                              @PathParam("table") String oldTable,
-                              @FormParam("rename") String newTable,
-                              @FormParam("group") String group,
-                              @FormParam("permissions") String permissions)
+    public Response renameTable(@PathParam("db") String db,
+                                @PathParam("table") String oldTable,
+                                @FormParam("rename") String newTable,
+                                @FormParam("group") String group,
+                                @FormParam("permissions") String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -297,8 +298,8 @@ public class Server {
     @GET
     @Path("ddl/database/{db}/table/{table}/partition")
     @Produces(MediaType.APPLICATION_JSON)
-    public String listPartitions(@PathParam("db") String db,
-                                 @PathParam("table") String table)
+    public Response listPartitions(@PathParam("db") String db,
+                                   @PathParam("table") String table)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -316,9 +317,9 @@ public class Server {
     @GET
     @Path("ddl/database/{db}/table/{table}/partition/{partition}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String descPartition(@PathParam("db") String db,
-                                @PathParam("table") String table,
-                                @PathParam("partition") String partition)
+    public Response descPartition(@PathParam("db") String db,
+                                  @PathParam("table") String table,
+                                  @PathParam("partition") String partition)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -337,10 +338,10 @@ public class Server {
     @PUT
     @Path("ddl/database/{db}/table/{table}/partition/{partition}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String addOnePartition(@PathParam("db") String db,
-                                  @PathParam("table") String table,
-                                  @PathParam("partition") String partition,
-                                  PartitionDesc desc)
+    public Response addOnePartition(@PathParam("db") String db,
+                                    @PathParam("table") String table,
+                                    @PathParam("partition") String partition,
+                                    PartitionDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -359,12 +360,12 @@ public class Server {
     @DELETE
     @Path("ddl/database/{db}/table/{table}/partition/{partition}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String dropPartition(@PathParam("db") String db,
-                                @PathParam("table") String table,
-                                @PathParam("partition") String partition,
-                                @QueryParam("ifExists") boolean ifExists,
-                                @QueryParam("group") String group,
-                                @QueryParam("permissions") String permissions)
+    public Response dropPartition(@PathParam("db") String db,
+                                  @PathParam("table") String table,
+                                  @PathParam("partition") String partition,
+                                  @QueryParam("ifExists") boolean ifExists,
+                                  @QueryParam("group") String group,
+                                  @QueryParam("permissions") String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -383,7 +384,7 @@ public class Server {
     @GET
     @Path("ddl/database/")
     @Produces(MediaType.APPLICATION_JSON)
-    public String listDatabases(@QueryParam("like") String dbPattern)
+    public Response listDatabases(@QueryParam("like") String dbPattern)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -401,8 +402,8 @@ public class Server {
     @GET
     @Path("ddl/database/{db}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String descDatabase(@PathParam("db") String db,
-                               @QueryParam("format") String format)
+    public Response descDatabase(@PathParam("db") String db,
+                                 @QueryParam("format") String format)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -418,8 +419,8 @@ public class Server {
     @PUT
     @Path("ddl/database/{db}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String createDatabase(@PathParam("db") String db,
-                                 DatabaseDesc desc)
+    public Response createDatabase(@PathParam("db") String db,
+                                   DatabaseDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -436,11 +437,11 @@ public class Server {
     @DELETE
     @Path("ddl/database/{db}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String dropDatabase(@PathParam("db") String db,
-                               @QueryParam("ifExists") boolean ifExists,
-                               @QueryParam("option") String option,
-                               @QueryParam("group") String group,
-                               @QueryParam("permissions") String permissions)
+    public Response dropDatabase(@PathParam("db") String db,
+                                 @QueryParam("ifExists") boolean ifExists,
+                                 @QueryParam("option") String option,
+                                 @QueryParam("group") String group,
+                                 @QueryParam("permissions") String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -460,8 +461,8 @@ public class Server {
     @GET
     @Path("ddl/database/{db}/table/{table}/column")
     @Produces(MediaType.APPLICATION_JSON)
-    public String listColumns(@PathParam("db") String db,
-                              @PathParam("table") String table)
+    public Response listColumns(@PathParam("db") String db,
+                                @PathParam("table") String table)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -479,9 +480,9 @@ public class Server {
     @GET
     @Path("ddl/database/{db}/table/{table}/column/{column}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String descColumn(@PathParam("db") String db,
-                             @PathParam("table") String table,
-                             @PathParam("column") String column)
+    public Response descColumn(@PathParam("db") String db,
+                               @PathParam("table") String table,
+                               @PathParam("column") String column)
         throws SimpleWebException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -500,10 +501,10 @@ public class Server {
     @PUT
     @Path("ddl/database/{db}/table/{table}/column/{column}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String addOneColumn(@PathParam("db") String db,
-                               @PathParam("table") String table,
-                               @PathParam("column") String column,
-                               ColumnDesc desc)
+    public Response addOneColumn(@PathParam("db") String db,
+                                 @PathParam("table") String table,
+                                 @PathParam("column") String column,
+                                 ColumnDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
