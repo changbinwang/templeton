@@ -81,9 +81,17 @@ public class HcatDelegator extends LauncherDelegator {
             exec = "desc database extended " + db + "; ";
         }
         String res = jsonRun(user, exec);
-        return JsonBuilder.create(res)
-            .put("database", db)
-            .build();
+        JsonBuilder builder = JsonBuilder.create(res);
+        boolean isset = builder.isset();
+        builder.put("database", db);
+
+        if (isset)
+            return builder.build();
+        else {
+            return builder
+                .put("error", "No database found")
+                .buildResponse(JsonBuilder.MISSING);
+        }
     }
 
     /**
@@ -94,8 +102,7 @@ public class HcatDelegator extends LauncherDelegator {
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
-        String exec = String.format("show databases like '%s';",
-                                    dbPattern);
+        String exec = String.format("show databases like '%s';", dbPattern);
         try {
             String res = jsonRun(user, exec);
             return JsonBuilder.create(res)
@@ -127,17 +134,17 @@ public class HcatDelegator extends LauncherDelegator {
         exec += ";";
 
         String res = jsonRun(user, exec, desc.group, desc.permissions);
-        return JsonBuilder.create()
+        return JsonBuilder.create(res)
             .put("database", desc.database)
             .build();
     }
 
     /**
-     * Drop the listed database
+     * Drop the given database
      */
     public Response dropDatabase(String user, String db,
-                               boolean ifExists, String option,
-                               String group, String permissions)
+                                 boolean ifExists, String option,
+                                 String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -150,7 +157,7 @@ public class HcatDelegator extends LauncherDelegator {
         exec += ";";
 
         String res = jsonRun(user, exec, group, permissions);
-        return JsonBuilder.create()
+        return JsonBuilder.create(res)
             .put("database", db)
             .build();
     }
@@ -165,9 +172,9 @@ public class HcatDelegator extends LauncherDelegator {
         String exec = makeCreateTable(db, desc);
 
         try {
-            jsonRun(user, exec, desc.group, desc.permissions, true);
+            String res = jsonRun(user, exec, desc.group, desc.permissions, true);
 
-            return JsonBuilder.create()
+            return JsonBuilder.create(res)
                 .put("database", db)
                 .put("table", desc.table)
                 .build();
@@ -178,7 +185,7 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     /**
-     * Create a table.
+     * Create a table like another.
      */
     public Response createTableLike(String user, String db, TableLikeDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
@@ -194,9 +201,9 @@ public class HcatDelegator extends LauncherDelegator {
         exec += ";";
 
         try {
-            jsonRun(user, exec, desc.group, desc.permissions, true);
+            String res = jsonRun(user, exec, desc.group, desc.permissions, true);
 
-            return JsonBuilder.create()
+            return JsonBuilder.create(res)
                 .put("database", db)
                 .put("table", desc.newTable)
                 .build();
@@ -430,8 +437,8 @@ public class HcatDelegator extends LauncherDelegator {
         exec += String.format(" %s;", table);
 
         try {
-            jsonRun(user, exec, group, permissions, true);
-            return JsonBuilder.create()
+            String res = jsonRun(user, exec, group, permissions, true);
+            return JsonBuilder.create(res)
                 .put("database", db)
                 .put("table", table)
                 .build();
@@ -452,8 +459,8 @@ public class HcatDelegator extends LauncherDelegator {
         String exec = String.format("use %s; alter table %s rename to %s;",
                                     db, oldTable, newTable);
         try {
-            jsonRun(user, exec, group, permissions, true);
-            return JsonBuilder.create()
+            String res = jsonRun(user, exec, group, permissions, true);
+            return JsonBuilder.create(res)
                 .put("database", db)
                 .put("table", newTable)
                 .build();
@@ -496,8 +503,8 @@ public class HcatDelegator extends LauncherDelegator {
         exec += "show table extended like " + table
             + " partition (" + partition + "); ";
         try {
-            String res = singleTable(jsonRun(user, exec));
-            return JsonBuilder.create(res)
+            String res = jsonRun(user, exec);
+            return JsonBuilder.create(singleTable(res))
                 .remove("tableName")
                 .put("database", db)
                 .put("table", table)
@@ -515,7 +522,7 @@ public class HcatDelegator extends LauncherDelegator {
      * Add one partition.
      */
     public Response addOnePartition(String user, String db, String table,
-                                  PartitionDesc desc)
+                                    PartitionDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -527,9 +534,8 @@ public class HcatDelegator extends LauncherDelegator {
             exec += String.format(" location '%s'", desc.location);
         exec += ";";
         try {
-            jsonRun(user, exec, desc.group, desc.permissions, true);
-
-            return JsonBuilder.create()
+            String res = jsonRun(user, exec, desc.group, desc.permissions, true);
+            return JsonBuilder.create(res)
                 .put("database", db)
                 .put("table", table)
                 .put("partition", desc.partition)
@@ -555,9 +561,8 @@ public class HcatDelegator extends LauncherDelegator {
         exec += String.format(" partition (%s);", partition);
 
         try {
-            jsonRun(user, exec, group, permissions, true);
-
-            return JsonBuilder.create()
+            String res = jsonRun(user, exec, group, permissions, true);
+            return JsonBuilder.create(res)
                 .put("database", db)
                 .put("table", table)
                 .put("partition", partition)
@@ -636,9 +641,8 @@ public class HcatDelegator extends LauncherDelegator {
             exec += String.format(" comment '%s'", desc.comment);
         exec += ");";
         try {
-            jsonRun(user, exec, desc.group, desc.permissions, true);
-
-            return JsonBuilder.create()
+            String res = jsonRun(user, exec, desc.group, desc.permissions, true);
+            return JsonBuilder.create(res)
                 .put("database", db)
                 .put("table", table)
                 .put("column", desc.name)
@@ -649,28 +653,40 @@ public class HcatDelegator extends LauncherDelegator {
         }
     }
 
-    // Check that the hcat result is valid and error free
-    private boolean isValid(ExecBean eb, boolean checkOutput) {
+    // Check that the hcat result is valid and or has a valid json
+    // error
+    private boolean isValid(ExecBean eb, boolean requireEmptyOutput) {
         if (eb == null)
             return false;
+
+        try {
+            Map m = JsonBuilder.jsonToMap(eb.stdout);
+            if (m.containsKey("error")) // This is a valid error message.
+                return true;
+        } catch (IOException e) {
+            return false;
+        }
+
         if (eb.exitcode != 0)
             return false;
-        if (checkOutput)
+
+        if (requireEmptyOutput)
             if (TempletonUtils.isset(eb.stdout))
                 return false;
+
         return true;
     }
 
     // Run an hcat expression and return just the json outout.
     private String jsonRun(String user, String exec,
                            String group, String permissions,
-                           boolean checkOutput)
+                           boolean requireEmptyOutput)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
         ExecBean res = run(user, exec, true, group, permissions);
 
-        if (! isValid(res, checkOutput))
+        if (! isValid(res, requireEmptyOutput))
             throw new HcatException("Failure calling hcat: " + exec, res, exec);
 
         return res.stdout;

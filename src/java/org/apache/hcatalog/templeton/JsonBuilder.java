@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.hcatalog.templeton.tool.TempletonUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -31,6 +32,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  */
 public class JsonBuilder {
     static final int OK = 200;
+    static final int MISSING = 404;
     static final int SERVER_ERROR = 500;
 
     // The map we're building.
@@ -40,10 +42,7 @@ public class JsonBuilder {
     private JsonBuilder(String json)
         throws IOException
     {
-        if (json == null)
-            map = new HashMap<String, Object>();
-        else
-            map = jsonToMap(json);
+        map = jsonToMap(json);
     }
 
     /**
@@ -115,10 +114,24 @@ public class JsonBuilder {
         if (o != null && (o instanceof Number))
             status = ((Number) o).intValue();
 
+        return buildResponse(status);
+    }
+
+    /**
+     * Turn the map back to response object.
+     */
+    public Response buildResponse(int status) {
         return Response.status(status)
             .entity(map)
             .type(MediaType.APPLICATION_JSON)
             .build();
+    }
+
+    /**
+     * Is the object non-empty?
+     */
+    public boolean isset() {
+        return TempletonUtils.isset(map);
     }
 
     /**
@@ -127,8 +140,12 @@ public class JsonBuilder {
     public static Map jsonToMap(String json)
         throws IOException
     {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, Map.class);
+        if (! TempletonUtils.isset(json))
+            return new HashMap<String, Object>();
+        else {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(json, Map.class);
+        }
     }
 
     /**

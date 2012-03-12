@@ -289,6 +289,30 @@ EOM
     curl("ddl/database/default?user.name=#{USERNAME}")
   end
 
+  desc "Create a database"
+  task :create_db do
+    data = <<EOM
+{
+  "comment": "The new database",
+  "location": "hdfs://localhost:9000/user/hive/my_warehouse"
+}
+EOM
+    curl("ddl/database/my_db?user.name=#{USERNAME}",
+         "-X", "PUT",
+         "-H" "Content-type:application/json",
+         "-d", data)
+  end
+
+  desc "Drop a database"
+  task :drop_db do
+    curl("ddl/database/my_db?user.name=#{USERNAME}", "-X", "DELETE")
+  end
+
+  desc "List databases"
+  task :list_dbs do
+    curl("ddl/database?user.name=#{USERNAME}")
+  end
+
 end
 
 def curl(cmd, *opts)
