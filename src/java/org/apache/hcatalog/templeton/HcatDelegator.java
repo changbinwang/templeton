@@ -497,6 +497,35 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     /**
+     * List the table properties.
+     */
+    public Response listTableProperties(String user, String db, String table)
+        throws HcatException, NotAuthorizedException, BusyException,
+        ExecuteException, IOException
+    {
+        Response res = descTable(user, db, table, true);
+        if (res.getStatus() != JsonBuilder.OK)
+            return res;
+        Map props = tableProperties(res.getEntity());
+        return JsonBuilder.create()
+            .put("database", db)
+            .put("table", table)
+            .put("properties", props)
+            .build();
+    }
+
+    private Map tableProperties(Object extendedTable) {
+        if (! (extendedTable instanceof Map))
+            return null;
+        Map m = (Map) extendedTable;
+        Map tableInfo = (Map) m.get("tableInfo");
+        if (tableInfo == null)
+            return null;
+
+        return (Map) tableInfo.get("parameters");
+    }
+
+    /**
      * Return a json description of the partitions.
      */
     public Response listPartitions(String user, String db, String table)

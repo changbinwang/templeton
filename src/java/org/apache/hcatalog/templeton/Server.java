@@ -295,7 +295,7 @@ public class Server {
      * Alter properties on an hcat table.
      */
     @PUT
-    @Path("ddl/database/{db}/table/{table}/properties")
+    @Path("ddl/database/{db}/table/{table}/property")
     @Produces(MediaType.APPLICATION_JSON)
     public Response renameTable(@PathParam("db") String db,
                                 @PathParam("table") String table,
@@ -310,6 +310,25 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.alterTableProperties(getUser(), db, desc);
+    }
+
+    /**
+     * Show properties on an hcat table.
+     */
+    @GET
+    @Path("ddl/database/{db}/table/{table}/property")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response renameTable(@PathParam("db") String db,
+                                @PathParam("table") String table)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.listTableProperties(getUser(), db, table);
     }
 
     /**
