@@ -88,6 +88,15 @@
      <tr><td><a href="createcolumn.html">ddl/database/:db/table/:table/column/:column (PUT)</a></td>
          <td>Create a column in an HCatalog table.</td></tr>
 
+     <tr><td><a href="listproperties.html">ddl/database/:db/table/:table/property (GET)</a></td>
+         <td>List table properties.</td></tr>
+
+     <tr><td><a href="descproperty.html">ddl/database/:db/table/:table/property/:property (GET)</a></td>
+         <td>Return the value of a single table property.</td></tr>
+
+     <tr><td><a href="addproperty.html">ddl/database/:db/table/:table/property/:property (PUT)</a></td>
+         <td>Set a table property.</td></tr>
+
      <tr><td><a href="mapreducestreaming.html">mapreduce/streaming</a></td>
          <td>Creates and queues Hadoop streaming MapReduce jobs.</td></tr>
 

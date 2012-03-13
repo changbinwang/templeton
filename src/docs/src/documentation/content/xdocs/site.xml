@@ -69,6 +69,9 @@ See http://forrest.apache.org/docs/linking.html for more info
       <index label="column" href="listcolumns.html" />
       <index label=":column (GET)" href="desccolumn.html" />
       <index label=":column (PUT)" href="createcolumn.html" />
+      <index label="property" href="listproperties.html" />
+      <index label=":property (GET)" href="descproperty.html" />
+      <index label=":property (PUT)" href="addproperty.html" />
      </index>
      <index label="mapreduce/streaming" href="mapreducestreaming.html" />
      <index label="mapreduce/jar" href="mapreducejar.html" />
