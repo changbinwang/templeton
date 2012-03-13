@@ -107,6 +107,21 @@
    </section>
 
    <section>
+       <title>Log Files</title>
+       <p>The Templeton server creates three log files when in operation:</p>
+       <ul>
+       <li><strong>templeton.log</strong> is the log4j log.  This the main log the application
+        writes to.</li>
+       <li><strong>templeton-console.log</strong> is what Java writes to stdout when Templeton is 
+        started.  It is a small amount of data, similar to "hcat.out".</li>
+       <li><strong>tempelton-console-error.log</strong> is what Java writes to stderr, similar to
+        "hcat.err".</li>
+       </ul>
+       <p>In the tempelton-log4j.properties file you can set the location of these logs using the
+        variable templeton.log.dir.  This log4j.properties file is set in the server startup script.</p> 
+   </section>
+
+   <section>
     <title>Project Name</title>
     <p>The Templeton project is named after the a character in the award-winning 
        children's novel Charlotte's Web, by E. B. White.

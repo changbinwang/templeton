@@ -49,7 +49,7 @@
   <p>The configuration files are loaded in this order with later files overriding 
      earlier ones.</p>
 
-  <p>Note: the Templeton server will require restart after any change to the 
+  <p><strong>Note:</strong> the Templeton server will require restart after any change to the 
      configuration.</p>
 
   <p>To find the configuration files, Templeton first attempts to load a file from the 
@@ -67,6 +67,9 @@ ${env.PIG_HOME}/bin/pig
   <p>Configuration variables that use a filesystem path try to have reasonable defaults.
      However, it's always safe to specify the full and complete path if there is any
      uncertainty.</p>
+
+  <p><strong>Note:</strong> The location of the log files created by Templeton and some other properties
+     of the logging system are set in the templeton-log4j.properties file.</p>
 
   <section>
   <title>Variables</title>
