@@ -46,11 +46,17 @@
      <tr><td><a href="desctable.html">ddl/database/:db/table/:table (GET)</a></td>
          <td>Describe an HCatalog table.</td></tr>
 
+     <tr><td><a href="createtable.html">ddl/database/:db/table/:table (PUT)</a></td>
+         <td>Create a new HCatalog table.</td></tr>
+
      <tr><td><a href="renametable.html">ddl/database/:db/table/:table (POST)</a></td>
          <td>Rename an HCatalog table.</td></tr>
 
      <tr><td><a href="deletetable.html">ddl/database/:db/table/:table (DELETE)</a></td>
          <td>Delete (drop) an HCatalog table.</td></tr>
+
+     <tr><td><a href="createtablelike.html">ddl/database/:db/table/:existingtable/like/:newtable (PUT)</a></td>
+         <td>Create a new HCatalog table like an existing one.</td></tr>
 
      <tr><td><a href="listpartitions.html">ddl/database/:db/table/:table/partion</a></td>
          <td>List all partitions in an HCatalog table.</td></tr>
