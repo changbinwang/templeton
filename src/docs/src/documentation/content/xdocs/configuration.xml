@@ -75,7 +75,7 @@ ${env.PIG_HOME}/bin/pig
 
   <tr>
     <td><strong>templeton.port</strong></td>
-    <td><code>8080</code></td>
+    <td><code>50111</code></td>
     <td>The HTTP port for the main server.</td> 
   </tr>
 
@@ -102,6 +102,12 @@ ${env.PIG_HOME}/bin/pig
     <td><code>hdfs:///user/templeton/ugi.jar</code></td>
     <td>Jars to add to the HADOOP_CLASSPATH for all Map Reduce jobs.
         These jars must exist on HDFS.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.override.enabled</strong></td>
+    <td><code>true</code></td>
+    <td>Enable the override path in templeton.override.jars</td>
   </tr>
 
   <tr>

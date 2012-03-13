@@ -58,8 +58,10 @@ See http://forrest.apache.org/docs/linking.html for more info
       <index label=":db (DELETE)" href="deletedb.html" />
       <index label="table" href="listtables.html" />
       <index label=":table (GET)" href="desctable.html" />
+      <index label=":table (PUT)" href="createtable.html" />
       <index label=":table (POST)" href="renametable.html" />
       <index label=":table (DELETE)" href="deletetable.html" />
+      <index label="like/:table (PUT)" href="createtablelike.html" />
       <index label="partition" href="listpartitions.html" />
       <index label=":partition (GET)" href="descpartition.html" />
       <index label=":partition (PUT)" href="createpartition.html" />

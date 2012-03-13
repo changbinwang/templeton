@@ -51,8 +51,29 @@
     </tr>
 
     <tr><td><strong>:partition</strong></td>
-        <td>The partition name</td>
+        <td>The partition name, col_name='value' list.  Be careful to properly
+            encode the quote for http, for example, country=%27algeria%27.</td>
         <td>Required</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>ifExists</strong></td>
+        <td>Hive returns an error if the partition specified does not exist,
+            unless ifExists is set to true.</td>
+        <td>Optional</td>
+        <td>false</td>
+    </tr>
+
+    <tr><td><strong>group</strong></td>
+        <td>The user group to use</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>permissions</strong></td>
+        <td>The permissions string to use.  The format is 
+          "<code>rwxrw-r-x</code>".</td>
+        <td>Optional</td>
         <td>None</td>
     </tr>
 

@@ -19,18 +19,18 @@
 
 <document>
   <header>
-    <title>PUT ddl/database/:db/table/:table/partition/:partition</title>
+    <title>PUT ddl/database/:db/table/:table</title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Create a partition in an HCatalog table.</p>
+    <p>Create a new HCatalog table.</p>
   </section>
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl/database/</code>:db<code>/table/</code>:table<code>/partition/</code>:partition</p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl/database/</code>:db<code>/table/</code>:table</p>
   </section>
 
   <section>
@@ -45,21 +45,63 @@
     </tr>
 
     <tr><td><strong>:table</strong></td>
-        <td>The table name</td>
+        <td>The new table name</td>
         <td>Required</td>
         <td>None</td>
     </tr>
 
-    <tr><td><strong>:partition</strong></td>
-        <td>The partition name, col_name='value' list.  Be careful to properly
-            encode the quote for http, for example, country=%27algeria%27.</td>
-        <td>Required</td>
+    <tr><td><strong>external</strong></td>
+        <td>Allows you to specify a location so that Hive does not use the default
+            location for this table.</td>
+        <td>Optional</td>
+        <td>false</td>
+    </tr>
+
+    <tr><td><strong>ifNotExists</strong></td>
+        <td>If true, you will not receive an error if the table already exists.</td>
+        <td>Optional</td>
+        <td>false</td>
+    </tr>
+
+    <tr><td><strong>comment</strong></td>
+        <td>Comment for the table</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>columns</strong></td>
+        <td>A list of column descriptions</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>partitionedBy</strong></td>
+        <td>A list of column descriptions</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>clusteredBy</strong></td>
+        <td>A list of columns, along with a sort order description and number of buckets</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>format</strong></td>
+        <td>Storage format description</td>
+        <td>Optional</td>
         <td>None</td>
     </tr>
 
     <tr><td><strong>location</strong></td>
-        <td>The location for partition creation</td>
-        <td>Required</td>
+        <td>The HDFS path</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>tableProperties</strong></td>
+        <td>A list of table properties and values (key/value pairs)</td>
+        <td>Optional</td>
         <td>None</td>
     </tr>
 
@@ -71,12 +113,8 @@
     <table>
     <tr><th>Name</th><th>Description</th></tr>   
 
-    <tr><td><strong>partition</strong></td>
-        <td>The partition name</td>
-    </tr>   
-
     <tr><td><strong>table</strong></td>
-        <td>The table name</td>
+        <td>The new table name</td>
     </tr>
 
     <tr><td><strong>database</strong></td>
@@ -91,14 +129,20 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X PUT -HContent-type:application/json -d '{"location": "loc_a"}' \
-       'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table/partition/country=%27algeria%27'
+% curl -X PUT -d '{ \
+ "comment": "Best table made today", \
+ "columns": [ \
+   { "name": "id", "type": "bigint" }, \
+   { "name": "price", "type": "float", "comment": "The unit price" } ], \
+ "partitionedBy": [ \
+   { "name": "country", "type": "string" } ], \
+ "format": { "storedAs": "rcfile" } }' \ 
+ 'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>
 <source>
 {
- "partition": "country='algeria'",
  "table": "test_table",
  "database": "default"
 }

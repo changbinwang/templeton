@@ -55,6 +55,20 @@
         <td>Required</td>
         <td>None</td>
     </tr>
+
+    <tr><td><strong>group</strong></td>
+        <td>The user group to use</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>permissions</strong></td>
+        <td>The permissions string to use.  The format is 
+          "<code>rwxrw-r-x</code>".</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
     </table>
   </section>
 

@@ -19,18 +19,18 @@
 
 <document>
   <header>
-    <title>PUT ddl/database/:db/table/:table/partition/:partition</title>
+    <title>PUT ddl/database/:db/table/:existingtable/like/:newtable</title>
   </header>
 
   <body>
   <section>
    <title>Description</title>
-    <p>Create a partition in an HCatalog table.</p>
+    <p>Create a new HCatalog table like an existing one</p>
   </section>
 
   <section>
    <title>URL</title>
-    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl/database/</code>:db<code>/table/</code>:table<code>/partition/</code>:partition</p>
+    <p><code>http://</code>www.myserver.com<code>/templeton/v1/ddl/database/</code>:db<code>/table/</code>:existingtable<code>/like/</code>:newtable</p>
   </section>
 
   <section>
@@ -44,22 +44,34 @@
         <td>None</td>
     </tr>
 
-    <tr><td><strong>:table</strong></td>
-        <td>The table name</td>
+    <tr><td><strong>:existingtable</strong></td>
+        <td>The existing table name</td>
         <td>Required</td>
         <td>None</td>
     </tr>
 
-    <tr><td><strong>:partition</strong></td>
-        <td>The partition name, col_name='value' list.  Be careful to properly
-            encode the quote for http, for example, country=%27algeria%27.</td>
+    <tr><td><strong>:newtable</strong></td>
+        <td>The new table name.</td>
         <td>Required</td>
         <td>None</td>
+    </tr>
+
+    <tr><td><strong>external</strong></td>
+        <td>Allows you to specify a location so that Hive does not use the default
+            location for this table.</td>
+        <td>Optional</td>
+        <td>false</td>
+    </tr>
+
+    <tr><td><strong>ifNotExists</strong></td>
+        <td>If true, you will not receive an error if the table already exists.</td>
+        <td>Optional</td>
+        <td>false</td>
     </tr>
 
     <tr><td><strong>location</strong></td>
-        <td>The location for partition creation</td>
-        <td>Required</td>
+        <td>The HDFS path</td>
+        <td>Optional</td>
         <td>None</td>
     </tr>
 
@@ -71,12 +83,8 @@
     <table>
     <tr><th>Name</th><th>Description</th></tr>   
 
-    <tr><td><strong>partition</strong></td>
-        <td>The partition name</td>
-    </tr>   
-
     <tr><td><strong>table</strong></td>
-        <td>The table name</td>
+        <td>The new table name</td>
     </tr>
 
     <tr><td><strong>database</strong></td>
@@ -91,15 +99,14 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X PUT -HContent-type:application/json -d '{"location": "loc_a"}' \
-       'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table/partition/country=%27algeria%27'
+% curl -X PUT -d {} \
+ 'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table/like/test_table_2?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>
 <source>
 {
- "partition": "country='algeria'",
- "table": "test_table",
+ "table": "test_table_2",
  "database": "default"
 }
 </source>

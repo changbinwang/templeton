@@ -51,7 +51,8 @@
     </tr>
 
     <tr><td><strong>:partition</strong></td>
-        <td>The partition name</td>
+        <td>The partition name, col_name='value' list.  Be careful to properly
+            encode the quote for http, for example, country=%27algeria%27.</td>
         <td>Required</td>
         <td>None</td>
     </tr>
@@ -135,7 +136,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl "http://www.myserver.com/templeton/v1/ddl/database/default/table/my_table/partition/my_p='XYZ',my_q='ABC'"  
+% curl "http://www.myserver.com/templeton/v1/ddl/database/default/table/my_table/partition/my_p=%27XYZ%27,my_q=%27ABC%27"  
 </source>
 
    <p><strong>JSON Output</strong></p>
