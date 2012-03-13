@@ -17,21 +17,20 @@
  */
 package org.apache.hcatalog.templeton;
 
-import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * A description of the table properties to alter.
+ * A description of a table property.
  */
 @XmlRootElement
-public class TablePropertiesDesc extends GroupPermissionsDesc {
-    public String table;
-    public Map<String, String> tableProperties;
+public class TablePropertyDesc extends GroupPermissionsDesc {
+    public String name;
+    public String value;
 
-    public TablePropertiesDesc() {}
+    public TablePropertyDesc() {}
 
     public String toString() {
-        return String.format("TablePropertiesDesc(table=%s, properties=%s)",
-                             table, tableProperties);
+        return String.format("TablePropertyDesc(name=%s, value=%s)",
+                             name, value);
     }
 }

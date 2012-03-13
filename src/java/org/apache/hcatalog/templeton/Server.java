@@ -292,36 +292,34 @@ public class Server {
     }
 
     /**
-     * Alter properties on an hcat table. Should this be /properties
-     * instead?
+     * Describe a single property on an hcat table.
      */
-    @PUT
-    @Path("ddl/database/{db}/table/{table}/property")
+    @GET
+    @Path("ddl/database/{db}/table/{table}/property/{property}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response renameTable(@PathParam("db") String db,
-                                @PathParam("table") String table,
-                                TablePropertiesDesc desc)
+    public Response descOneTableProperty(@PathParam("db") String db,
+                                         @PathParam("table") String table,
+                                         @PathParam("property") String property)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
         verifyUser();
         verifyDdlParam(db, ":db");
         verifyDdlParam(table, ":table");
-        desc.table = table;
+        verifyDdlParam(property, ":property");
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
-        return d.alterTableProperties(getUser(), db, desc);
+        return d.descTableProperty(getUser(), db, table, property);
     }
 
     /**
-     * Show properties on an hcat table.  Should this be /properties
-       instead?
+     * List all the properties on an hcat table.
      */
     @GET
     @Path("ddl/database/{db}/table/{table}/property")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response renameTable(@PathParam("db") String db,
-                                @PathParam("table") String table)
+    public Response listTableProperties(@PathParam("db") String db,
+                                        @PathParam("table") String table)
         throws HcatException, NotAuthorizedException, BusyException,
         BadParam, ExecuteException, IOException
     {
@@ -331,6 +329,29 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.listTableProperties(getUser(), db, table);
+    }
+
+    /**
+     * Add a single property on an hcat table.
+     */
+    @PUT
+    @Path("ddl/database/{db}/table/{table}/property/{property}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addOneTableProperty(@PathParam("db") String db,
+                                        @PathParam("table") String table,
+                                        @PathParam("property") String property,
+                                        TablePropertyDesc desc)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+        verifyDdlParam(property, ":property");
+        desc.name = property;
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.addOneTableProperty(getUser(), db, table, desc);
     }
 
     /**

@@ -474,26 +474,31 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     /**
-     * Alter the table properties.
+     * Describe one table property.
      */
-    public Response alterTableProperties(String user, String db,
-                                         TablePropertiesDesc desc)
+    public Response descTableProperty(String user, String db,
+                                      String table, String property)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
-        String exec = String.format("use %s; alter table %s set tblproperties (%s);",
-                                    db, desc.table,
-                                    makePropertiesStatement(desc.tableProperties));
-        try {
-            String res = jsonRun(user, exec, desc.group, desc.permissions, true);
-            return JsonBuilder.create(res)
-                .put("database", db)
-                .put("table", desc.table)
-                .build();
-        } catch (HcatException e) {
-            throw new HcatException("unable to alter table properties: " + desc.table,
-                                    e.execBean, exec);
+        Response res = descTable(user, db, table, true);
+        if (res.getStatus() != JsonBuilder.OK)
+            return res;
+        Map props = tableProperties(res.getEntity());
+        Map found = null;
+        if (props != null) {
+            String value = (String) props.get(property);
+            if (value != null) {
+                found = new HashMap<String, String>();
+                found.put(property, value);
+            }
         }
+
+        return JsonBuilder.create()
+            .put("database", db)
+            .put("table", table)
+            .put("property", found)
+            .build();
     }
 
     /**
@@ -512,6 +517,30 @@ public class HcatDelegator extends LauncherDelegator {
             .put("table", table)
             .put("properties", props)
             .build();
+    }
+
+    /**
+     * Add one table property.
+     */
+    public Response addOneTableProperty(String user, String db, String table,
+                                        TablePropertyDesc desc)
+        throws HcatException, NotAuthorizedException, BusyException,
+        ExecuteException, IOException
+    {
+        String exec
+            = String.format("use %s; alter table %s set tblproperties ('%s'='%s');",
+                            db, table, desc.name, desc.value);
+        try {
+            String res = jsonRun(user, exec, desc.group, desc.permissions, true);
+            return JsonBuilder.create(res)
+                .put("database", db)
+                .put("table", table)
+                .put("property", desc.name)
+                .build();
+        } catch (HcatException e) {
+            throw new HcatException("unable to add table property: " + table,
+                                    e.execBean, exec);
+        }
     }
 
     private Map tableProperties(Object extendedTable) {
