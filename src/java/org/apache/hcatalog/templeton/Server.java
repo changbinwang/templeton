@@ -292,7 +292,8 @@ public class Server {
     }
 
     /**
-     * Alter properties on an hcat table.
+     * Alter properties on an hcat table. Should this be /properties
+     * instead?
      */
     @PUT
     @Path("ddl/database/{db}/table/{table}/property")
@@ -313,7 +314,8 @@ public class Server {
     }
 
     /**
-     * Show properties on an hcat table.
+     * Show properties on an hcat table.  Should this be /properties
+       instead?
      */
     @GET
     @Path("ddl/database/{db}/table/{table}/property")
