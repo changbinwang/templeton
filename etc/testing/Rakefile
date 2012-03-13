@@ -203,6 +203,22 @@ EOM
     curl("ddl/database/default/table/test_table?user.name=#{USERNAME}&format=extended")
   end
 
+  desc "Add table properties"
+  task :add_table_props do
+    data = <<EOM
+{
+  "tableProperties": {
+    "fruit": "apple",
+    "color": "blue"
+  }
+}
+EOM
+    curl("ddl/database/default/table/test_table/properties?user.name=#{USERNAME}",
+         "-X", "PUT",
+         "-H" "Content-type:application/json",
+         "-d", data)
+  end
+
   desc "Rename the test table"
   task :rename_table do
     curl("ddl/database/default/table/test_table",
@@ -275,8 +291,6 @@ EOM
          "-X", "PUT",
          "-H" "Content-type:application/json",
          "-d", data)
-
-
   end
 
   desc "Drop a partition"

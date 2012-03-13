@@ -319,6 +319,9 @@ public class HcatDelegator extends LauncherDelegator {
             exec += " " + makeStorageFormat(desc.format);
         if (TempletonUtils.isset(desc.location))
             exec += String.format(" location '%s'", desc.location);
+        if (TempletonUtils.isset(desc.tableProperties))
+            exec += String.format(" tblproperties (%s)",
+                                  makePropertiesStatement(desc.tableProperties));
         exec += ";";
 
         return exec;
@@ -426,8 +429,8 @@ public class HcatDelegator extends LauncherDelegator {
      * Drop a table.
      */
     public Response dropTable(String user, String db,
-                            String table, boolean ifExists,
-                            String group, String permissions)
+                              String table, boolean ifExists,
+                              String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -448,11 +451,11 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     /**
-     * Drop a table.
+     * Rename a table.
      */
     public Response renameTable(String user, String db,
-                              String oldTable, String newTable,
-                              String group, String permissions)
+                                String oldTable, String newTable,
+                                String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -466,6 +469,29 @@ public class HcatDelegator extends LauncherDelegator {
                 .build();
         } catch (HcatException e) {
             throw new HcatException("unable to rename table: " + oldTable,
+                                    e.execBean, exec);
+        }
+    }
+
+    /**
+     * Alter the table properties.
+     */
+    public Response alterTableProperties(String user, String db,
+                                         TablePropertiesDesc desc)
+        throws HcatException, NotAuthorizedException, BusyException,
+        ExecuteException, IOException
+    {
+        String exec = String.format("use %s; alter table %s set tblproperties (%s);",
+                                    db, desc.table,
+                                    makePropertiesStatement(desc.tableProperties));
+        try {
+            String res = jsonRun(user, exec, desc.group, desc.permissions, true);
+            return JsonBuilder.create(res)
+                .put("database", db)
+                .put("table", desc.table)
+                .build();
+        } catch (HcatException e) {
+            throw new HcatException("unable to alter table properties: " + desc.table,
                                     e.execBean, exec);
         }
     }
@@ -495,7 +521,7 @@ public class HcatDelegator extends LauncherDelegator {
      * Return a json description of one partition.
      */
     public Response descOnePartition(String user, String db, String table,
-                                   String partition)
+                                     String partition)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -550,8 +576,8 @@ public class HcatDelegator extends LauncherDelegator {
      * Drop a partition.
      */
     public Response dropPartition(String user, String db,
-                                String table, String partition, boolean ifExists,
-                                String group, String permissions)
+                                  String table, String partition, boolean ifExists,
+                                  String group, String permissions)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {
@@ -631,7 +657,7 @@ public class HcatDelegator extends LauncherDelegator {
      * Add one column.
      */
     public Response addOneColumn(String user, String db, String table,
-                               ColumnDesc desc)
+                                 ColumnDesc desc)
         throws HcatException, NotAuthorizedException, BusyException,
         ExecuteException, IOException
     {

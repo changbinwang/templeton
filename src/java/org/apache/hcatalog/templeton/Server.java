@@ -217,7 +217,6 @@ public class Server {
         desc.existingTable = existingTable;
         desc.newTable = newTable;
 
-
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.createTableLike(getUser(), db, desc);
     }
@@ -290,6 +289,27 @@ public class Server {
 
         HcatDelegator d = new HcatDelegator(appConf, execService);
         return d.renameTable(getUser(), db, oldTable, newTable, group, permissions);
+    }
+
+    /**
+     * Alter properties on an hcat table.
+     */
+    @PUT
+    @Path("ddl/database/{db}/table/{table}/properties")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response renameTable(@PathParam("db") String db,
+                                @PathParam("table") String table,
+                                TablePropertiesDesc desc)
+        throws HcatException, NotAuthorizedException, BusyException,
+        BadParam, ExecuteException, IOException
+    {
+        verifyUser();
+        verifyDdlParam(db, ":db");
+        verifyDdlParam(table, ":table");
+        desc.table = table;
+
+        HcatDelegator d = new HcatDelegator(appConf, execService);
+        return d.alterTableProperties(getUser(), db, desc);
     }
 
     /**
