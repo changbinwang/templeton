@@ -44,10 +44,30 @@
         <td>None</td>
     </tr>
 
-    <tr><td><strong>param</strong></td>
+    <tr><td><strong>ifExists</strong></td>
+        <td>Hive returns an error if the database specified does not exist,
+            unless ifExists is set to true.</td>
+        <td>Optional</td>
+        <td>false</td>
+    </tr>
+
+    <tr><td><strong>option</strong></td>
         <td>Parameter set to either "restrict" or "cascade".  Restrict will remove the
             schema if all the tables are empty.  Cascade removes everything including
             data and definitions.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>group</strong></td>
+        <td>The user group to use</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>permissions</strong></td>
+        <td>The permissions string to use.  The format is 
+          "<code>rwxrw-r-x</code>".</td>
         <td>Optional</td>
         <td>None</td>
     </tr>
@@ -72,7 +92,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X DELETE "http://www.myserver.com/templeton/v1/ddl/database/newdb?param=cascade"
+% curl -X DELETE "http://www.myserver.com/templeton/v1/ddl/database/newdb?option=cascade"
 </source>
 
    <p><strong>JSON Output</strong></p>
