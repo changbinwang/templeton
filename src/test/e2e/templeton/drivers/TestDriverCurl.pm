@@ -534,8 +534,8 @@ sub compare
         if (!Compare($json_field_val, $regex_expected_obj)) {
           print $log "$0::$subName INFO check failed:" 
             . " json compare failed. For field "
-              . "$key, regex <" . $regex_expected_obj 
-                . "> did not match the result <" . $json_field_val
+              . "$key, regex <" . dump($regex_expected_obj)
+                . "> did not match the result <" . dump($json_field_val)
                   . ">\n";
           $result = 0;
         }
