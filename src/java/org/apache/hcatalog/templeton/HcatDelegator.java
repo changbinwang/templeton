@@ -77,20 +77,15 @@ public class HcatDelegator extends LauncherDelegator {
         ExecuteException, IOException
     {
         String exec = "desc database " + db + "; ";
-        if (extended) {
+        if (extended)
             exec = "desc database extended " + db + "; ";
-        }
-        String res = jsonRun(user, exec);
-        JsonBuilder builder = JsonBuilder.create(res);
-        boolean isset = builder.isset();
-        builder.put("database", db);
 
-        if (isset)
-            return builder.build();
-        else {
-            return builder
-                .put("error", "No database found")
-                .buildResponse(JsonBuilder.MISSING);
+        try {
+            String res = jsonRun(user, exec);
+            return JsonBuilder.create(res).build();
+        } catch (HcatException e) {
+            throw new HcatException("unable to describe database: " + db,
+                                    e.execBean, exec);
         }
     }
 
