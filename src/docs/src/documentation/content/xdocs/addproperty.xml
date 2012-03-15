@@ -77,6 +77,10 @@
         <td>The table name</td>
     </tr>
 
+    <tr><td><strong>property</strong></td>
+        <td>The property name</td>
+    </tr>
+
     </table>
  </section> 
 
@@ -92,6 +96,7 @@
    <p><strong>JSON Output</strong></p>
 <source>
 {
+ "property": "fruit",
  "table": "test_table",
  "database": "default"
 }
