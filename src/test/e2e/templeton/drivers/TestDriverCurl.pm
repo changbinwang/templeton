@@ -543,9 +543,22 @@ sub compare
 
 
     }
+    
+    #kill it if there is a request to kill
+    if($testCmd->{'kill_job_timeout'}){
+      sleep $testCmd->{'kill_job_timeout'};
+      my $jobid = $json_hash->{'id'};
+      if (!defined $jobid) {
+        print $log "$0::$subName INFO check failed: " 
+          . "no jobid (id field)found in result";
+        $result = 0;
+      } else {
+        $self->killJob($testCmd, $jobid, $log);
+      }
+    }
 
 
-    #try to get the call back url request
+    #try to get the call back url request until timeout
     if ($result == 1 && defined $testCmd->{'check_call_back'}) {
       my $d = $testCmd->{'http_daemon'};
       $d->timeout(300);         #wait for 5 mins
@@ -635,7 +648,10 @@ sub getRunStateNum{
     return 2;
   } elsif (lc($job_complete_state) eq 'failure') {
     return 3;
+  } elsif (lc($job_complete_state) eq 'killed') {
+    return 5;
   }
+
 }
 
 
@@ -645,6 +661,16 @@ sub getJobResult{
   my $testCmdBasics = $self->copyTestBasicConfig($testCmd);
   $testCmdBasics->{'method'} = 'GET';
   $testCmdBasics->{'num'} = $testCmdBasics->{'num'} . "_jobStatusCheck";
+  $testCmdBasics->{'url'} = ':TEMPLETON_URL:/templeton/v1/queue/' 
+    . $jobid . '?' . "user.name=:UNAME:" ;
+  return $self->execCurlCmd($testCmdBasics, $log);
+}
+###############################################################################
+sub killJob{
+  my ($self, $testCmd, $jobid, $log) = @_;
+  my $testCmdBasics = $self->copyTestBasicConfig($testCmd);
+  $testCmdBasics->{'method'} = 'DELETE';
+  $testCmdBasics->{'num'} = $testCmdBasics->{'num'} . "_killJob";
   $testCmdBasics->{'url'} = ':TEMPLETON_URL:/templeton/v1/queue/' 
     . $jobid . '?' . "user.name=:UNAME:" ;
   return $self->execCurlCmd($testCmdBasics, $log);
