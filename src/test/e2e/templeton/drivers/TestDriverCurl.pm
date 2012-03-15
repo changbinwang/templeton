@@ -516,7 +516,7 @@ sub compare
         my $regex_expected_value = $json_matches->{$key};
         print $log "Comparing $key: $json_field_val with regex /$regex_expected_value/\n";
 
-        if ($json_field_val !~ /$regex_expected_value/) {
+        if ($json_field_val !~ /$regex_expected_value/s) {
           print $log "$0::$subName INFO check failed:" 
             . " json pattern check failed. For field "
               . "$key, regex <" . $regex_expected_value 
