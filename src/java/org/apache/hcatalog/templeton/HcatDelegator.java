@@ -326,7 +326,7 @@ public class HcatDelegator extends LauncherDelegator {
     private String makeClusteredBy(TableDesc.ClusteredByDesc desc) {
         String res = String.format("(%s)", StringUtils.join(desc.columnNames, ", "));
         if (TempletonUtils.isset(desc.sortedBy))
-            res += String.format(" sorted by %s", makeClusterSortList(desc.sortedBy));
+            res += String.format(" sorted by (%s)", makeClusterSortList(desc.sortedBy));
         res += String.format(" into %s buckets", desc.numberOfBuckets);
 
         return res;
