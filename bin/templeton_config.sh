@@ -42,10 +42,10 @@ SLEEP_TIME_AFTER_START=10
 #================================================
 
 #These parameters can be overriden by templeton-env.sh
-# the root of the TEMPLETON installation                                                                                                                                                                                                                                                                    
+# the root of the TEMPLETON installation
 export TEMPLETON_PREFIX=`dirname "$this"`/..
 
-#check to see if the conf dir is given as an optional argument                                                                                                                                                                                                                                             
+#check to see if the conf dir is given as an optional argument
 if [ $# -gt 1 ]
 then
     if [ "--config" = "$1" ]
@@ -57,7 +57,7 @@ then
     fi
 fi
 
-# Allow alternate conf dir location.                                                                                                                                                                                                                                                                       
+# Allow alternate conf dir location.
 if [ -e "${TEMPLETON_PREFIX}/conf/templeton-env.sh" ]; then
   DEFAULT_CONF_DIR=${TEMPLETON_PREFIX}/"conf"
 else
@@ -65,23 +65,23 @@ else
 fi
 TEMPLETON_CONF_DIR="${TEMPLETON_CONF_DIR:-$DEFAULT_CONF_DIR}"
 
-#users can add various env vars to templeton-env.sh in the conf                                                                                                                                                                                                                                                 
-#rather than having to export them before running the command                                                                                                                                                                                                                                              
+#users can add various env vars to templeton-env.sh in the conf
+#rather than having to export them before running the command
 if [ -f "${TEMPLETON_CONF_DIR}/templeton-env.sh" ]; then
   . "${TEMPLETON_CONF_DIR}/templeton-env.sh"
 fi
 
 #====================================
-#determine where hadoop is           
+#determine where hadoop is
 #====================================
-                                                                                                                                                                                                                                                                      
-#check HADOOP_HOME and then check HADOOP_PREFIX                                                                                                                                                                                                                                                            
+
+#check HADOOP_HOME and then check HADOOP_PREFIX
 if [ -f ${HADOOP_HOME}/bin/hadoop ]; then
   HADOOP_PREFIX=$HADOOP_HOME
-#if this is an rpm install check for /usr/bin/hadoop                                                                                                                                                                                                                                                       
+#if this is an rpm install check for /usr/bin/hadoop
 elif [ -f ${TEMPLETON_PREFIX}/bin/hadoop ]; then
   HADOOP_PREFIX=$TEMPLETON_PREFIX
-#otherwise see if HADOOP_PREFIX is defined                                                                                                                                                                                                                                                                 
+#otherwise see if HADOOP_PREFIX is defined
 elif [ ! -f ${HADOOP_PREFIX}/bin/hadoop ]; then
   echo "Hadoop not found."
   exit 1
