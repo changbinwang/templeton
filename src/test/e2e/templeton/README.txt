@@ -54,3 +54,30 @@ ant test -Dinpdir.hdfs=<location of inpdir on hdfs>  -Dtest.user.name=<user the 
 If you want to run specific test group you can specify the group, for example:  -Dtests.to.run='-t TestHive'
 
 If you want to run specific test in a group group you can specify the test, for example:  -Dtests.to.run='-t TestHive_1'
+
+Notes
+-----
+You may also need to install:
+
+Number::Compare
+Text::Glob
+Data::Compare
+File::Find::Rule
+
+Enable webhdfs by adding the following to your hadoop hdfs-site.xml :
+
+<property>
+  <name>dfs.webhdfs.enabled</name>
+  <value>true</value>
+</property>
+<property>
+  <name>dfs.http.address</name>
+  <value>127.0.0.1:8085</value>
+  <final>true</final>
+</property>
+
+You can build a server that will measure test coverage by using templeton:
+ant clean; ant e2e
+This assumes you've got webhdfs at the address above, the inpdir info in /user/templeton, and templeton running on the default port.  You can change any of those properties in the build file.
+
+It's best to set HADOOP_HOME_WARN_SUPPRESS=true everywhere you can.

@@ -51,6 +51,10 @@
   <property name="webapp.dir" value="${basedir}/src/webapp"/>
   <property name="build.webapp" value="${build.dir}/webapp"/>
   <property name="build.instrumented" value="${build.dir}/instrumented" />
+  <property name="e2e.src" value="${basedir}/src/test/e2e/templeton" />
+  <property name="inpdir" value="/user/templeton" />
+  <property name="webhdfs.url" value="http://127.0.0.1:8085" />
+  <property name="templeton.url" value="http://localhost:50111" />
   <condition property="forrest.home" value="${env.FORREST_HOME}">
       <isset property="env.FORREST_HOME"/>
   </condition>
@@ -251,6 +255,36 @@
     <jar jarfile="${build.dir}/${ant.project.name}/${templeton.jar}">
       <fileset dir="${build.classes}" />
     </jar>
+  </target>
+
+  <!-- Run end-to-end tests -->
+  <target name="e2e" depends="compile,test">
+    <copy todir="${build.classes}/">
+      <fileset dir="${build.instrumented}" />
+    </copy>
+    <mkdir dir="${build.classes}/lib"/>
+    <copy todir="${build.classes}/lib/">
+      <fileset dir="${build.ivy.lib.dir}/templeton/">
+        <include name="cober*.jar"/>
+      </fileset>
+    </copy>
+    <jar jarfile="${build.dir}/${ant.project.name}/${templeton.jar}">
+      <fileset dir="${build.classes}" />
+    </jar>
+    <exec executable="${basedir}/bin/templeton_server.sh">
+      <arg value="stop"/>
+    </exec>
+    <exec executable="${basedir}/bin/templeton_server.sh">
+      <arg value="start"/>
+    </exec>
+    <ant antfile="${e2e.src}/build.xml" 
+      dir="${e2e.src}" target="test">
+      <property name="inpdir.hdfs" value="${inpdir}"/>
+      <property name="test.user.name" value="${env.USER}"/>
+      <property name="harness.webhdfs.url" value="${webhdfs.url}"/>
+      <property name="harness.templeton.url" value="${templeton.url}"/>
+    </ant>
+    <cobertura-report srcdir="${src.dir}" destdir="${build.coverage.dir}"/>
   </target>
 
   <!--
