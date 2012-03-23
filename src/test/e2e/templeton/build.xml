@@ -44,7 +44,7 @@
 
   <target name="test" depends="property-check, init-test" >
     <property name="tests.to.run" value=""/>
-    <exec executable="${harness.dir}/test_harness.pl" dir="${test.location}" failonerror="true">
+    <exec executable="${harness.dir}/test_harness.pl" dir="${test.location}" failonerror="false">
       <env key="HARNESS_ROOT" value="${harness.dir}"/>
       <env key="DRIVER_ROOT" value="${basedir}/drivers"/>
       <env key="TH_WORKING_DIR" value="${test.location}"/>

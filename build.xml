@@ -257,6 +257,12 @@
     </jar>
   </target>
 
+  <!--
+    ============================================================================
+====    Test Section
+    ================================================================================
+  -->
+
   <!-- Run end-to-end tests -->
   <target name="e2e" depends="compile,test">
     <copy todir="${build.classes}/">
@@ -287,11 +293,6 @@
     <cobertura-report srcdir="${src.dir}" destdir="${build.coverage.dir}"/>
   </target>
 
-  <!--
-    ================================================================================
-    Test Section
-    ================================================================================
-  -->
   <!-- Build Templeton test files -->
 
   <path id="cobertura.classpath">
