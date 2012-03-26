@@ -368,7 +368,7 @@ public class HcatDelegator extends LauncherDelegator {
             + makeTermBy(desc.linesTerminatedBy, "lines");
 
         if (TempletonUtils.isset(res))
-            return "delimited" + res;
+            return "row format delimited" + res;
         else if (desc.serde != null)
             return makeSerdeFormat(desc.serde);
         else
@@ -385,7 +385,7 @@ public class HcatDelegator extends LauncherDelegator {
 
     // Format the serde statement
     private String makeSerdeFormat(TableDesc.SerdeDesc desc) {
-        String res = "serde " + desc.name;
+        String res = "row format serde " + desc.name;
         if (TempletonUtils.isset(desc.properties))
             res += String.format(" with serdeproperties (%s)",
                                  makePropertiesStatement(desc.properties));
