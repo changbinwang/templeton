@@ -27,4 +27,30 @@ public abstract class GroupPermissionsDesc {
     public String permissions;
 
     public GroupPermissionsDesc() {}
+
+    protected static boolean xequals(Object a, Object b) {
+        if (a == null) {
+            if (b == null)
+                return true;
+            else
+                return false;
+        }
+
+        return a.equals(b);
+    }
+
+    protected static boolean xequals(boolean a, boolean b) { return a == b; }
+    protected static boolean xequals(int a, int b)         { return a == b; }
+    protected static boolean xequals(char a, char b)       { return a == b; }
+
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (! (o instanceof GroupPermissionsDesc))
+            return false;
+        GroupPermissionsDesc that = (GroupPermissionsDesc) o;
+        return xequals(this.group,       that.group)
+            && xequals(this.permissions, that.permissions)
+            ;
+    }
 }

@@ -43,4 +43,17 @@ public class ColumnDesc extends GroupPermissionsDesc {
         return String.format("ColumnDesc(name=%s, type=%s, comment=%s)",
                              name, type, comment);
     }
+
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (! (o instanceof ColumnDesc))
+            return false;
+        ColumnDesc that = (ColumnDesc) o;
+        return xequals(this.name,       that.name)
+            && xequals(this.type,       that.type)
+            && xequals(this.comment,    that.comment)
+            && super.equals(that)
+            ;
+    }
 }
