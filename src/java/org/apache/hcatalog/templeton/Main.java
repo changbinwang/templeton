@@ -36,20 +36,12 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-
-
 /**
  * The main executable that starts up and runs the Server.
  */
 public class Main {
     public static final String SERVLET_PATH = "templeton";
     private static final Log LOG = LogFactory.getLog(Main.class);
-
-    /**
-     * More threads than we can handle, but an upper limit so the
-     * server won't crash.
-     */
-    public static final int MAX_THREADS = 1024;
 
     public static final int DEFAULT_PORT = 8080;
 
@@ -84,7 +76,6 @@ public class Main {
 
         SLF4JBridgeHandler.install();
     }
-
 
     public AppConfig loadConfig(String[] args) {
         AppConfig cf = new AppConfig();
