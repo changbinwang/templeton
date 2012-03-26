@@ -213,7 +213,16 @@ EOM
     "numberOfBuckets": 10
   },
   "format": {
-    "storedAs": "rcfile"
+    "storedAs": "rcfile",
+    "rowFormat": {
+      "fieldsTerminatedBy": "\\u0001",
+      "serde": {
+        "name": "org.apache.hadoop.hive.serde2.columnar.ColumnarSerDe",
+        "properties": {
+          "key": "value"
+        }
+      }
+    }
   }
 }
 EOM
