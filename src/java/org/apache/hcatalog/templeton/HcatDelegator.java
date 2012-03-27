@@ -18,6 +18,7 @@
 package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,9 @@ import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
@@ -265,11 +269,25 @@ public class HcatDelegator extends LauncherDelegator {
                                     db, table);
         try {
             String res = jsonRun(user, exec);
-            return JsonBuilder.create(singleTable(res))
+            
+            JsonBuilder jb = JsonBuilder.create(singleTable(res))
                 .remove("tableName")
                 .put("database", db)
-                .put("table", table)
-                .build();
+                .put("table", table);
+                
+            // If we can get them from HDFS, add group and permission
+            String loc = (String) jb.getMap().get("location");
+            if (loc != null && loc.startsWith("hdfs://")) {
+                try {
+                    FileSystem fs = FileSystem.get(appConf);
+                    FileStatus status = fs.getFileStatus(new Path(new URI(loc)));
+                    jb.put("group", status.getGroup());
+                    jb.put("permission", status.getPermission().toString());
+                } catch (Exception e) {
+                    LOG.warn(e.getMessage() + " Couldn't get permissions for " + loc);
+                }
+            }
+            return jb.build();
         } catch (HcatException e) {
             throw new HcatException("unable to show table: " + table, e.execBean, exec);
         }
