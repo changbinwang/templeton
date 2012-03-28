@@ -64,7 +64,7 @@ public class HcatDelegator extends LauncherDelegator {
         }
         if (format) {
             args.add("-D");
-            args.add("hive.format=json");
+            args.add("hive.ddl.output.format=json");
         }
 
         // Setup the hadoop vars to specify the user.
