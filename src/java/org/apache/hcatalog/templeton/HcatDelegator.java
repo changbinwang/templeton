@@ -65,6 +65,10 @@ public class HcatDelegator extends LauncherDelegator {
         if (format) {
             args.add("-D");
             args.add("hive.ddl.output.format=json");
+            // Use both args to ease development.  Delete this one on
+            // May 1.
+            args.add("-D");
+            args.add("hive.format=json");
         }
 
         // Setup the hadoop vars to specify the user.
@@ -269,12 +273,12 @@ public class HcatDelegator extends LauncherDelegator {
                                     db, table);
         try {
             String res = jsonRun(user, exec);
-            
+
             JsonBuilder jb = JsonBuilder.create(singleTable(res))
                 .remove("tableName")
                 .put("database", db)
                 .put("table", table);
-                
+
             // If we can get them from HDFS, add group and permission
             String loc = (String) jb.getMap().get("location");
             if (loc != null && loc.startsWith("hdfs://")) {
