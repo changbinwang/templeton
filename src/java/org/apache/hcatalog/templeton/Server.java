@@ -66,7 +66,7 @@ public class Server {
     /**
      * The list of supported return formats.  Always json.
      */
-    public static final List<String> SUPPORTED_FORMATS = createFormats();
+    public static final Map<String, Object> SUPPORTED_FORMATS = createFormats();
 
     // Build the status message for the /status call.
     private static Map<String, String> createStatusMsg() {
@@ -90,10 +90,13 @@ public class Server {
     }
 
     // Build the supported formats list
-    private static List<String> createFormats() {
-        ArrayList<String> res = new ArrayList<String>();
-        res.add(MediaType.APPLICATION_JSON);
-        return Collections.unmodifiableList(res);
+    private static Map<String, Object> createFormats() {
+        ArrayList<String> formats = new ArrayList<String>();
+        formats.add(MediaType.APPLICATION_JSON);
+        HashMap<String, Object> res = new HashMap<String, Object>();
+        res.put("responseTypes", formats);
+        
+        return Collections.unmodifiableMap(res);
     }
 
     protected static ExecService execService = ExecServiceImpl.getInstance();
@@ -122,7 +125,7 @@ public class Server {
      */
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public List<String> requestFormats() {
+    public Map<String, Object> requestFormats() {
         return SUPPORTED_FORMATS;
     }
 
