@@ -92,6 +92,12 @@ public class HcatDelegator extends LauncherDelegator {
             String res = jsonRun(user, exec);
             return JsonBuilder.create(res).build();
         } catch (HcatException e) {
+            if (e.execBean.stderr.indexOf("Error in semantic analysis") > -1) {
+                return JsonBuilder.create().
+                        put("error", "Database " + db + " does not exist")
+                        .put("errorCode", "404")
+                        .put("database", db).build();
+            }
             throw new HcatException("unable to describe database: " + db,
                                     e.execBean, exec);
         }
