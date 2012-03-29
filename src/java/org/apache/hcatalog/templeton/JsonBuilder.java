@@ -111,9 +111,14 @@ public class JsonBuilder {
         if (map.containsKey("error"))
             status = SERVER_ERROR; // Generic http server error.
         Object o = map.get("errorCode");
-        if (o != null && (o instanceof Number))
-            status = ((Number) o).intValue();
-
+        if (o != null) {
+            try {
+                status = Integer.parseInt(o.toString());
+            } catch (Exception e) {
+                if (o instanceof Number)
+                    status = ((Number) o).intValue();
+            }
+        }
         return buildResponse(status);
     }
 
