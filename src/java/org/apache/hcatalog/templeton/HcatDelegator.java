@@ -642,6 +642,14 @@ public class HcatDelegator extends LauncherDelegator {
         exec += ";";
         try {
             String res = jsonRun(user, exec, desc.group, desc.permissions, true);
+            if (res.indexOf("AlreadyExistsException") > -1) {
+                return JsonBuilder.create().
+                        put("error", "Partition already exists")
+                        .put("errorCode", "409")
+                        .put("database", db)
+                        .put("table", table)
+                        .put("partition", desc.partition).build();
+            }
             return JsonBuilder.create(res)
                 .put("database", db)
                 .put("table", table)
