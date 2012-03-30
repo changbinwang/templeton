@@ -299,7 +299,7 @@ sub replaceParametersInArg
 
 sub getBaseCurlCmd(){
   my ($self) = @_; 
-  my @curl_cmd = ("curl", '--silent','--show-error');
+  my @curl_cmd = ("curl", '--silent','--show-error', '-H','Expect:');
   if (defined $ENV{'SOCKS_PROXY'}) {
     push @curl_cmd, ('--socks5-hostname', $ENV{'SOCKS_PROXY'});
   }
