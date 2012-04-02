@@ -27,7 +27,7 @@
      that are not normally connected, the configuration is more complex than might be
      desirable.</p>  
 
-  <p>The Templeton specific configuration is split into three layers:</p>
+  <p>The Templeton specific configuration is split into two layers:</p>
 
   <ol>
    <li><strong>templeton-default.xml</strong> - All the configuration variables 
@@ -36,9 +36,6 @@
     change it to maintain local installation settings. Because templeton-default.xml
     is present in the Templeton war file, editing a local copy of it will not change the
     configuration.</li>
-
-   <li><strong>templeton-dist.xml</strong> - The (possibly empty) configuration 
-    file that can set variables for a particular distribution, such as an RPM file.</li>
 
    <li><strong>templeton-site.xml</strong> - The (possibly empty) configuration 
     file in which the system administrator can set variables for their Hadoop cluster.
@@ -49,8 +46,8 @@
   <p>The configuration files are loaded in this order with later files overriding 
      earlier ones.</p>
 
-  <p><strong>Note:</strong> the Templeton server will require restart after any change to the 
-     configuration.</p>
+  <p><strong>Note:</strong> the Templeton server will require restart
+     after any change to the configuration.</p>
 
   <p>To find the configuration files, Templeton first attempts to load a file from the 
      <code>CLASSPATH</code> and then looks in the directory specified in the 
@@ -254,6 +251,30 @@ hive.metastore.sasl.enabled=false</code></td>
     <td><strong>templeton.zookeeper.cleanup.maxage</strong></td>
     <td><code>604800000</code></td>
     <td>The maximum age of a templeton job</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.kerberos.secret</strong></td>
+    <td>A random value</td>
+    <td>The secret used to sign the HTTP cookie value. The default
+        value is a random value. Unless multiple Templeton instances
+        need to share the secret the random value is adequate.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.kerberos.principal</strong></td>
+    <td>None</td>
+    <td>The Kerberos principal to used by the server. As stated by the
+        Kerberos SPNEGO specification, it should be
+        <code>HTTP/${HOSTNAME}@{REALM}</code>. It does not have a
+        default value.</td>
+  </tr>
+
+  <tr>
+    <td><strong>templeton.kerberos.keytab</strong></td>
+    <td>None</td>
+    <td>The keytab file containing the credentials for the Kerberos
+        principal.</td>
   </tr>
 
   </table>

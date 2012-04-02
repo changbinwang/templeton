@@ -33,6 +33,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
+
 /**
  * Run hcat on the local server using the ExecService.  This is
  * the backend of the ddl web service.
@@ -51,6 +52,27 @@ public class HcatDelegator extends LauncherDelegator {
                         String group, String permissions)
         throws NotAuthorizedException, BusyException, ExecuteException, IOException
     {
+        SecureProxySupport proxy = new SecureProxySupport();
+        try {
+            List<String> args = makeArgs(exec, format, group, permissions);
+            proxy.open(user, appConf);
+
+            // Setup the hadoop vars to specify the user.
+            String cp = makeOverrideClasspath(appConf);
+            Map<String, String> env = TempletonUtils.hadoopUserEnv(user, cp);
+            proxy.addEnv(env);
+            proxy.addArgs(args);
+            return execService.run(appConf.clusterHcat(), args, env);
+        } catch (InterruptedException e) {
+            throw new IOException(e);
+        } finally {
+            if (proxy != null)
+                proxy.close();
+        }
+    }
+
+    private List<String> makeArgs(String exec, boolean format, 
+                                  String group, String permissions) {
         ArrayList<String> args = new ArrayList<String>();
         args.add("-e");
         args.add(exec);
@@ -71,10 +93,7 @@ public class HcatDelegator extends LauncherDelegator {
             args.add("hive.format=json");
         }
 
-        // Setup the hadoop vars to specify the user.
-        String cp = makeOverrideClasspath(appConf);
-        Map<String, String> env = TempletonUtils.hadoopUserEnv(user, cp);
-        return execService.run(appConf.clusterHcat(), args, env);
+        return args;
     }
 
     /**

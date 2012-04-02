@@ -94,6 +94,9 @@ public class AppConfig extends Configuration {
     public static final String TEMPLETON_JAR_NAME  = "templeton.jar";
     public static final String OVERRIDE_JARS_NAME  = "templeton.override.jars";
     public static final String OVERRIDE_JARS_ENABLED = "templeton.override.enabled";
+    public static final String KERBEROS_SECRET     = "templeton.kerberos.secret";
+    public static final String KERBEROS_PRINCIPAL  = "templeton.kerberos.principal";
+    public static final String KERBEROS_KEYTAB     = "templeton.kerberos.keytab";
 
     public static final String CALLBACK_INTERVAL_NAME
         = "templeton.callback.retry.interval";
@@ -170,6 +173,9 @@ public class AppConfig extends Configuration {
     public String hivePath()         { return get(HIVE_PATH_NAME); }
     public String hiveArchive()      { return get(HIVE_ARCHIVE_NAME); }
     public String streamingJar()     { return get(STREAMING_JAR_NAME); }
+    public String kerberosSecret()   { return get(KERBEROS_SECRET); }
+    public String kerberosPrincipal(){ return get(KERBEROS_PRINCIPAL); }
+    public String kerberosKeytab()   { return get(KERBEROS_KEYTAB); }
 
     public String[] overrideJars() {
         if (getBoolean(OVERRIDE_JARS_ENABLED, true))
