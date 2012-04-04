@@ -64,6 +64,17 @@ public class JsonBuilder {
     }
 
     /**
+     * Create a new map error object.
+     */
+    public static JsonBuilder createError(String msg, int code)
+        throws IOException
+    {
+        return new JsonBuilder(null)
+            .put("error", msg)
+            .put("errorCode", code);
+    }
+
+    /**
      * Add a non-null value to the map.
      */
     public JsonBuilder put(String name, Object val) {
@@ -137,6 +148,14 @@ public class JsonBuilder {
      */
     public boolean isset() {
         return TempletonUtils.isset(map);
+    }
+
+    /**
+     * Check if this is an error doc.
+     */
+    public static boolean isError(Map obj)
+    {
+        return (obj != null) && obj.containsKey("error");
     }
 
     /**

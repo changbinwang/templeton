@@ -279,8 +279,7 @@ public class HcatDelegator extends LauncherDelegator {
                                     db, table);
         try {
             String res = jsonRun(user, exec);
-
-            JsonBuilder jb = JsonBuilder.create(singleTable(res))
+            JsonBuilder jb = JsonBuilder.create(singleTable(res, table))
                 .remove("tableName")
                 .put("database", db)
                 .put("table", table);
@@ -438,14 +437,22 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     // Pull out the first table from the "show extended" json.
-    private String singleTable(String json)
+    private String singleTable(String json, String table)
         throws IOException
     {
         Map obj = JsonBuilder.jsonToMap(json);
-        List tables = (List) obj.get("tables");
-        if (tables == null || tables.size() == 0)
+        if (JsonBuilder.isError(obj))
             return json;
-        return JsonBuilder.mapToJson(tables.get(0));
+
+        List tables = (List) obj.get("tables");
+        if (TempletonUtils.isset(tables))
+            return JsonBuilder.mapToJson(tables.get(0));
+        else {
+            return JsonBuilder
+                .createError(String.format("Table %s does not exist", table),
+                             JsonBuilder.MISSING).
+                buildJson();
+        }
     }
 
     /**
@@ -611,7 +618,7 @@ public class HcatDelegator extends LauncherDelegator {
             + " partition (" + partition + "); ";
         try {
             String res = jsonRun(user, exec);
-            return JsonBuilder.create(singleTable(res))
+            return JsonBuilder.create(singleTable(res, table))
                 .remove("tableName")
                 .put("database", db)
                 .put("table", table)
