@@ -85,8 +85,9 @@ Server: Jetty(7.6.0.v20120127)
     the ZooKeeper storage class. (Be sure to review
     and update the ZooKeeper related <a href="configuration.html">Templeton 
     configuration</a>.)</li>
-   <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>. Required to use the 
-    ddl resource.  (Be sure to review and update the related
+   <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>. Version 0.4.1 or higher
+    is reccomended for users who want to use the REST ddl commands.
+    (Be sure to review and update the related
     <a href="configuration.html">Templeton configuration</a>.)</li>
    <li><a href="installation.html#Hadoop+Distributed+Cache">Hadoop Distributed Cache</a>.
     To use the <a href="http://hive.apache.org/">Hive</a>, 
