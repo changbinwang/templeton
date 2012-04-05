@@ -82,8 +82,10 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X PUT -HContent-type:application/json \
-       -d '{"comment":"Hello there", "location":"", "properties":{"a":"b"}}' \
+% curl -s -X PUT -HContent-type:application/json \
+       -d '{ "comment":"Hello there", 
+             "location":"hdfs://localhost:9000/user/hive/my_warehouse", 
+             "properties":{"a":"b"}}' \
        'http://www.myserver.com/templeton/v1/ddl/database/newdb?user.name=rachel'
 </source>
 

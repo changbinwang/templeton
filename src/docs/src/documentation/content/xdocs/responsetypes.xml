@@ -63,13 +63,15 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1'
+% curl -s 'http://www.myserver.com/templeton/v1'
 </source>
 
    <p><strong>JSON Output</strong></p>
 <source>
 {
- "application/json"
+  "responseTypes": [
+    "application/json"
+  ]
 }
 </source>
   </section>

@@ -60,7 +60,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/version'
+% curl -s 'http://www.myserver.com/templeton/v1/version'
 </source>
 
    <p><strong>JSON Output</strong></p>

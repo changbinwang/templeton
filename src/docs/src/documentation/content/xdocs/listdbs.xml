@@ -63,7 +63,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/ddl/database?like=n*'
+% curl -s 'http://www.myserver.com/templeton/v1/ddl/database?user.name=ctdean&amp;like=n*'
 </source>
 
    <p><strong>JSON Output</strong></p>
