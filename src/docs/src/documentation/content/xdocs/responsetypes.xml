@@ -39,7 +39,7 @@
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
     
     <tr><td><strong>:version</strong></td>
-        <td>The Templeton version number</td>
+        <td>The Templeton version number.  (Currently this must be "v1")</td>
         <td>Required</td>
         <td>None</td>
     </tr>
@@ -63,13 +63,22 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1'
+% curl -s 'http://localhost:50111/templeton/v1'
 </source>
 
    <p><strong>JSON Output</strong></p>
 <source>
 {
- "application/json"
+  "responseTypes": [
+    "application/json"
+  ]
+}
+</source>
+
+   <p><strong>JSON Output (error)</strong></p>
+<source>
+{
+  "error": "null for uri: http://localhost:50111/templeton/v2"
 }
 </source>
   </section>

@@ -44,6 +44,18 @@
         <td>None</td>
     </tr>
 
+ <tr><td><strong>group</strong></td>
+        <td>The user group to use</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>permissions</strong></td>
+        <td>The permissions string to use</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr> 
+
     <tr><td><strong>location</strong></td>
         <td>The database location</td>
         <td>Optional</td>
@@ -82,9 +94,11 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X PUT -HContent-type:application/json \
-       -d '{"comment":"Hello there", "location":"", "properties":{"a":"b"}}' \
-       'http://www.myserver.com/templeton/v1/ddl/database/newdb?user.name=rachel'
+% curl -s -X PUT -HContent-type:application/json \
+       -d '{ "comment":"Hello there", 
+             "location":"hdfs://localhost:9000/user/hive/my_warehouse", 
+             "properties":{"a":"b"}}' \
+       'http://localhost:50111/templeton/v1/ddl/database/newdb?user.name=rachel'
 </source>
 
    <p><strong>JSON Output</strong></p>

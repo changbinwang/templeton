@@ -92,7 +92,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X DELETE "http://www.myserver.com/templeton/v1/ddl/database/newdb?option=cascade"
+% curl -s -X DELETE "http://localhost:50111/templeton/v1/ddl/database/newdb?user.name=ctdean"
 </source>
 
    <p><strong>JSON Output</strong></p>
@@ -101,6 +101,20 @@
  "database":"newdb"
 }
 </source>
+
+   <p><strong>JSON Output (error)</strong></p>
+<source>
+{
+  "errorDetail": "
+    NoSuchObjectException(message:There is no database named my_db)
+        at org.apache.hadoop.hive.metastor...
+    ",
+  "error": "There is no database named newdb",
+  "errorCode": 404,
+  "database": "newdb"
+}
+</source>
+
   </section>
  </body>
 </document>

@@ -104,7 +104,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X DELETE 'http://www.myserver.com/templeton/v1/queue/job_201111111311_0009?user.name=ctdean'
+% curl -s -X DELETE 'http://localhost:50111/templeton/v1/queue/job_201111111311_0009?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>

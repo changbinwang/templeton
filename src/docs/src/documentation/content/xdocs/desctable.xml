@@ -79,52 +79,28 @@
         <td>The table name</td>
     </tr>
 
-    <tr><td><strong>minFileSize</strong> (extended only)</td>
-        <td>Mininum file size</td>
-    </tr>
-
-    <tr><td><strong>totalNumberFiles</strong> (extended only)</td>
-        <td>Number of files</td>
-    </tr>
-
-   <tr><td><strong>location</strong> (extended only)</td>
-        <td>Location of table</td>
-    </tr>
-
-   <tr><td><strong>lastUpdateTime</strong> (extended only)</td>
-        <td>Last update time</td>
-    </tr>
-
-   <tr><td><strong>lastAccessTime</strong> (extended only)</td>
-        <td>Last access time</td>
-    </tr>
-
-   <tr><td><strong>partitionColumns</strong> (extended only)</td>
-        <td>A list of the partition columns</td>
-    </tr>
-
-   <tr><td><strong>maxFileSize</strong> (extended only)</td>
-        <td>Maximum file size</td>
-    </tr>
-
-   <tr><td><strong>inputformat</strong> (extended only)</td>
-        <td>Input format</td>
-    </tr>
-
-   <tr><td><strong>partitioned</strong> (extended only)</td>
+    <tr><td><strong>partitioned</strong> (extended only)</td>
         <td>True if the table is partitioned</td>
     </tr>
 
-   <tr><td><strong>owner</strong> (extended only)</td>
-        <td>The table owner</td>
+    <tr><td><strong>location</strong> (extended only)</td>
+        <td>Location of table</td>
     </tr>
 
-   <tr><td><strong>totalFileSize</strong> (extended only)</td>
-        <td>Total File Size</td>
-    </tr>
-
-   <tr><td><strong>outputformat</strong> (extended only)</td>
+    <tr><td><strong>outputFormat</strong> (extended only)</td>
         <td>Output format</td>
+    </tr>
+
+    <tr><td><strong>owner</strong> (extended only)</td>
+        <td>The owner's user name</td>
+    </tr>
+
+    <tr><td><strong>partitionColumns</strong> (extended only)</td>
+        <td>List of the partition columns</td>
+    </tr>
+
+    <tr><td><strong>inputFormat</strong> (extended only)</td>
+        <td>Input format</td>
     </tr>
 
     </table>
@@ -135,7 +111,7 @@
 
    <p><strong>Curl Command (simple)</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/ddl/database/default/table/my_table' 
+% curl -s 'http://localhost:50111/templeton/v1/ddl/database/default/table/my_table?user.name=ctdean' 
 </source>
 
    <p><strong>JSON Output (simple)</strong></p>
@@ -148,6 +124,7 @@
    },
    {
      "name": "user",
+     "comment": "The user name",
      "type": "string"
    },
    {
@@ -166,47 +143,49 @@
 
    <p><strong>Curl Command (extended)</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/ddl/database/default/table/my_table?format=extended'
+% curl -s 'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table?user.name=ctdean&amp;format=extended'
 </source>
 
    <p><strong>JSON Output (extended)</strong></p>
 <source>
 {
- "minFileSize": 184,
- "totalNumberFiles": 1,
- "location": "hdfs://localhost:9000/user/hive/warehouse/my_table",
- "lastUpdateTime": 1329980827336,
- "lastAccessTime": 1329980816220,
- "columns": [
-   {
-     "name": "id",
-     "type": "bigint"
-   },
-   {
-     "name": "user",
-     "type": "string"
-   }
- ],
- "partitionColumns": [
-   {
-     "name": "my_p",
-     "type": "string"
-   },
-   {
-     "name": "my_q",
-     "type": "string"
-   }
- ],
- "maxFileSize": 184,
- "inputformat": "org.apache.hadoop.hive.ql.io.RCFileInputFormat",
- "partitioned": true,
- "owner": "ctdean",
- "totalFileSize": 184,
- "outputformat": "org.apache.hadoop.hive.ql.io.RCFileOutputFormat",
- "database": "default",
- "table": "my_table"
+  "partitioned": true,
+  "location": "hdfs://ip-10-77-6-151.ec2.internal:8020/apps/hive/warehouse/test_table",
+  "outputFormat": "org.apache.hadoop.hive.ql.io.RCFileOutputFormat",
+  "columns": [
+    {
+      "name": "id",
+      "type": "bigint"
+    },
+    {
+      "name": "price",
+      "comment": "The unit price",
+      "type": "float"
+    }
+  ],
+  "owner": "ctdean",
+  "partitionColumns": [
+    {
+      "name": "country",
+      "type": "string"
+    }
+  ],
+  "inputFormat": "org.apache.hadoop.hive.ql.io.RCFileInputFormat",
+  "database": "default",
+  "table": "test_table"
 }
 </source>
+
+   <p><strong>JSON Output (error)</strong></p>
+<source>
+{
+  "error": "Table xtest_table does not exist",
+  "errorCode": 404,
+  "database": "default",
+  "table": "xtest_table"
+}
+</source>
+
   </section>
  </body>
 </document>

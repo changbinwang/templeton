@@ -56,6 +56,18 @@
         <td>None</td>
     </tr>
 
+   <tr><td><strong>group</strong></td>
+        <td>The user group to use when creating a table</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>permissions</strong></td>
+        <td>The permissions string to use when creating a table.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr> 
+
     <tr><td><strong>external</strong></td>
         <td>Allows you to specify a location so that Hive does not use the default
             location for this table.</td>
@@ -99,8 +111,8 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X PUT -d {} \
- 'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table/like/test_table_2?user.name=ctdean'
+% curl -s -X PUT -HContent-type:application/json -d {} \
+ 'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table/like/test_table_2?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>

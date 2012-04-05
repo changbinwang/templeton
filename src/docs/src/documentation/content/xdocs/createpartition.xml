@@ -57,10 +57,28 @@
         <td>None</td>
     </tr>
 
+   <tr><td><strong>group</strong></td>
+        <td>The user group to use</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>permissions</strong></td>
+        <td>The permissions string to use</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr> 
+
     <tr><td><strong>location</strong></td>
         <td>The location for partition creation</td>
         <td>Required</td>
         <td>None</td>
+    </tr>
+
+    <tr><td><strong>ifNotExists</strong></td>
+        <td>If true, return an error if the partition already exists.</td>
+        <td>Optional</td>
+        <td>False</td>
     </tr>
 
     </table>
@@ -91,8 +109,8 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X PUT -HContent-type:application/json -d '{"location": "loc_a"}' \
-       'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table/partition/country=%27algeria%27'
+% curl -s -X PUT -HContent-type:application/json -d '{"location": "loc_a"}' \
+       'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table/partition/country=%27algeria%27?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>

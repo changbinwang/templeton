@@ -58,7 +58,7 @@
     <tr><th>Name</th><th>Description</th></tr>   
 
     <tr><td><strong>partitions</strong></td>
-        <td>A list of partition values and names</td>
+        <td>A list of partition values and of partition names</td>
     </tr>
 
     <tr><td><strong>database</strong></td>
@@ -77,29 +77,29 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/ddl/database/default/table/my_table/partition?user.name=ctdean' 
+% curl -s 'http://localhost:50111/templeton/v1/ddl/database/default/table/my_table/partition?user.name=ctdean' 
 </source>
 
    <p><strong>JSON Output</strong></p>
 <source>
 {
- "partitions": [
-   {
-     "values": [
-       {
-         "columnName": "my_p",
-         "columnValue": "XYZ"
-       },
-       {
-         "columnName": "my_q",
-         "columnValue": "ABC"
-       }
-     ],
-     "name": "my_p='XYZ',my_q='ABC'"
-   }
- ],
- "database": "default",
- "table": "my_table"
+  "partitions": [
+    {
+      "values": [
+        {
+          "columnName": "dt",
+          "columnValue": "20120101"
+        },
+        {
+          "columnName": "country",
+          "columnValue": "US"
+        }
+      ],
+      "name": "dt='20120101',country='US'"
+    }
+  ],
+  "database": "default",
+  "table": "my_table"
 }
 </source>
   </section>

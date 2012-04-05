@@ -32,16 +32,62 @@
   </section>
 
   <section>
+  <title>Procedure</title>
+  <ol>
+  <li>Ensure that the
+       <a href="installation.html#Requirements">required related installations</a>
+      are in place, and place required files into the 
+      <a href="installation.html#Hadoop+Distributed+Cache">Hadoop distributed cache.</a></li>
+  <li>Download and unpack the Templeton distribution.</li>
+  <li>Set the <code>TEMPLETON_HOME</code> environment variable to the base of the
+      Templeton installation.  This is used to find the Templeton 
+      configuration.</li>
+  <li>Review the <a href="configuration.html">Templeton configuration</a> 
+      and update or create <code>templeton-site.xml</code> as required. Ensure that 
+      site specific component installation locations are accurate, especially
+      the Hadoop configuration path.  Configuration variables that use a filesystem
+      path try to have reasonable defaults, but it's always safe to specify a full 
+      and complete path.</li>
+  <li>Build Templeton using the command <code>ant jar</code> from the top level Templeton
+      directory.</li>
+  <li>Start the Templeton server with the command 
+      <code>bin/templeton_server.sh start</code>.</li>
+  <li>Check that your local install works.  Assuming that Tomcat is running
+      on port 8080, the following command would give output similar to that shown. 
+<source>
+% curl -i http://localhost:50111/templeton/v1/status
+HTTP/1.1 200 OK
+Content-Type: application/json
+Transfer-Encoding: chunked
+Server: Jetty(7.6.0.v20120127)
+
+{"status":"ok","version":"v1"}
+%  
+</source></li>
+  </ol>
+  </section>
+
+  <section>
+  <title>Server Commands</title>
+  <ul>
+   <li><strong>Start the server:</strong> <code>bin/templeton_server.sh start</code></li>
+   <li><strong>Stop the server:</strong> <code>bin/templeton_server.sh stop</code></li>
+   <li><strong>End-to-end build, run, test:</strong> <code>ant e2e</code></li>
+  </ul>
+  </section>
+
+  <section>
   <title>Requirements</title>  
   <ul>
    <li><a href="http://ant.apache.org/">Ant</a>, version 1.8 or higher</li>
-   <li><a href="http://tomcat.apache.org/">Tomcat</a>, version 7.0 or higher</li>
    <li><a href="http://hadoop.apache.org/">Hadoop</a>, version 0.20.205.0</li>
-   <li><a href="http://zookeeper.apache.org/">ZooKeeper</a>.  (Be sure to review
+   <li><a href="http://zookeeper.apache.org/">ZooKeeper</a> is required if you are using
+    the ZooKeeper storage class. (Be sure to review
     and update the ZooKeeper related <a href="configuration.html">Templeton 
     configuration</a>.)</li>
-   <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>. Required to use the 
-    ddl resource.  (Be sure to review and update the related
+   <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>. Version 0.4.1 or higher
+    is reccomended for users who want to use the REST ddl commands.
+    (Be sure to review and update the related
     <a href="configuration.html">Templeton configuration</a>.)</li>
    <li><a href="installation.html#Hadoop+Distributed+Cache">Hadoop Distributed Cache</a>.
     To use the <a href="http://hive.apache.org/">Hive</a>, 
@@ -52,39 +98,7 @@
   </ul>
   </section>
  
-  <section>
-  <title>Procedure</title>
-  <ol>
-  <li>Ensure that the required related installations are in place.</li>
-  <li>Set the <code>TEMPLETON_HOME</code> environment variable to the base of the
-      Templeton installation.  This is used to find the Templeton 
-      configuration.</li>
-  <li>Review the <a href="configuration.html">Templeton configuration</a> 
-      and update or create <code>templeton-site.xml</code> as required. Ensure that 
-      site specific component installation locations are accurate, especially
-      the Hadoop configuration path.  Configuration variables that use a filesystem
-      path try to have reasonable defaults, but it's always safe to specify a full 
-      and complete path.</li>
-  <li>Start Tomcat.  (Note: The Tomcat server needs to be restarted after any 
-      configuration change.)</li>
-  <li>Build the Templeton war file using <code>ant war</code>
-      from <code>$TEMPLETON_HOME</code>.  Copy the Templeton war file to the Tomcat
-      webapps directory.</li>
-  <li>Check that your local install works.  Assuming that Tomcat is running
-      on port 8080, the following command would give output similar to that shown. 
-<source>
-% curl -i http://localhost:8080/templeton/v1/status
-HTTP/1.1 200 OK
-Server: Apache-Coyote/1.1
-Content-Type: application/json
-Transfer-Encoding: chunked
-Date: Tue, 18 Oct 2011 19:35:17 GMT
 
-{"status": "ok", "version": "v1"}
-%
-</source></li>
-  </ol>
-  </section>
 
   <section>
   <title>Hadoop Distributed Cache</title>

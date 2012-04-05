@@ -56,6 +56,18 @@
         <td>None</td>
     </tr>
 
+ <tr><td><strong>group</strong></td>
+        <td>The user group to use</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>permissions</strong></td>
+        <td>The permissions string to use</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr> 
+
     <tr><td><strong>type</strong></td>
         <td>The type of column to add, like "string" or "int"</td>
         <td>Required</td>
@@ -96,9 +108,9 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X PUT -HContent-type:application/json \
+% curl -s -X PUT -HContent-type:application/json \
        -d '{"type": "string", "comment": "The brand name"}' \
-       'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table/column/brand'
+       'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table/column/brand?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>

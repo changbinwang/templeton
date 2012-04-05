@@ -93,8 +93,9 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -d rename=test_table_2 \
-       'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table'
+% curl -s -d user.name=ctdean \ 
+       -d rename=test_table_2 \
+       'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table'
 </source>
 
    <p><strong>JSON Output</strong></p>
@@ -102,6 +103,16 @@
 {
  "table": "test_table_2",
  "database": "default"
+}
+</source>
+
+   <p><strong>JSON Output (error)</strong></p>
+<source>
+{
+  "error": "Table test_table does not exist",
+  "errorCode": 404,
+  "database": "default",
+  "table": "test_table_2"
 }
 </source>
   </section>

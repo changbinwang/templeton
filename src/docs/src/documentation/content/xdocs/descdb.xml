@@ -77,7 +77,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/ddl/database/newdb'
+% curl -s 'http://localhost:50111/templeton/v1/ddl/database/newdb?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>
@@ -89,6 +89,15 @@
  "database":"newdb"
 }
 </source>
+
+   <p><strong>JSON Output (error)</strong></p>
+<source>
+{
+  "error": "No such database: newdb",
+  "errorCode": 404
+}
+</source>
+
   </section>
  </body>
 </document>

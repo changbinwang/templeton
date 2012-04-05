@@ -87,9 +87,9 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -d user.name=ctdean \
+% curl -s -d user.name=ctdean \
        -d 'exec=show tables;' \
-       'http://www.myserver.com/templeton/v1/ddl'
+       'http://localhost:50111/templeton/v1/ddl'
 </source>
 
    <p><strong>JSON Output</strong></p>
@@ -109,6 +109,20 @@
  "exitcode": 0
 }
 </source>
+
+   <p><strong>JSON Output (error)</strong></p>
+<source>
+{
+  "stdout": "",
+  "stderr": "WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated...
+            Hive history file=/tmp/ctdean/hive_job_log_ctdean_201204051246_689834593.txt
+            FAILED: Parse Error: line 1:5 Failed to recognize predicate 'tab'... 
+            
+            ",
+  "exitcode": 11
+}
+</source>
+
   </section>
  </body>
 </document>

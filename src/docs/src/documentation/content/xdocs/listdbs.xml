@@ -41,7 +41,7 @@
     <tr><td><strong>like</strong></td>
         <td>List only databases whose names match the specified pattern</td>
         <td>Optional</td>
-        <td>"*" (List all tables)</td>
+        <td>"*" (List all)</td>
     </tr>
     </table>
   </section>
@@ -63,7 +63,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/ddl/database?like=n*'
+% curl -s 'http://localhost:50111/templeton/v1/ddl/database?user.name=ctdean&amp;like=n*'
 </source>
 
    <p><strong>JSON Output</strong></p>

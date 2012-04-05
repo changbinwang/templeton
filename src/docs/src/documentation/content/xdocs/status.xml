@@ -60,7 +60,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl 'http://www.myserver.com/templeton/v1/status?user.name=charlotte'
+% curl -s 'http://localhost:50111/templeton/v1/status'
 </source>
 
    <p><strong>JSON Output</strong></p>
