@@ -74,6 +74,18 @@
          <li>SPNEGO credentials: When running with Kerberos authentication. </li>
          </ul>
      </section>
+
+     <section>
+       <title>Security Error Response</title>
+       <p>If the user.name parameter is not supplied when required, Templeton returns
+        the following error: </p>
+<source>
+{
+  "error": "No user found.  Missing user.name parameter."
+}
+</source>
+     </section>
+
    </section>
  
    <section>

@@ -99,8 +99,8 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X PUT -d {} \
- 'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table/like/test_table_2?user.name=ctdean'
+% curl -s -X PUT -HContent-type:application/json -d {} \
+ 'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table/like/test_table_2?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>

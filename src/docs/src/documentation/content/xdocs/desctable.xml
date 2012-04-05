@@ -87,7 +87,7 @@
         <td>Location of table</td>
     </tr>
 
-    <tr><td><strong>outputformat</strong> (extended only)</td>
+    <tr><td><strong>outputFormat</strong> (extended only)</td>
         <td>Output format</td>
     </tr>
 
@@ -99,7 +99,7 @@
         <td>List of the partition columns</td>
     </tr>
 
-    <tr><td><strong>inputformat</strong> (extended only)</td>
+    <tr><td><strong>inputFormat</strong> (extended only)</td>
         <td>Input format</td>
     </tr>
 
@@ -111,7 +111,7 @@
 
    <p><strong>Curl Command (simple)</strong></p>
 <source>
-% curl -s 'http://www.myserver.com/templeton/v1/ddl/database/default/table/my_table?user.name=ctdean' 
+% curl -s 'http://localhost:50111/templeton/v1/ddl/database/default/table/my_table?user.name=ctdean' 
 </source>
 
    <p><strong>JSON Output (simple)</strong></p>
@@ -143,7 +143,7 @@
 
    <p><strong>Curl Command (extended)</strong></p>
 <source>
-% curl -s 'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table?user.name=ctdean&amp;format=extended'
+% curl -s 'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table?user.name=ctdean&amp;format=extended'
 </source>
 
    <p><strong>JSON Output (extended)</strong></p>
@@ -175,6 +175,17 @@
   "table": "test_table"
 }
 </source>
+
+   <p><strong>JSON Output (error)</strong></p>
+<source>
+{
+  "error": "Table xtest_table does not exist",
+  "errorCode": 404,
+  "database": "default",
+  "table": "xtest_table"
+}
+</source>
+
   </section>
  </body>
 </document>

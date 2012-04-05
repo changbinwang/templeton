@@ -25,7 +25,8 @@
   <body>
   <section>
    <title>Description</title>
-    <p>Create a new HCatalog table.</p>
+    <p>Create a new HCatalog table. For more information, please refer to the 
+     <a href="https://cwiki.apache.org/Hive/languagemanual-ddl.html#LanguageManualDDL-CreateTable">Hive documentation.</a></p>
   </section>
 
   <section>
@@ -50,6 +51,18 @@
         <td>None</td>
     </tr>
 
+    <tr><td><strong>group</strong></td>
+        <td>The user group to use when creating a table</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>permissions</strong></td>
+        <td>The permissions string to use when creating a table.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr> 
+
     <tr><td><strong>external</strong></td>
         <td>Allows you to specify a location so that Hive does not use the default
             location for this table.</td>
@@ -70,25 +83,34 @@
     </tr>
 
     <tr><td><strong>columns</strong></td>
-        <td>A list of column descriptions</td>
+        <td>A list of column descriptions, including name, type, and an optional comment.</td>
         <td>Optional</td>
         <td>None</td>
     </tr>
 
     <tr><td><strong>partitionedBy</strong></td>
-        <td>A list of column descriptions</td>
+        <td>A list of column descriptions used to partition the table.  Like the columns
+          parameter this is a list of name, type, and comment fields.</td>
         <td>Optional</td>
         <td>None</td>
     </tr>
 
     <tr><td><strong>clusteredBy</strong></td>
-        <td>A list of columns, along with a sort order description and number of buckets</td>
+        <td>An object describing how to cluster the table including the parameters
+         columnNames, sortedBy, numberOfBuckets.  The sortedBy parameter includes 
+         the parameters columnName and order.  For further information
+         please refer to the examples below or to the
+         <a href="https://cwiki.apache.org/Hive/languagemanual-ddl.html#LanguageManualDDL-CreateTable">
+         Hive documentation.</a></td>
         <td>Optional</td>
         <td>None</td>
     </tr>
 
     <tr><td><strong>format</strong></td>
-        <td>Storage format description</td>
+        <td>Storage format description including paraeters for rowFormat, storedAs 
+         and storedBy.  For further information please refer to the examples below or to the
+         <a href="https://cwiki.apache.org/Hive/languagemanual-ddl.html#LanguageManualDDL-CreateTable">
+         Hive documentation.</a></td>
         <td>Optional</td>
         <td>None</td>
     </tr>
@@ -100,7 +122,7 @@
     </tr>
 
     <tr><td><strong>tableProperties</strong></td>
-        <td>A list of table properties and values (key/value pairs)</td>
+        <td>A list of table property names and values (key/value pairs)</td>
         <td>Optional</td>
         <td>None</td>
     </tr>
@@ -129,15 +151,41 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X PUT -d '{ \
- "comment": "Best table made today", \
- "columns": [ \
-   { "name": "id", "type": "bigint" }, \
-   { "name": "price", "type": "float", "comment": "The unit price" } ], \
- "partitionedBy": [ \
-   { "name": "country", "type": "string" } ], \
- "format": { "storedAs": "rcfile" } }' \ 
- 'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table?user.name=ctdean'
+% curl -s -X PUT -HContent-type:application/json -d '{ 
+ "comment": "Best table made today", 
+ "columns": [ 
+   { "name": "id", "type": "bigint" }, 
+   { "name": "price", "type": "float", "comment": "The unit price" } ], 
+ "partitionedBy": [ 
+   { "name": "country", "type": "string" } ], 
+ "format": { "storedAs": "rcfile" } }' \
+ 'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table?user.name=ctdean'
+</source>
+
+   <p><strong>Curl Command (using clusteredBy)</strong></p>
+<source>
+% curl -s -X PUT -HContent-type:application/json -d '{
+  "comment": "Best table made today",
+  "columns": [
+    { "name": "id", "type": "bigint"},
+    { "name": "price", "type": "float", "comment": "The unit price" } ],
+  "partitionedBy": [
+    { "name": "country", "type": "string" } ],
+  "clusteredBy": {
+    "columnNames": ["id"],
+    "sortedBy": [
+      { "columnName": "id", "order": "ASC" } ],
+    "numberOfBuckets": 10 },
+  "format": {
+    "storedAs": "rcfile",
+    "rowFormat": {
+      "fieldsTerminatedBy": "\u0001",
+      "serde": {
+        "name": "org.apache.hadoop.hive.serde2.columnar.ColumnarSerDe",
+        "properties": { 
+          "key": "value" } } } } 
+  } ' \ 
+  'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table_c?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>
@@ -147,6 +195,28 @@
  "database": "default"
 }
 </source>
+
+   <p><strong>JSON Output (error)</strong></p>
+<source>
+{
+  "statement": "use default; create table test_table_c(id bigint, price float comment ...",
+  "error": "unable to create table: test_table_c",
+  "exec": {
+    "stdout": "",
+    "stderr": "WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated... 
+        Hive history file=/tmp/ctdean/hive_job_log_ctdean_201204051335_2016086186.txt
+        SLF4J: Class path contains multiple SLF4J bindings.
+        SLF4J: Found binding in ...
+        SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+        OK
+        Time taken: 0.448 seconds
+        FAILED: Error in semantic analysis: Operation not supported. HCatalog doesn't allow Clustered By in create table.
+        ",
+    "exitcode": 10
+  }
+}
+</source>
+
   </section>
  </body>
 </document>
