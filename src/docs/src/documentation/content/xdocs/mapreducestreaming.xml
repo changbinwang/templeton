@@ -149,12 +149,12 @@ Found 2 items
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -d user.name=ctdean \
+% curl -s -d user.name=ctdean \
        -d input=mydata \
        -d output=mycounts \
        -d mapper=/bin/cat \
        -d reducer="/usr/bin/wc -w" \
-       'http://www.myserver.com/templeton/v1/mapreduce/streaming'
+       'http://localhost:50111/templeton/v1/mapreduce/streaming'
 </source>
 
    <p><strong>JSON Output</strong></p>

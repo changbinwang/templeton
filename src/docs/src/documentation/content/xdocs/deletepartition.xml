@@ -85,7 +85,11 @@
     <table>
     <tr><th>Name</th><th>Description</th></tr>   
 
-    <tr><td><strong>table</strong></td>
+   <tr><td><strong>partition</strong></td>
+        <td>The partition name</td>
+    </tr>
+  
+   <tr><td><strong>table</strong></td>
         <td>The table name</td>
     </tr>
 
@@ -101,13 +105,14 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -X DELETE \
-       'http://www.myserver.com/templeton/v1/ddl/database/default/table/test_table/partition/country=%27algeria%27'
+% curl -s -X DELETE \
+       'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table/partition/country=%27algeria%27?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>
 <source>
 {
+ "partition": "country='algeria'",
  "table": "test_table",
  "database": "default"
 }

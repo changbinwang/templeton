@@ -92,7 +92,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -s -X DELETE "http://www.myserver.com/templeton/v1/ddl/database/newdb?user.name=ctdean&amp;option=cascade"
+% curl -s -X DELETE "http://localhost:50111/templeton/v1/ddl/database/newdb?user.name=ctdean"
 </source>
 
    <p><strong>JSON Output</strong></p>

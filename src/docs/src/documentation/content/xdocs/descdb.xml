@@ -77,7 +77,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -s 'http://www.myserver.com/templeton/v1/ddl/database/newdb?user.name=ctdean'
+% curl -s 'http://localhost:50111/templeton/v1/ddl/database/newdb?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>

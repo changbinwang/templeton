@@ -121,10 +121,10 @@ dra:Deirdre McClure:marvelous
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -d user.name=ctdean \
+% curl -s -d user.name=ctdean \
        -d file=id.pig \
        -d arg=-v \
-       'http://www.myserver.com/templeton/v1/pig' 
+       'http://localhost:50111/templeton/v1/pig' 
 </source>
 
    <p><strong>JSON Output</strong></p>

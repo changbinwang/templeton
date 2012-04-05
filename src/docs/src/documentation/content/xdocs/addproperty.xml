@@ -90,7 +90,7 @@
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -s -X PUT -HContent-type:application/json -d '{ "value": "apples" ) \
+% curl -s -X PUT -HContent-type:application/json -d '{ "value": "apples" }' \
   'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table/property/fruit?user.name=ctdean' 
 </source>
 
