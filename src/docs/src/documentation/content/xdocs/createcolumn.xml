@@ -56,6 +56,18 @@
         <td>None</td>
     </tr>
 
+ <tr><td><strong>group</strong></td>
+        <td>The user group to use</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>permissions</strong></td>
+        <td>The permissions string to use</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr> 
+
     <tr><td><strong>type</strong></td>
         <td>The type of column to add, like "string" or "int"</td>
         <td>Required</td>

@@ -56,6 +56,18 @@
         <td>None</td>
     </tr>
 
+   <tr><td><strong>group</strong></td>
+        <td>The user group to use when creating a table</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr>
+
+    <tr><td><strong>permissions</strong></td>
+        <td>The permissions string to use when creating a table.</td>
+        <td>Optional</td>
+        <td>None</td>
+    </tr> 
+
     <tr><td><strong>external</strong></td>
         <td>Allows you to specify a location so that Hive does not use the default
             location for this table.</td>
