@@ -422,9 +422,10 @@ public class HcatDelegator extends LauncherDelegator {
     }
 
     // A row format terminated by clause
-    private String makeTermBy(char ch, String fieldName) {
-        if (TempletonUtils.isset(ch))
-            return String.format(" %s terminated by '%c'", fieldName, ch);
+    private String makeTermBy(String sep, String fieldName) {
+      
+        if (TempletonUtils.isset(sep))
+          return String.format(" %s terminated by '%s'", fieldName, sep);
         else
             return "";
     }

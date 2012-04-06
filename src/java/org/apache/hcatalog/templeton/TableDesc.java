@@ -166,10 +166,10 @@ public class TableDesc extends GroupPermissionsDesc {
      */
     @XmlRootElement
     public static class RowFormatDesc {
-        public char fieldsTerminatedBy;
-        public char collectionItemsTerminatedBy;
-        public char mapKeysTerminatedBy;
-        public char linesTerminatedBy;
+        public String fieldsTerminatedBy;
+        public String collectionItemsTerminatedBy;
+        public String mapKeysTerminatedBy;
+        public String linesTerminatedBy;
         public SerdeDesc serde;
 
         public RowFormatDesc() {}
