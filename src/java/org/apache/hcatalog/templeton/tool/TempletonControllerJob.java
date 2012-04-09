@@ -269,6 +269,14 @@ public class TempletonControllerJob extends Configured implements Tool {
         }
     }
 
+    private JobID submittedJobId;
+    public String getSubmittedId() {
+        if (submittedJobId == null)
+            return null;
+        else
+            return submittedJobId.toString();
+    }
+
     /**
      * Enqueue the job and print out the job id for later collection.
      */
@@ -292,6 +300,9 @@ public class TempletonControllerJob extends Configured implements Tool {
 
         job.submit();
         TempletonUtils.printTaggedJobID(job.getJobID());
+
+        submittedJobId = job.getJobID();
+
         return 0;
     }
 

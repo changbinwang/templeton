@@ -95,7 +95,7 @@ public class Server {
         formats.add(MediaType.APPLICATION_JSON);
         HashMap<String, Object> res = new HashMap<String, Object>();
         res.put("responseTypes", formats);
-        
+
         return Collections.unmodifiableMap(res);
     }
 

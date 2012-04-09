@@ -18,12 +18,15 @@
 package org.apache.hcatalog.templeton;
 
 import java.io.IOException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.util.StringUtils;
+import org.apache.hadoop.util.ToolRunner;
 import org.apache.hcatalog.templeton.tool.JobState;
 import org.apache.hcatalog.templeton.tool.TempletonControllerJob;
 import org.apache.hcatalog.templeton.tool.TempletonStorage;
@@ -91,6 +94,67 @@ public class LauncherDelegator extends TempletonDelegator {
         args.add("jar");
         args.add(appConf.templetonJar());
         args.add(JAR_CLASS);
+        args.add("-libjars");
+        args.add(appConf.libJars());
+        addCacheFiles(args, appConf);
+
+        // Hadoop vars
+        addDef(args, "user.name", runAs);
+        addDef(args, AppConfig.HADOOP_SPECULATIVE_NAME, "false");
+
+        // Internal vars
+        addDef(args, TempletonControllerJob.STATUSDIR_NAME, statusdir);
+        addDef(args, TempletonControllerJob.COPY_NAME,
+               TempletonUtils.encodeArray(copyFiles));
+        addDef(args, TempletonControllerJob.OVERRIDE_CLASSPATH,
+               makeOverrideClasspath(appConf));
+
+        // Job vars
+        addStorageVars(args);
+        addCompletionVars(args, completedUrl);
+
+        return args;
+    }
+
+    /**
+     * Enqueue the TempletonControllerJob directly calling doAs.
+     */
+    public EnqueueBean directlyEnqueueController(String user, String callback,
+                                                 final List<String> args)
+        throws NotAuthorizedException, BusyException, ExecuteException,
+        IOException, QueueException
+    {
+        try {
+            UserGroupInformation loginUser = UserGroupInformation.getLoginUser();
+            UserGroupInformation ugi
+                = UserGroupInformation.createProxyUser(user, loginUser);
+
+            String id = ugi.doAs(new PrivilegedExceptionAction<String>() {
+                    public String run() throws Exception {
+                        String[] array = new String[args.size()];
+                        TempletonControllerJob ctrl = new TempletonControllerJob();
+                        ToolRunner.run(ctrl, args.toArray(array));
+                        return ctrl.getSubmittedId();
+                    }
+                });
+
+            if (id == null)
+                throw new QueueException("Unable to get job id");
+
+            registerJob(id, user, callback);
+
+            return new EnqueueBean(id, null);
+        } catch (InterruptedException e) {
+            throw new QueueException("Unable to launch job " + e);
+        }
+    }
+
+    public List<String> makeDirectLauncherArgs(AppConfig appConf, String statusdir,
+                                               String completedUrl,
+                                               List<String> copyFiles)
+    {
+        ArrayList<String> args = new ArrayList<String>();
+
         args.add("-libjars");
         args.add(appConf.libJars());
         addCacheFiles(args, appConf);

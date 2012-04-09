@@ -50,7 +50,7 @@ public class PigDelegator extends LauncherDelegator {
                                      srcFile, pigArgs,
                                      otherFiles, statusdir, completedUrl);
 
-        return enqueueController(user, callback, args);
+        return directlyEnqueueController(user, callback, args);
     }
 
     private List<String> makeArgs(String execute, String srcFile,
@@ -70,8 +70,8 @@ public class PigDelegator extends LauncherDelegator {
                 allFiles.addAll(Arrays.asList(ofs));
             }
 
-            args.addAll(makeLauncherArgs
-                    (appConf, statusdir, completedUrl, allFiles));
+            args.addAll(makeDirectLauncherArgs
+                        (appConf, statusdir, completedUrl, allFiles));
             args.add("-archives");
             args.add(appConf.pigArchive());
 

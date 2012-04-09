@@ -71,7 +71,7 @@ public class HcatDelegator extends LauncherDelegator {
         }
     }
 
-    private List<String> makeArgs(String exec, boolean format, 
+    private List<String> makeArgs(String exec, boolean format,
                                   String group, String permissions) {
         ArrayList<String> args = new ArrayList<String>();
         args.add("-e");

@@ -27,4 +27,8 @@ public class QueueException extends SimpleWebException {
         super(500, msg, new HashMap<String, Object>() {{ put("exec", bean); }});
     }
 
+    public QueueException(String msg) {
+        super(500, msg);
+    }
+
 }
