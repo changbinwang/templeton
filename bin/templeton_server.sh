@@ -92,14 +92,10 @@ function find_classpath() {
                 fi
         fi
 
-        # Append hcat classpath
-        local hcat_classpath
-        hcat_classpath=`hcat -classpath`
-        if [[ "$?" != "0" ]]; then
-                die "Unable to get the hcatalog classpath"
-        fi
-        echo "$classpath:$hcat_classpath"
+        echo $classpath
 }
+
+
 
 # Check if the pid is running
 function check_pid() {

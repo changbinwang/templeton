@@ -25,14 +25,12 @@ import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hdfs.web.AuthFilter;
-import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.eclipse.jetty.rewrite.handler.RedirectPatternRule;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.FilterMapping;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -102,8 +100,8 @@ public class Main {
         int port = conf.getInt(AppConfig.PORT, DEFAULT_PORT);
         try {
             runServer(port);
-            System.out.println("templeton: listening on port " + port);
             LOG.info("Templeton listening on port " + port);
+            System.out.println("templeton: listening on port " + port);
         } catch (Exception e) {
             System.err.println("templeton: Server failed to start: " + e.getMessage());
             LOG.fatal("Server failed to start: " + e);
@@ -119,36 +117,9 @@ public class Main {
         ServletContextHandler root = new ServletContextHandler(server, "/");
 
         // Add the Auth filter
-        root.addFilter(makeAuthFilter(), "/*", FilterMapping.REQUEST);
+        root.addFilter(AuthFilter.class, "/*", FilterMapping.REQUEST);
 
         // Connect Jersey
-        ServletHolder h = new ServletHolder(new ServletContainer(makeJerseyConfig()));
-        root.addServlet(h, "/" + SERVLET_PATH + "/*");
-
-        // Add any redirects
-        addRedirects(server);
-
-        // Start the server
-        server.start();
-        return server;
-    }
-
-    // Configure the AuthFilter with the Kerberos params iff security
-    // is enabled.
-    public FilterHolder makeAuthFilter() {
-        FilterHolder authFilter = new FilterHolder(AuthFilter.class);
-        if (UserGroupInformation.isSecurityEnabled()) {
-            authFilter.setInitParameter("dfs.web.authentication.signature.secret",
-                                        conf.kerberosSecret());
-            authFilter.setInitParameter("dfs.web.authentication.kerberos.principal",
-                                        conf.kerberosPrincipal());
-            authFilter.setInitParameter("dfs.web.authentication.kerberos.keytab",
-                                        conf.kerberosKeytab());
-        }
-        return authFilter;
-    }
-
-    public PackagesResourceConfig makeJerseyConfig() {
         PackagesResourceConfig rc
             = new PackagesResourceConfig("org.apache.hcatalog.templeton");
         HashMap<String, Object> props = new HashMap<String, Object>();
@@ -156,8 +127,15 @@ public class Main {
         props.put("com.sun.jersey.config.property.WadlGeneratorConfig",
                   "org.apache.hcatalog.templeton.WadlConfig");
         rc.setPropertiesAndFeatures(props);
+        root.addServlet(new ServletHolder(new ServletContainer(rc)),
+                        "/" + SERVLET_PATH + "/*");
 
-        return rc;
+        // Add any redirects
+        addRedirects(server);
+
+        // Start the server
+        server.start();
+        return server;
     }
 
     public void addRedirects(Server server) {

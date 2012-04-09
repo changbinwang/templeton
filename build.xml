@@ -218,17 +218,14 @@
     ================================================================================
   -->
   <!-- Build Templeton src files -->
-  <target name="compile-src" depends="init, hcat-classpath">
+  <target name="compile-src" depends="init">
     <javac encoding="${build.encoding}" srcdir="${src.dir}" excludes="${excludes}"
            includes="**/*.java" destdir="${build.classes}" debug="${javac.debug}"
            optimize="${javac.optimize}" target="${javac.version}"
            source="${javac.version}" deprecation="${javac.deprecation}"
            includeantruntime="false">
       <compilerarg line="${javac.args}"/>
-      <classpath>
-        <path refid="classpath" />
-        <pathelement path="${hcat.classpath}" />
-      </classpath>
+      <classpath refid="classpath" />
     </javac>
   </target>
 
@@ -238,12 +235,7 @@
     <copy todir="${build.classes}/">
       <fileset dir="${resources.dir}" />
     </copy>
-  </target>
 
-  <target name="hcat-classpath">
-    <exec executable="hcat" outputproperty="hcat.classpath" failonerror="true">
-      <arg value="-classpath"/>
-    </exec>
   </target>
 
   <target name="compile" depends="compile-src, compile-resources">
@@ -251,11 +243,7 @@
     <javadoc access="public" classpathref="classpath">
       <fileset dir="${src.dir}" defaultexcludes="yes">
       </fileset>
-      <classpath>
-        <path refid="classpath" />
-        <pathelement path="${hcat.classpath}" />
-      </classpath>
-      <doclet name="com.sun.jersey.wadl.resourcedoc.ResourceDoclet"
+      <doclet name="com.sun.jersey.wadl.resourcedoc.ResourceDoclet" 
          pathref="classpath">
         <param name="-output" value="${build.classes}/resourcedoc.xml" />
       </doclet>
