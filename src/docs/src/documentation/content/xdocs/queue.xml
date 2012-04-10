@@ -25,7 +25,7 @@
   <body>
   <section>
    <title>Description</title>
-    <p>Check the status of a job and get related job information given its job ID.  
+    <p>Check the status of a job and get related job information given its job ID.
      Substitute ":jobid" with the job ID received when the job was created.</p>
   </section>
 
@@ -38,7 +38,7 @@
    <title>Parameters</title>
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
+
     <tr><td><strong>:jobid</strong></td>
         <td>The job ID to check. This is the ID received when the
          job was created.</td>
@@ -51,18 +51,18 @@
   <section>
    <title>Results</title>
     <table>
-    <tr><th>Name</th><th>Description</th></tr>   
+    <tr><th>Name</th><th>Description</th></tr>
     <tr><td><strong>status</strong></td>
         <td>A JSON object containing the job status information.
-            See the Hadoop documentation 
-            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/JobStatus.html">Class 
+            See the Hadoop documentation
+            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/JobStatus.html">Class
             JobStatus</a>) for more information.</td>
     </tr>
 
     <tr><td><strong>profile</strong></td>
         <td>A JSON object containing the job profile information.
-             See the Hadoop documentation 
-            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/JobProfile.html">Class 
+             See the Hadoop documentation
+            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/JobProfile.html">Class
             JobProfile</a>) for more information.
 </td>
     </tr>
@@ -96,7 +96,7 @@
     </tr>
 
     </table>
- </section> 
+ </section>
 
   <section>
    <title>Example</title>

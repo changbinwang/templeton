@@ -289,7 +289,7 @@
     <exec executable="${basedir}/bin/templeton_server.sh">
       <arg value="start"/>
     </exec>
-    <ant antfile="${e2e.src}/build.xml" 
+    <ant antfile="${e2e.src}/build.xml"
       dir="${e2e.src}" target="test">
       <property name="inpdir.hdfs" value="${inpdir}"/>
       <property name="test.user.name" value="${env.USER}"/>
@@ -329,7 +329,7 @@
       <delete file="${basedir}/cobertura.ser"/>
       <mkdir dir="${test.log.dir}"/>
       <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
-      <cobertura-instrument todir="${build.instrumented}">    
+      <cobertura-instrument todir="${build.instrumented}">
         <fileset dir="${build.classes}"/>
       </cobertura-instrument>
 
@@ -427,7 +427,7 @@
     <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${tar.dist.dir}/" />
 
     <copy todir="${tar.dist.dir}/docs">
-      <fileset dir="${build.docs}"> 
+      <fileset dir="${build.docs}">
         <exclude name="webapp/**" />
         <exclude name="tmp/**" />
       </fileset>
@@ -438,7 +438,7 @@
           <exclude name="hadoop*jar"/>
           <exclude name="junit*jar"/>
           <exclude name="cobertura*jar"/>
-        </fileset>  
+        </fileset>
     </copy>
 
     <copy todir="${tar.dist.dir}/">
@@ -476,7 +476,7 @@
        </fileset>
     </copy>
 
-    <copy todir="${tar.dist.dir}/" file="build.xml" /> 
+    <copy todir="${tar.dist.dir}/" file="build.xml" />
 
     <chmod perm="ugo+x" dir= "${tar.dist.dir}/sbin/" includes="**/*.sh" />
 
@@ -486,7 +486,7 @@
   <!-- Copy files to a releasable structure                               -->
   <!-- ================================================================== -->
   <target name="package-rpm" depends="docs">
-    <mkdir dir="${build.docs}" /> 
+    <mkdir dir="${build.docs}" />
 
     <copy file="${resources.dir}/templeton-default.xml"
           tofile="${rpm.dist.dir}/etc/templeton/templeton-site.xml" />
@@ -497,7 +497,7 @@
     <copy file="${build.dir}/${ant.project.name}/${templeton.jar}" todir="${rpm.dist.dir}/share/templeton/" />
 
     <copy todir="${rpm.dist.dir}/share/doc/templeton">
-      <fileset dir="${build.docs}"> 
+      <fileset dir="${build.docs}">
         <exclude name="webapp/**" />
         <exclude name="tmp/**" />
       </fileset>
@@ -509,7 +509,7 @@
           <exclude name="hadoop*jar"/>
           <exclude name="junit*jar"/>
           <exclude name="cobertura*jar"/>
-        </fileset>  
+        </fileset>
     </copy>
 
     <copy todir="${rpm.dist.dir}/libexec" >

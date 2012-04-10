@@ -37,7 +37,7 @@
    <title>Parameters</title>
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
+
     <tr><td><strong>:version</strong></td>
         <td>The Templeton version number.  (Currently this must be "v1")</td>
         <td>Required</td>
@@ -49,8 +49,8 @@
   <section>
    <title>Results</title>
     <table>
-    <tr><th>Name</th><th>Description</th></tr>   
-    
+    <tr><th>Name</th><th>Description</th></tr>
+
     <tr><td><strong>responseTypes</strong></td>
         <td>A list of all supported response types</td>
     </tr>

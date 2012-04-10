@@ -25,7 +25,7 @@
   <body>
   <section>
    <title>Description</title>
-    <p>Add a single property on an HCatalog table.  
+    <p>Add a single property on an HCatalog table.
        This will also reset an existing property.</p>
   </section>
 
@@ -38,7 +38,7 @@
    <title>Parameters</title>
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
+
     <tr><td><strong>:db</strong></td>
         <td>The database name</td>
         <td>Required</td>
@@ -67,7 +67,7 @@
         <td>The permissions string to use</td>
         <td>Optional</td>
         <td>None</td>
-    </tr> 
+    </tr>
 
     <tr><td><strong>value</strong></td>
         <td>The property value</td>
@@ -80,7 +80,7 @@
   <section>
    <title>Results</title>
     <table>
-    <tr><th>Name</th><th>Description</th></tr>   
+    <tr><th>Name</th><th>Description</th></tr>
 
     <tr><td><strong>database</strong></td>
         <td>The database name</td>
@@ -95,7 +95,7 @@
     </tr>
 
     </table>
- </section> 
+ </section>
 
   <section>
    <title>Example</title>
@@ -103,7 +103,7 @@
    <p><strong>Curl Command</strong></p>
 <source>
 % curl -s -X PUT -HContent-type:application/json -d '{ "value": "apples" }' \
-  'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table/property/fruit?user.name=ctdean' 
+  'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table/property/fruit?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>

@@ -37,7 +37,7 @@
    <title>Parameters</title>
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
+
     <tr><td><strong>:db</strong></td>
         <td>The database name</td>
         <td>Required</td>
@@ -55,7 +55,7 @@
   <section>
    <title>Results</title>
     <table>
-    <tr><th>Name</th><th>Description</th></tr>   
+    <tr><th>Name</th><th>Description</th></tr>
 
     <tr><td><strong>partitions</strong></td>
         <td>A list of partition values and of partition names</td>
@@ -70,14 +70,14 @@
     </tr>
 
     </table>
- </section> 
+ </section>
 
   <section>
    <title>Example</title>
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -s 'http://localhost:50111/templeton/v1/ddl/database/default/table/my_table/partition?user.name=ctdean' 
+% curl -s 'http://localhost:50111/templeton/v1/ddl/database/default/table/my_table/partition?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output</strong></p>

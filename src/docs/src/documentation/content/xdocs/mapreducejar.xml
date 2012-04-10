@@ -26,7 +26,7 @@
 
   <section>
    <title>Description</title>
-    <p>Creates and queues a standard 
+    <p>Creates and queues a standard
      <a href="http://hadoop.apache.org/common/docs/current/commands_manual.html">
         Hadoop MapReduce</a> job.</p>
   </section>
@@ -40,7 +40,7 @@
    <title>Parameters</title>
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
+
     <tr><td><strong>jar</strong></td>
         <td>Name of the jar file for Map Reduce to use.</td>
         <td>Required</td>
@@ -99,20 +99,20 @@
   <section>
    <title>Results</title>
      <table>
-      <tr><th>Name</th><th>Description</th></tr>   
-    
+      <tr><th>Name</th><th>Description</th></tr>
+
       <tr><td><strong>id</strong></td>
         <td>A string containing the job ID similar to "job_201110132141_0001".</td>
       </tr>
 
       <tr><td><strong>info</strong></td>
         <td>A JSON object containing the information returned when the job was queued.
-            See the Hadoop documentation 
-            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/TaskController.html">Class 
+            See the Hadoop documentation
+            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/TaskController.html">Class
             TaskController</a>) for more information.</td>
       </tr>
      </table>
-  </section> 
+  </section>
 
   <section>
    <title>Example</title>

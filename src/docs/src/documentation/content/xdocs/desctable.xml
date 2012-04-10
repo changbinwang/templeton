@@ -25,7 +25,7 @@
   <body>
   <section>
    <title>Description</title>
-    <p>Describe an HCatalog table.  Normally returns a simple list of columns 
+    <p>Describe an HCatalog table.  Normally returns a simple list of columns
      (using "desc table"), but the extended format will show more information (using
      "show table extended like").</p>
   </section>
@@ -40,7 +40,7 @@
    <title>Parameters</title>
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
+
     <tr><td><strong>:db</strong></td>
         <td>The database name</td>
         <td>Required</td>
@@ -54,7 +54,7 @@
     </tr>
 
     <tr><td><strong>format</strong></td>
-        <td>Set "format=extended" to see additional information (using "show table 
+        <td>Set "format=extended" to see additional information (using "show table
             extended like")</td>
         <td>Optional</td>
         <td>Not extended</td>
@@ -65,7 +65,7 @@
   <section>
    <title>Results</title>
     <table>
-    <tr><th>Name</th><th>Description</th></tr>   
+    <tr><th>Name</th><th>Description</th></tr>
 
     <tr><td><strong>columns</strong></td>
         <td>A list of column names and types</td>
@@ -104,14 +104,14 @@
     </tr>
 
     </table>
- </section> 
+ </section>
 
   <section>
    <title>Example</title>
 
    <p><strong>Curl Command (simple)</strong></p>
 <source>
-% curl -s 'http://localhost:50111/templeton/v1/ddl/database/default/table/my_table?user.name=ctdean' 
+% curl -s 'http://localhost:50111/templeton/v1/ddl/database/default/table/my_table?user.name=ctdean'
 </source>
 
    <p><strong>JSON Output (simple)</strong></p>

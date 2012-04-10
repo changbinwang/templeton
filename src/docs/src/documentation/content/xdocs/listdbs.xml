@@ -49,14 +49,14 @@
   <section>
    <title>Results</title>
     <table>
-    <tr><th>Name</th><th>Description</th></tr>   
+    <tr><th>Name</th><th>Description</th></tr>
 
     <tr><td><strong>databases</strong></td>
         <td>A list of database names</td>
     </tr>
 
     </table>
- </section> 
+ </section>
 
   <section>
    <title>Example</title>

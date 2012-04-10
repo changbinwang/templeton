@@ -27,9 +27,9 @@
     directory (ends in '/'), in which case /index.html will be added
     If @id's are present, site.xml entries with a matching @tab will be in that tab.
 
-   Tabs can be embedded to a depth of two. The second level of tabs will only 
-    be displayed when their parent tab is selected.    
+   Tabs can be embedded to a depth of two. The second level of tabs will only
+    be displayed when their parent tab is selected.
   -->
-  <tab label="Templeton 0.1.0 Documentation" dir="" type="visible" /> 
+  <tab label="Templeton 0.1.0 Documentation" dir="" type="visible" />
 
 </tabs>

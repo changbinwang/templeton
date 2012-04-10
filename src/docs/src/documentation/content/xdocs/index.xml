@@ -24,21 +24,21 @@
   <body>
 
    <section>
-      <title>Introduction </title> 
+      <title>Introduction </title>
        <p>Templeton provides a REST-like web API for
-        <a href="http://incubator.apache.org/hcatalog/">HCatalog</a> 
+        <a href="http://incubator.apache.org/hcatalog/">HCatalog</a>
         and related Hadoop components.
         As shown in the figure below, developers make HTTP requests to access
-        <a href="http://hadoop.apache.org/mapreduce/">Hadoop MapReduce</a>, 
-        <a href="http://pig.apache.org/">Pig</a>, 
-        <a href="http://hive.apache.org/">Hive</a>, and 
+        <a href="http://hadoop.apache.org/mapreduce/">Hadoop MapReduce</a>,
+        <a href="http://pig.apache.org/">Pig</a>,
+        <a href="http://hive.apache.org/">Hive</a>, and
         <a href="http://incubator.apache.org/hcatalog/docs/r0.2.0/cli.html">
-        HCatalog DDL</a> from within applications. 
-        Data and code used by Templeton is maintained in 
-        <a href="http://hadoop.apache.org/hdfs/">HDFS</a>.  HCatalog DDL commands 
-        are executed directly when requested.     
-        MapReduce, Pig, and Hive jobs are placed in queue by 
-        Templeton and can be monitored for progress or stopped as required.  
+        HCatalog DDL</a> from within applications.
+        Data and code used by Templeton is maintained in
+        <a href="http://hadoop.apache.org/hdfs/">HDFS</a>.  HCatalog DDL commands
+        are executed directly when requested.
+        MapReduce, Pig, and Hive jobs are placed in queue by
+        Templeton and can be monitored for progress or stopped as required.
         Developers specify a location
         in HDFS into which Templeton should place Pig, Hive, and MapReduce results.</p>
        <figure src="images/TempletonArch.jpg" align="left" alt="Templeton Architecture"/>
@@ -48,28 +48,28 @@
        <title>URL format </title>
        <p>Templeton resources are accessed using the following URL format:</p>
        <p><code>http://</code><em>yourserver</em><code>/templeton/v1/</code><em>resource</em></p>
-       <p>where "<em>yourserver</em>" is replaced with your server name, and 
-          "<em>resource</em>" is replaced by the Templeton 
+       <p>where "<em>yourserver</em>" is replaced with your server name, and
+          "<em>resource</em>" is replaced by the Templeton
           resource name.</p>
-       <p>For example, to check if the Templeton server is running you could 
+       <p>For example, to check if the Templeton server is running you could
           access the following URL:</p>
        <p><code>http://www.myserver.com/templeton/v1/status</code></p>
     </section>
 
    <section>
-      <title>Security </title> 
+      <title>Security </title>
        <p>The current version of Templeton supports two types of security:</p>
        <ul>
        <li>Default security (without additional authentication)</li>
-       <li>Authentication via 
+       <li>Authentication via
            <a href="http://web.mit.edu/kerberos/">Kerberos</a></li>
        </ul>
      <section>
        <title>Standard Parameters </title>
-       <p>Every Templeton resource can accept the following parameters to 
+       <p>Every Templeton resource can accept the following parameters to
          aid in authentication: </p>
          <ul>
-         <li>user.name: The user name as a string.  
+         <li>user.name: The user name as a string.
              Only valid when using default security. </li>
          <li>SPNEGO credentials: When running with Kerberos authentication. </li>
          </ul>
@@ -87,14 +87,14 @@
      </section>
 
    </section>
- 
+
    <section>
       <title>WebHDFS and Code Push</title>
-      <p>Data and code that are used by Templeton resources must first be placed in 
+      <p>Data and code that are used by Templeton resources must first be placed in
          Hadoop.  The current version of Templeton does not attempt to integrate or replace
-         existing web interfaces that can perform this task, like 
-         <a href="http://hadoop.apache.org/common/docs/r1.0.0/webhdfs.html">WebHDFS</a>.  
-         (Integration of these functions in some way, perhaps forwarding, is planned for 
+         existing web interfaces that can perform this task, like
+         <a href="http://hadoop.apache.org/common/docs/r1.0.0/webhdfs.html">WebHDFS</a>.
+         (Integration of these functions in some way, perhaps forwarding, is planned for
          a future release.) When placing files into HDFS is required you can use
          whatever method is most convienient for you.</p>
    </section>
@@ -106,7 +106,7 @@
         <li><strong>200 OK:</strong> Success!</li>
         <li><strong>400 Bad Request:</strong> The request was invalid.</li>
         <li><strong>401 Unauthorized:</strong> Credentials were missing or incorrect.</li>
-        <li><strong>404 Not Found:</strong> The URI requested is invalid or the 
+        <li><strong>404 Not Found:</strong> The URI requested is invalid or the
                     resource requested does not exist.</li>
         <li><strong>500 Internal Server Error:</strong> We received an unexpected result.</li>
         <li><strong>503 Busy, please retry:</strong> The server is busy.</li>
@@ -124,21 +124,21 @@
        <ul>
        <li><strong>templeton.log</strong> is the log4j log.  This the main log the application
         writes to.</li>
-       <li><strong>templeton-console.log</strong> is what Java writes to stdout when Templeton is 
+       <li><strong>templeton-console.log</strong> is what Java writes to stdout when Templeton is
         started.  It is a small amount of data, similar to "hcat.out".</li>
        <li><strong>tempelton-console-error.log</strong> is what Java writes to stderr, similar to
         "hcat.err".</li>
        </ul>
        <p>In the tempelton-log4j.properties file you can set the location of these logs using the
-        variable templeton.log.dir.  This log4j.properties file is set in the server startup script.</p> 
+        variable templeton.log.dir.  This log4j.properties file is set in the server startup script.</p>
    </section>
 
    <section>
     <title>Project Name</title>
-    <p>The Templeton project is named after the a character in the award-winning 
+    <p>The Templeton project is named after the a character in the award-winning
        children's novel Charlotte's Web, by E. B. White.
-       The novel's protagonist is a pig named 
-       Wilber.  Templeton is a rat who helps Wilber by running errands 
+       The novel's protagonist is a pig named
+       Wilber.  Templeton is a rat who helps Wilber by running errands
        and making deliveries.</p>
    </section>
   </body>

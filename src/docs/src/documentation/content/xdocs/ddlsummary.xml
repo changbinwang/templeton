@@ -88,6 +88,6 @@
      <tr><td><a href="addproperty.html">ddl/database/:db/table/:table/property/:property (PUT)</a></td>
          <td>Set a table property.</td></tr>
 
-     </table>     
+     </table>
   </body>
 </document>

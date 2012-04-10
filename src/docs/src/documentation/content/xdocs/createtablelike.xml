@@ -37,7 +37,7 @@
    <title>Parameters</title>
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
+
     <tr><td><strong>:db</strong></td>
         <td>The database name</td>
         <td>Required</td>
@@ -66,7 +66,7 @@
         <td>The permissions string to use when creating a table.</td>
         <td>Optional</td>
         <td>None</td>
-    </tr> 
+    </tr>
 
     <tr><td><strong>external</strong></td>
         <td>Allows you to specify a location so that Hive does not use the default
@@ -93,7 +93,7 @@
   <section>
    <title>Results</title>
     <table>
-    <tr><th>Name</th><th>Description</th></tr>   
+    <tr><th>Name</th><th>Description</th></tr>
 
     <tr><td><strong>table</strong></td>
         <td>The new table name</td>
@@ -104,7 +104,7 @@
     </tr>
 
     </table>
- </section> 
+ </section>
 
   <section>
    <title>Example</title>

@@ -37,7 +37,7 @@
    <title>Parameters</title>
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
+
     <tr><td><strong>:db</strong></td>
         <td>The database name</td>
         <td>Required</td>
@@ -63,7 +63,7 @@
     </tr>
 
     <tr><td><strong>permissions</strong></td>
-        <td>The permissions string to use.  The format is 
+        <td>The permissions string to use.  The format is
           "<code>rwxrw-r-x</code>".</td>
         <td>Optional</td>
         <td>None</td>
@@ -75,7 +75,7 @@
   <section>
    <title>Results</title>
     <table>
-    <tr><th>Name</th><th>Description</th></tr>   
+    <tr><th>Name</th><th>Description</th></tr>
 
     <tr><td><strong>table</strong></td>
         <td>The new table name</td>
@@ -86,14 +86,14 @@
     </tr>
 
     </table>
- </section> 
+ </section>
 
   <section>
    <title>Example</title>
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -s -d user.name=ctdean \ 
+% curl -s -d user.name=ctdean \
        -d rename=test_table_2 \
        'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table'
 </source>

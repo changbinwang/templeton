@@ -26,8 +26,8 @@
 
   <section>
    <title>Description</title>
-    <p>Create and queue an 
-     <a href="http://hadoop.apache.org/common/docs/current/streaming.html">Hadoop 
+    <p>Create and queue an
+     <a href="http://hadoop.apache.org/common/docs/current/streaming.html">Hadoop
       streaming MapReduce</a> job.</p>
   </section>
 
@@ -40,7 +40,7 @@
    <title>Parameters</title>
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
+
     <tr><td><strong>input</strong></td>
         <td>Location of the input data in Hadoop.</td>
         <td>Required</td>
@@ -48,8 +48,8 @@
     </tr>
 
     <tr><td><strong>output</strong></td>
-        <td>Location in which to store the output data.  If not specified, 
-            Templeton will store the output in a location that can be discovered 
+        <td>Location in which to store the output data.  If not specified,
+            Templeton will store the output in a location that can be discovered
             using the <a href="queue.html">queue</a> resource.</td>
         <td>Optional</td>
         <td>See description</td>
@@ -78,7 +78,7 @@
          <code>define=NAME=VALUE</code></td>
         <td>Optional</td>
         <td>None</td>
-    </tr>    
+    </tr>
 
     <tr><td><strong>cmdenv</strong></td>
         <td>Set an environment variable using the syntax
@@ -115,20 +115,20 @@
   <section>
    <title>Results</title>
      <table>
-      <tr><th>Name</th><th>Description</th></tr>   
-    
+      <tr><th>Name</th><th>Description</th></tr>
+
       <tr><td><strong>id</strong></td>
         <td>A string containing the job ID similar to "job_201110132141_0001".</td>
       </tr>
 
       <tr><td><strong>info</strong></td>
         <td>A JSON object containing the information returned when the job was queued.
-            See the Hadoop documentation 
-            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/TaskController.html">Class 
+            See the Hadoop documentation
+            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/TaskController.html">Class
             TaskController</a>) for more information.</td>
       </tr>
      </table>
-  </section> 
+  </section>
 
   <section>
    <title>Example</title>

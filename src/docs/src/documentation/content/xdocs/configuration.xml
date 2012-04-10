@@ -22,39 +22,39 @@
     <title>Configuration</title>
   </header>
   <body>
-  <p>The configuration for Templeton merges the normal Hadoop configuration with 
+  <p>The configuration for Templeton merges the normal Hadoop configuration with
      the Templeton specific variables.  Because Templeton is designed to connect services
      that are not normally connected, the configuration is more complex than might be
-     desirable.</p>  
+     desirable.</p>
 
   <p>The Templeton specific configuration is split into two layers:</p>
 
   <ol>
-   <li><strong>templeton-default.xml</strong> - All the configuration variables 
-    that Templeton needs. This file sets the defaults that ship with Templeton and 
-    should only be changed by Templeton developers. Do not copy this file and/or 
+   <li><strong>templeton-default.xml</strong> - All the configuration variables
+    that Templeton needs. This file sets the defaults that ship with Templeton and
+    should only be changed by Templeton developers. Do not copy this file and/or
     change it to maintain local installation settings. Because templeton-default.xml
     is present in the Templeton war file, editing a local copy of it will not change the
     configuration.</li>
 
-   <li><strong>templeton-site.xml</strong> - The (possibly empty) configuration 
+   <li><strong>templeton-site.xml</strong> - The (possibly empty) configuration
     file in which the system administrator can set variables for their Hadoop cluster.
-    Create this file and maintain entries in it for configuration variables 
+    Create this file and maintain entries in it for configuration variables
     that require you to override default values based on your local installation.</li>
   </ol>
 
-  <p>The configuration files are loaded in this order with later files overriding 
+  <p>The configuration files are loaded in this order with later files overriding
      earlier ones.</p>
 
   <p><strong>Note:</strong> the Templeton server will require restart
      after any change to the configuration.</p>
 
-  <p>To find the configuration files, Templeton first attempts to load a file from the 
-     <code>CLASSPATH</code> and then looks in the directory specified in the 
+  <p>To find the configuration files, Templeton first attempts to load a file from the
+     <code>CLASSPATH</code> and then looks in the directory specified in the
      <code>TEMPLETON_HOME</code> environment variable.</p>
 
-  <p>Configuration files may access the special environment variable 
-     <code>env</code> for all environment variables. For example, the pig executable 
+  <p>Configuration files may access the special environment variable
+     <code>env</code> for all environment variables. For example, the pig executable
      could be specified using:</p>
 
 <source>
@@ -76,13 +76,13 @@ ${env.PIG_HOME}/bin/pig
   <tr>
     <td><strong>templeton.port</strong></td>
     <td><code>50111</code></td>
-    <td>The HTTP port for the main server.</td> 
+    <td>The HTTP port for the main server.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.hadoop.config.dir</strong></td>
     <td><code>$(env.HADOOP_CONFIG_DIR)</code></td>
-    <td>The path to the Hadoop configuration.</td> 
+    <td>The path to the Hadoop configuration.</td>
   </tr>
 
   <tr>
@@ -153,7 +153,7 @@ ${env.PIG_HOME}/bin/pig
   </tr>
 
   <tr>
-    <td><strong>templeton.hive.properties</strong></td> 
+    <td><strong>templeton.hive.properties</strong></td>
     <td>
 <code>hive.metastore.local=false,
 hive.metastore.uris=thrift://localhost:9933,
@@ -279,6 +279,6 @@ hive.metastore.sasl.enabled=false</code></td>
 
   </table>
   </section>
- 
+
   </body>
 </document>

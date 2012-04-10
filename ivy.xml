@@ -73,7 +73,7 @@
                 conf="common->master"/>
     <dependency org="org.slf4j" name="jul-to-slf4j" rev="1.6.4"
                 conf="common->master"/>
-                
+
     <dependency org="org.eclipse.jetty.aggregate"
                 name="jetty-all-server" rev="7.6.0.v20120127"
                 conf="common->master"/>
@@ -141,16 +141,16 @@
                 name="cobertura"
                 rev="1.9.4"
                 conf="common->master"/>
-    <dependency org="oro" 
-                name="oro" 
+    <dependency org="oro"
+                name="oro"
                 rev="2.0.8"
                 conf="common->master"/>
-    <dependency org="com.sun.jersey.contribs" 
-                name="wadl-resourcedoc-doclet" 
+    <dependency org="com.sun.jersey.contribs"
+                name="wadl-resourcedoc-doclet"
                 rev="1.4"
                 conf="common->master"/>
-    <dependency org="xerces" 
-                name="xercesImpl" 
+    <dependency org="xerces"
+                name="xercesImpl"
                 rev="2.9.1"
                 conf="common->master"/>
 

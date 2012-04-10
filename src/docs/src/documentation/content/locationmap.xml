@@ -21,9 +21,9 @@
       <matcher name="lm" src="org.apache.forrest.locationmap.WildcardLocationMapHintMatcher"/>
     </matchers>
 <!--
-      * Can contain any sitemap selector with the following syntax. * 
+      * Can contain any sitemap selector with the following syntax. *
     <selectors default="exists">
-      <selector name="exists" logger="sitemap.selector.exists"  
+      <selector name="exists" logger="sitemap.selector.exists"
           src="org.apache.forrest.sourceexists.SourceExistsSelector" />
     </selectors>
     -->
@@ -34,7 +34,7 @@
   -->
   <locator>
 <!--
-      * Can contain a mount within a selector where a selector is valid. 
+      * Can contain a mount within a selector where a selector is valid.
     <select>
       <mount src="somelocation.xml"/>
     </select>
@@ -45,7 +45,7 @@
     <match pattern="project.remote.**.xml">
       <location src="http://svn.apache.org/repos/asf/forrest/trunk/main/fresh-site/src/documentation/content/xdocs/{1}.xml"/>
     </match>
-<!-- 
+<!--
       * Can use a selector inside a match.  *
     <match pattern="somepattern/**">
       <select>

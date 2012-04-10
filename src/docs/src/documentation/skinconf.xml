@@ -49,8 +49,8 @@ which will be used to configure the chosen Forrest skin.
   <disable-xml-link>true</disable-xml-link>
 <!-- Disable navigation icons on all external links? -->
   <disable-external-link-image>true</disable-external-link-image>
-<!-- Disable w3c compliance links? 
-    Use e.g. align="center" to move the compliance links logos to 
+<!-- Disable w3c compliance links?
+    Use e.g. align="center" to move the compliance links logos to
     an alternate location default is left.
     (if the skin supports it) -->
   <disable-compliance-links>true</disable-compliance-links>
@@ -71,7 +71,7 @@ which will be used to configure the chosen Forrest skin.
   <project-logo>images/project-logo.gif</project-logo> -->
 
 <!-- optional group logo
-       default skin: renders it at the top-left corner --> 
+       default skin: renders it at the top-left corner -->
   <group-name>Templeton</group-name>
   <group-description></group-description>
   <group-url></group-url>
@@ -86,36 +86,36 @@ which will be used to configure the chosen Forrest skin.
   <host-logo></host-logo>
 <!-- relative url of a favicon file, normally favicon.ico -->
   <favicon-url></favicon-url>
-  
-  
+
+
 <!-- The following are used to construct a copyright statement -->
   <disable-copyright-footer>false</disable-copyright-footer>
 
 <!-- @inception enable automatic generation of a date-range to current date -->
   <year inception="true">2011</year>
   <vendor>The Apache Software Foundation</vendor>
- 
-    
-  <copyright-link>http://www.apache.org/licenses/</copyright-link>
- 
 
-  
+
+  <copyright-link>http://www.apache.org/licenses/</copyright-link>
+
+
+
 <!-- Some skins use this to form a 'breadcrumb trail' of links.
     Use location="alt" to move the trail to an alternate location
     (if the skin supports it).
     Omit the location attribute to display the trail in the default location.
     Use location="none" to not display the trail (if the skin supports it).
     For some skins just set the attributes to blank.
-    
+
     NOTE: If a breadcrumb entry points at a local file the href must
-    be complete, that is it must point to the file itself, not to a 
+    be complete, that is it must point to the file itself, not to a
     directory.
   -->
 
 <!-- Configure the TOC, i.e. the Table of Contents.
   @max-depth
    how many "section" levels need to be included in the
-   generated Table of Contents (TOC). 
+   generated Table of Contents (TOC).
   @min-sections
    Minimum required to create a TOC.
   @location ("page","menu","page,menu", "none")
@@ -123,7 +123,7 @@ which will be used to configure the chosen Forrest skin.
   -->
   <toc max-depth="1" min-sections="1" location="page"/>
 
-<!-- Heading types can be clean|underlined|boxed  
+<!-- Heading types can be clean|underlined|boxed
 -->
   <headings type="clean"/>
 
@@ -136,7 +136,7 @@ which will be used to configure the chosen Forrest skin.
     Send feedback about the website to:
   </feedback>
  -->
- 
+
 <!-- Optional message of the day (MOTD).
     Note: This is only implemented in the pelt skin.
     Note: Beware issue FOR-677 if you use an absolute path uri.
@@ -146,7 +146,7 @@ which will be used to configure the chosen Forrest skin.
       The "pattern" attribute specifies the pattern to be matched.
       This can be a specific page, or a general pattern to match a set of pages,
       e.g. everything in the "samples" directory.
-      The @starts-with=true anchors the string to the start, otherwise contains 
+      The @starts-with=true anchors the string to the start, otherwise contains
     motd-title : This text will betadded in brackets after the <html><title>
       and this can be empty.
     motd-page : This text will be added in a panel on the face of the page,
@@ -174,16 +174,16 @@ which will be used to configure the chosen Forrest skin.
   </motd>
 -->
 <!--
-    extra-css - here you can define custom css-elements that are 
-    A) overriding the fallback elements or 
-    B) adding the css definition from new elements that you may have 
+    extra-css - here you can define custom css-elements that are
+    A) overriding the fallback elements or
+    B) adding the css definition from new elements that you may have
        used in your documentation.
     -->
-  
+
   <extra-css>
 <!--Example of reason B:
         To define the css definition of a new element that you may have used
-        in the class attribute of a <p> node. 
+        in the class attribute of a <p> node.
         e.g. <p class="quote"/>
     -->
     p.quote {
@@ -197,29 +197,29 @@ which will be used to configure the chosen Forrest skin.
     -->
     #footer a { color: #0F3660; }
     #footer a:visited { color: #009999; }
-    
+
 <!--Headers and Code -->
-        
+
 	#content h1 {
 	  margin-bottom: .5em;
 	  font-size: 200%; color: black;
 	  font-family: arial;
-	}  
+	}
     h2, .h3 { font-size: 195%; color: black; font-family: arial; }
 	h3, .h4 { font-size: 140%; color: black; font-family: arial; margin-bottom: 0.5em; }
 	h4, .h5 { font-size: 125%; color: black;  font-style: italic; font-weight: bold; font-family: arial; }
-	h5, h6 { font-size: 110%; color: #363636; font-weight: bold; } 
-   
+	h5, h6 { font-size: 110%; color: #363636; font-weight: bold; }
+
     pre.code {
       margin-left: 0em;
       padding: 0.5em;
       background-color: rgb(241,239,231);
       font-family: monospace;
-    }   
-    
+    }
+
   </extra-css>
-  
-  
+
+
   <colors>
 <!-- These values are used for the generated CSS files.
     They essentially "override" the default colors defined in the chosen skin.
@@ -231,8 +231,8 @@ which will be used to configure the chosen Forrest skin.
     Note that by default, all color groups are commented-out which means that
     the default colors provided by the skin are being used.
   -->
-  
-<!-- Color group: Forrest 
+
+<!-- Color group: Forrest
 
     Example colors similar to forrest.apache.org
     Some of the element names are obscure, so comments are added to show how
@@ -262,14 +262,14 @@ which will be used to configure the chosen Forrest skin.
     <color name="published" value="#4C6C8F" font="#FFFFFF"/>
     <color name="feedback" value="#4C6C8F" font="#FFFFFF" align="center"/>
     <color name="navstrip" value="#4a6d8c" font="#ffffff" link="#0F3660" vlink="#0F3660" hlink="#000066"/>
-    <color name="menu" value="#4a6d8c" font="#cedfef" link="#ffffff" vlink="#ffffff" hlink="#ffcf00"/>    
+    <color name="menu" value="#4a6d8c" font="#cedfef" link="#ffffff" vlink="#ffffff" hlink="#ffcf00"/>
     <color name="toolbox" value="#4a6d8c"/>
     <color name="border" value="#294563"/>
     <color name="dialog" value="#4a6d8c"/>
     <color name="searchbox" value="#4a6d8c" font="#000000"/>
     <color name="body" value="#ffffff" link="#0F3660" vlink="#009999" hlink="#000066"/>
-    <color name="table" value="#7099C5"/>    
-    <color name="table-cell" value="#f0f0ff"/>    
+    <color name="table" value="#7099C5"/>
+    <color name="table-cell" value="#f0f0ff"/>
     <color name="highlight" value="#ffff00"/>
     <color name="fixme" value="#cc6600"/>
     <color name="note" value="#006699"/>
@@ -290,24 +290,24 @@ which will be used to configure the chosen Forrest skin.
 
     <color name="heading" value="#a5b6c6"/>
     <color name="subheading" value="#CFDCED"/>
-        
+
     <color name="navstrip" value="#CFDCED" font="#000000" link="#000000" vlink="#000000" hlink="#000000"/>
     <color name="toolbox" value="#a5b6c6"/>
     <color name="border" value="#a5b6c6"/>
-        
-    <color name="menu" value="#F7F7F7" link="#000000" vlink="#000000" hlink="#000000"/>    
+
+    <color name="menu" value="#F7F7F7" link="#000000" vlink="#000000" hlink="#000000"/>
     <color name="dialog" value="#F7F7F7"/>
-            
+
     <color name="body"    value="#ffffff" link="#0F3660" vlink="#009999" hlink="#000066"/>
-    
-    <color name="table" value="#a5b6c6"/>    
-    <color name="table-cell" value="#ffffff"/>    
+
+    <color name="table" value="#a5b6c6"/>
+    <color name="table-cell" value="#ffffff"/>
     <color name="highlight" value="#ffff00"/>
     <color name="fixme" value="#cc6600"/>
     <color name="note" value="#006699"/>
     <color name="warning" value="#990000"/>
     <color name="code" value="#a5b6c6"/>
-        
+
     <color name="footer" value="#a5b6c6"/>
 -->
 
@@ -323,24 +323,24 @@ which will be used to configure the chosen Forrest skin.
 
     <color name="heading" value="#003366"/>
     <color name="subheading" value="#888888"/>
-    
+
     <color name="navstrip" value="#dddddd" font="#555555"/>
     <color name="toolbox" value="#dddddd" font="#555555"/>
     <color name="border" value="#999999"/>
-    
-    <color name="menu" value="#ffffff"/>    
+
+    <color name="menu" value="#ffffff"/>
     <color name="dialog" value="#eeeeee"/>
-            
+
     <color name="body"      value="#ffffff"/>
-    
-    <color name="table" value="#ccc"/>    
-    <color name="table-cell" value="#ffffff"/>   
+
+    <color name="table" value="#ccc"/>
+    <color name="table-cell" value="#ffffff"/>
     <color name="highlight" value="#ffff00"/>
     <color name="fixme" value="#cc6600"/>
     <color name="note" value="#006699"/>
     <color name="warning" value="#990000"/>
     <color name="code" value="#003366"/>
-        
+
     <color name="footer" value="#ffffff"/>
 -->
 
@@ -376,11 +376,11 @@ which will be used to configure the chosen Forrest skin.
     <color name="footer" value="#E5E4D9"/>
 -->
   </colors>
-  
-  
+
+
 <!-- Settings specific to PDF output. -->
   <pdf>
-<!-- 
+<!--
        Supported page sizes are a0, a1, a2, a3, a4, a5, executive,
        folio, legal, ledger, letter, quarto, tabloid (default letter).
        Supported page orientations are portrait, landscape (default
@@ -388,7 +388,7 @@ which will be used to configure the chosen Forrest skin.
        Supported text alignments are left, right, justify (default left).
     -->
     <page size="letter" orientation="portrait" text-align="left"/>
-<!-- 
+<!--
        Pattern of the page numbering in the footer - Default is "Page x".
        first occurrence of '1' digit represents the current page number,
        second occurrence of '1' digit represents the total page number,

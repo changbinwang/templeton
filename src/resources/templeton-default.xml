@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
@@ -49,7 +49,7 @@ limitations under the License.
 
   <property>
     <name>templeton.override.jars</name>
-    <value>hdfs:///user/templeton/ugi.jar</value> 
+    <value>hdfs:///user/templeton/ugi.jar</value>
     <description>
         Jars to add the the HADOOP_CLASSPATH for all Map Reduce jobs.
         This is a list of jars that must exist on hdfs that are added
@@ -59,7 +59,7 @@ limitations under the License.
 
   <property>
     <name>templeton.override.enabled</name>
-    <value>true</value> 
+    <value>true</value>
     <description>
       Enable the override path in templeton.override.jars
     </description>

@@ -38,18 +38,18 @@
 
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
+
     <tr><td><strong>execute</strong></td>
         <td>String containing an entire, short hive program to run.</td>
         <td>One of either "execute" or "file" is required</td>
         <td>None</td>
     </tr>
-        
+
     <tr><td><strong>file</strong></td>
         <td>HDFS file name of a hive program to run.</td>
         <td>One of either "exec" or "file" is required</td>
         <td>None</td>
-    </tr>  
+    </tr>
 
     <tr><td><strong>define</strong></td>
         <td>Set a Hive configuration variable using the syntax
@@ -79,20 +79,20 @@
   <section>
    <title>Results</title>
      <table>
-      <tr><th>Name</th><th>Description</th></tr>   
-    
+      <tr><th>Name</th><th>Description</th></tr>
+
       <tr><td><strong>id</strong></td>
         <td>A string containing the job ID similar to "job_201110132141_0001".</td>
       </tr>
 
       <tr><td><strong>info</strong></td>
         <td>A JSON object containing the information returned when the job was queued.
-            See the Hadoop documentation 
-            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/TaskController.html">Class 
+            See the Hadoop documentation
+            (<a href="http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/TaskController.html">Class
             TaskController</a>) for more information.</td>
       </tr>
      </table>
-  </section> 
+  </section>
 
   <section>
    <title>Example</title>

@@ -25,7 +25,7 @@
   <body>
   <section>
    <title>Description</title>
-    <p>Create a new HCatalog table. For more information, please refer to the 
+    <p>Create a new HCatalog table. For more information, please refer to the
      <a href="https://cwiki.apache.org/Hive/languagemanual-ddl.html#LanguageManualDDL-CreateTable">Hive documentation.</a></p>
   </section>
 
@@ -38,7 +38,7 @@
    <title>Parameters</title>
     <table>
     <tr><th>Name</th><th>Description</th><th>Required?</th><th>Default</th></tr>
-    
+
     <tr><td><strong>:db</strong></td>
         <td>The database name</td>
         <td>Required</td>
@@ -61,7 +61,7 @@
         <td>The permissions string to use when creating a table.</td>
         <td>Optional</td>
         <td>None</td>
-    </tr> 
+    </tr>
 
     <tr><td><strong>external</strong></td>
         <td>Allows you to specify a location so that Hive does not use the default
@@ -97,7 +97,7 @@
 
     <tr><td><strong>clusteredBy</strong></td>
         <td>An object describing how to cluster the table including the parameters
-         columnNames, sortedBy, numberOfBuckets.  The sortedBy parameter includes 
+         columnNames, sortedBy, numberOfBuckets.  The sortedBy parameter includes
          the parameters columnName and order.  For further information
          please refer to the examples below or to the
          <a href="https://cwiki.apache.org/Hive/languagemanual-ddl.html#LanguageManualDDL-CreateTable">
@@ -107,7 +107,7 @@
     </tr>
 
     <tr><td><strong>format</strong></td>
-        <td>Storage format description including paraeters for rowFormat, storedAs 
+        <td>Storage format description including paraeters for rowFormat, storedAs
          and storedBy.  For further information please refer to the examples below or to the
          <a href="https://cwiki.apache.org/Hive/languagemanual-ddl.html#LanguageManualDDL-CreateTable">
          Hive documentation.</a></td>
@@ -133,7 +133,7 @@
   <section>
    <title>Results</title>
     <table>
-    <tr><th>Name</th><th>Description</th></tr>   
+    <tr><th>Name</th><th>Description</th></tr>
 
     <tr><td><strong>table</strong></td>
         <td>The new table name</td>
@@ -144,20 +144,20 @@
     </tr>
 
     </table>
- </section> 
+ </section>
 
   <section>
    <title>Example</title>
 
    <p><strong>Curl Command</strong></p>
 <source>
-% curl -s -X PUT -HContent-type:application/json -d '{ 
- "comment": "Best table made today", 
- "columns": [ 
-   { "name": "id", "type": "bigint" }, 
-   { "name": "price", "type": "float", "comment": "The unit price" } ], 
- "partitionedBy": [ 
-   { "name": "country", "type": "string" } ], 
+% curl -s -X PUT -HContent-type:application/json -d '{
+ "comment": "Best table made today",
+ "columns": [
+   { "name": "id", "type": "bigint" },
+   { "name": "price", "type": "float", "comment": "The unit price" } ],
+ "partitionedBy": [
+   { "name": "country", "type": "string" } ],
  "format": { "storedAs": "rcfile" } }' \
  'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table?user.name=ctdean'
 </source>
@@ -182,9 +182,9 @@
       "fieldsTerminatedBy": "\u0001",
       "serde": {
         "name": "org.apache.hadoop.hive.serde2.columnar.ColumnarSerDe",
-        "properties": { 
-          "key": "value" } } } } 
-  } ' \ 
+        "properties": {
+          "key": "value" } } } }
+  } ' \
   'http://localhost:50111/templeton/v1/ddl/database/default/table/test_table_c?user.name=ctdean'
 </source>
 
@@ -203,7 +203,7 @@
   "error": "unable to create table: test_table_c",
   "exec": {
     "stdout": "",
-    "stderr": "WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated... 
+    "stderr": "WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated...
         Hive history file=/tmp/ctdean/hive_job_log_ctdean_201204051335_2016086186.txt
         SLF4J: Class path contains multiple SLF4J bindings.
         SLF4J: Found binding in ...
