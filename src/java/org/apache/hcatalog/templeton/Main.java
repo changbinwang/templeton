@@ -19,6 +19,8 @@ package org.apache.hcatalog.templeton;
 
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,12 +103,30 @@ public class Main {
     public void run() {
         int port = conf.getInt(AppConfig.PORT, DEFAULT_PORT);
         try {
+            checkEnv();
             runServer(port);
             System.out.println("templeton: listening on port " + port);
             LOG.info("Templeton listening on port " + port);
         } catch (Exception e) {
             System.err.println("templeton: Server failed to start: " + e.getMessage());
             LOG.fatal("Server failed to start: " + e);
+            System.exit(1);
+        }
+    }
+
+    private void checkEnv() {
+        checkCurrentDirPermissions();
+        
+    }
+
+    private void checkCurrentDirPermissions() {
+        //org.apache.commons.exec.DefaultExecutor requires
+        // that current directory exists
+        File pwd = new File(".");
+        if(!pwd.exists()){
+            String msg = "Server failed to start: templeton: Current working directory '.' does not exist!";
+            System.err.println(msg);
+            LOG.fatal( msg);
             System.exit(1);
         }
     }
