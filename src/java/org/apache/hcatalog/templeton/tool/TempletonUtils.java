@@ -41,8 +41,6 @@ import org.apache.hadoop.util.StringUtils;
  * General utility methods.
  */
 public class TempletonUtils {
-    public static final String JOB_ID_TAG = "templeton-job-id:";
-
     /**
      * Is the object non-empty?
      */
@@ -79,27 +77,6 @@ public class TempletonUtils {
         return (col != null) && (! col.isEmpty());
     }
 
-
-    /**
-     * Print a job id for later extraction.
-     */
-    public static void printTaggedJobID(JobID jobid) {
-        System.out.println();
-        System.out.println(JOB_ID_TAG + jobid);
-    }
-
-    /**
-     * Extract the job id that we output earlier.
-     */
-    public static String extractJobId(String stdout) {
-        String pat = "^" + Pattern.quote(JOB_ID_TAG) + "(\\S+)";
-        Pattern re = Pattern.compile(pat, Pattern.MULTILINE);
-
-        Matcher m = re.matcher(stdout);
-        if (m.find())
-            return m.group(1);
-        return null;
-    }
 
     public static final Pattern JAR_COMPLETE
         = Pattern.compile(" map \\d+%\\s+reduce \\d+%$");

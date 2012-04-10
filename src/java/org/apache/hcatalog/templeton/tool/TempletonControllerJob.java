@@ -299,7 +299,6 @@ public class TempletonControllerJob extends Configured implements Tool {
         job.setNumReduceTasks(0);
 
         job.submit();
-        TempletonUtils.printTaggedJobID(job.getJobID());
 
         submittedJobId = job.getJobID();
 

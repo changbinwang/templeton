@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.util.StringUtils;
@@ -38,11 +40,12 @@ import org.apache.hcatalog.templeton.tool.ZooKeeperStorage;
  * launch child jobs.
  */
 public class LauncherDelegator extends TempletonDelegator {
+    private static final Log LOG = LogFactory.getLog(Server.class);
     public static final String JAR_CLASS = TempletonControllerJob.class.getName();
     protected String runAs = null;
 
-    public LauncherDelegator(AppConfig appConf, ExecService execService) {
-        super(appConf, execService);
+    public LauncherDelegator(AppConfig appConf) {
+        super(appConf);
     }
 
     public void registerJob(String id, String user, String callback)
@@ -60,67 +63,10 @@ public class LauncherDelegator extends TempletonDelegator {
     }
 
     /**
-     * Enqueue the TempletonControllerJob by running the hadoop
-     * executable.
-     */
-    public EnqueueBean enqueueController(String user, String callback,
-                                         List<String> args)
-        throws NotAuthorizedException, BusyException, ExecuteException,
-        IOException, QueueException
-    {
-        // Setup the hadoop vars to specify the user.
-        Map<String, String> env = TempletonUtils.hadoopUserEnv(user, null);
-
-        // Run the job
-        ExecBean exec = execService.run(appConf.clusterHadoop(), args, env);
-
-        // Return the job info
-        if (exec.exitcode != 0)
-            throw new QueueException("invalid exit code", exec);
-        String id = TempletonUtils.extractJobId(exec.stdout);
-        if (id == null)
-            throw new QueueException("Unable to get job id", exec);
-        registerJob(id, user, callback);
-
-        return new EnqueueBean(id, exec);
-    }
-
-    public List<String> makeLauncherArgs(AppConfig appConf, String statusdir,
-                                         String completedUrl,
-                                         List<String> copyFiles)
-    {
-        ArrayList<String> args = new ArrayList<String>();
-
-        args.add("jar");
-        args.add(appConf.templetonJar());
-        args.add(JAR_CLASS);
-        args.add("-libjars");
-        args.add(appConf.libJars());
-        addCacheFiles(args, appConf);
-
-        // Hadoop vars
-        addDef(args, "user.name", runAs);
-        addDef(args, AppConfig.HADOOP_SPECULATIVE_NAME, "false");
-
-        // Internal vars
-        addDef(args, TempletonControllerJob.STATUSDIR_NAME, statusdir);
-        addDef(args, TempletonControllerJob.COPY_NAME,
-               TempletonUtils.encodeArray(copyFiles));
-        addDef(args, TempletonControllerJob.OVERRIDE_CLASSPATH,
-               makeOverrideClasspath(appConf));
-
-        // Job vars
-        addStorageVars(args);
-        addCompletionVars(args, completedUrl);
-
-        return args;
-    }
-
-    /**
      * Enqueue the TempletonControllerJob directly calling doAs.
      */
-    public EnqueueBean directlyEnqueueController(String user, String callback,
-                                                 final List<String> args)
+    public EnqueueBean enqueueController(String user, String callback,
+                                                 List<String> args)
         throws NotAuthorizedException, BusyException, ExecuteException,
         IOException, QueueException
     {
@@ -129,29 +75,42 @@ public class LauncherDelegator extends TempletonDelegator {
             UserGroupInformation ugi
                 = UserGroupInformation.createProxyUser(user, loginUser);
 
-            String id = ugi.doAs(new PrivilegedExceptionAction<String>() {
-                    public String run() throws Exception {
-                        String[] array = new String[args.size()];
-                        TempletonControllerJob ctrl = new TempletonControllerJob();
-                        ToolRunner.run(ctrl, args.toArray(array));
-                        return ctrl.getSubmittedId();
-                    }
-                });
+            final long startTime = System.nanoTime();
+
+            String id = queueAsUser(ugi, args);
+
+            long elapsed = ((System.nanoTime() - startTime) / ((int) 1e6));
+            LOG.debug("queued job " + id + " in " + elapsed + " ms");
 
             if (id == null)
                 throw new QueueException("Unable to get job id");
 
             registerJob(id, user, callback);
 
-            return new EnqueueBean(id, null);
+            return new EnqueueBean(id);
         } catch (InterruptedException e) {
             throw new QueueException("Unable to launch job " + e);
         }
     }
 
-    public List<String> makeDirectLauncherArgs(AppConfig appConf, String statusdir,
-                                               String completedUrl,
-                                               List<String> copyFiles)
+    private String queueAsUser(UserGroupInformation ugi, final List<String> args)
+        throws IOException, InterruptedException
+    {
+        String id = ugi.doAs(new PrivilegedExceptionAction<String>() {
+                public String run() throws Exception {
+                    String[] array = new String[args.size()];
+                    TempletonControllerJob ctrl = new TempletonControllerJob();
+                    ToolRunner.run(ctrl, args.toArray(array));
+                    return ctrl.getSubmittedId();
+                }
+            });
+
+        return id;
+    }
+
+    public List<String> makeLauncherArgs(AppConfig appConf, String statusdir,
+                                         String completedUrl,
+                                         List<String> copyFiles)
     {
         ArrayList<String> args = new ArrayList<String>();
 

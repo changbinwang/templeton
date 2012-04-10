@@ -26,16 +26,13 @@ import org.apache.commons.exec.ExecuteException;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
- * Submit a job to the MapReduce queue.  We do this by running the
- * hadoop executable on the local server using the ExecService.
- * This allows us to easily verify that the user identity is being
- * securely used.
+ * Submit a job to the MapReduce queue.
  *
  * This is the backend of the mapreduce/jar web service.
  */
 public class JarDelegator extends LauncherDelegator {
-    public JarDelegator(AppConfig appConf, ExecService execService) {
-        super(appConf, execService);
+    public JarDelegator(AppConfig appConf) {
+        super(appConf);
     }
 
     public EnqueueBean run(String user, String jar, String mainClass,

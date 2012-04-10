@@ -23,10 +23,6 @@ import java.util.HashMap;
  * Unable to queue the job
  */
 public class QueueException extends SimpleWebException {
-    public QueueException(String msg, final ExecBean bean) {
-        super(500, msg, new HashMap<String, Object>() {{ put("exec", bean); }});
-    }
-
     public QueueException(String msg) {
         super(500, msg);
     }

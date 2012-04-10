@@ -34,8 +34,8 @@ import org.apache.hcatalog.templeton.tool.JobState;
 public class StatusDelegator extends TempletonDelegator {
     private static final Log LOG = LogFactory.getLog(StatusDelegator.class);
 
-    public StatusDelegator(AppConfig appConf, ExecService execService) {
-        super(appConf, execService);
+    public StatusDelegator(AppConfig appConf) {
+        super(appConf);
     }
 
     public QueueStatusBean run(String user, String id)

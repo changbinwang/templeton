@@ -26,16 +26,14 @@ import org.apache.commons.exec.ExecuteException;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
- * Submit a Hive job.  We do this by running the hadoop executable
- * on the local server using the ExecService.  This allows us to
- * easily verify that the user identity is being securely used.
+ * Submit a Hive job.
  *
- * This is the backend of the pig web service.
+ * This is the backend of the hive web service.
  */
 public class HiveDelegator extends LauncherDelegator {
 
-    public HiveDelegator(AppConfig appConf, ExecService execService) {
-        super(appConf, execService);
+    public HiveDelegator(AppConfig appConf) {
+        super(appConf);
     }
 
     public EnqueueBean run(String user,
@@ -46,7 +44,7 @@ public class HiveDelegator extends LauncherDelegator {
     {
         runAs = user;
         List<String> args = makeArgs(execute, srcFile, defines, statusdir,
-                completedUrl);
+                                     completedUrl);
 
         return enqueueController(user, callback, args);
     }

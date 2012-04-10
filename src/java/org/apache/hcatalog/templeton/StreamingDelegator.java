@@ -23,15 +23,14 @@ import java.util.List;
 import org.apache.commons.exec.ExecuteException;
 
 /**
- * Submit a streaming job to the MapReduce queue.  We do this by
- * running the hadoop executable on the local server using the
- * ExecService.  Really just a front end to the JarDelegator.
+ * Submit a streaming job to the MapReduce queue.  Really just a front
+   end to the JarDelegator.
  *
  * This is the backend of the mapreduce/streaming web service.
  */
 public class StreamingDelegator extends LauncherDelegator {
-    public StreamingDelegator(AppConfig appConf, ExecService execService) {
-        super(appConf, execService);
+    public StreamingDelegator(AppConfig appConf) {
+        super(appConf);
     }
 
     public EnqueueBean run(String user,
@@ -49,7 +48,7 @@ public class StreamingDelegator extends LauncherDelegator {
         List<String> args = makeArgs(inputs, output, mapper, reducer,
                                      files, defines, cmdenvs, jarArgs);
 
-        JarDelegator d = new JarDelegator(appConf, execService);
+        JarDelegator d = new JarDelegator(appConf);
         return d.run(user,
                      appConf.streamingJar(), null,
                      null, null, args, defines,

@@ -608,7 +608,7 @@ public class Server {
         verifyParam(mapper, "mapper");
         verifyParam(reducer, "reducer");
 
-        StreamingDelegator d = new StreamingDelegator(appConf, execService);
+        StreamingDelegator d = new StreamingDelegator(appConf);
         return d.run(getUser(), inputs, output, mapper, reducer,
                      files, defines, cmdenvs, args,
                      statusdir, callback, getCompletedUrl());
@@ -635,7 +635,7 @@ public class Server {
         verifyParam(jar, "jar");
         verifyParam(mainClass, "class");
 
-        JarDelegator d = new JarDelegator(appConf, execService);
+        JarDelegator d = new JarDelegator(appConf);
         return d.run(getUser(),
                      jar, mainClass,
                      libjars, files, args, defines,
@@ -661,7 +661,7 @@ public class Server {
         if (execute == null && srcFile == null)
             throw new BadParam("Either execute or file parameter required");
 
-        PigDelegator d = new PigDelegator(appConf, execService);
+        PigDelegator d = new PigDelegator(appConf);
         return d.run(getUser(),
                      execute, srcFile,
                      pigArgs, otherFiles,
@@ -686,7 +686,7 @@ public class Server {
         if (execute == null && srcFile == null)
             throw new BadParam("Either execute or file parameter required");
 
-        HiveDelegator d = new HiveDelegator(appConf, execService);
+        HiveDelegator d = new HiveDelegator(appConf);
         return d.run(getUser(), execute, srcFile, defines,
                      statusdir, callback, getCompletedUrl());
     }
@@ -703,7 +703,7 @@ public class Server {
         verifyUser();
         verifyParam(jobid, ":jobid");
 
-        StatusDelegator d = new StatusDelegator(appConf, execService);
+        StatusDelegator d = new StatusDelegator(appConf);
         return d.run(getUser(), jobid);
     }
 
@@ -719,7 +719,7 @@ public class Server {
         verifyUser();
         verifyParam(jobid, ":jobid");
 
-        DeleteDelegator d = new DeleteDelegator(appConf, execService);
+        DeleteDelegator d = new DeleteDelegator(appConf);
         return d.run(getUser(), jobid);
     }
 
@@ -734,7 +734,7 @@ public class Server {
     {
         verifyUser();
 
-        ListDelegator d = new ListDelegator(appConf, execService);
+        ListDelegator d = new ListDelegator(appConf);
         return d.run(getUser());
     }
 
@@ -747,7 +747,7 @@ public class Server {
     public CompleteBean completeJob(@PathParam("jobid") String jobid)
         throws CallbackFailedException, IOException
     {
-        CompleteDelegator d = new CompleteDelegator(appConf, execService);
+        CompleteDelegator d = new CompleteDelegator(appConf);
         return d.run(jobid);
     }
 

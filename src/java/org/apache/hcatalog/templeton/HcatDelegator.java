@@ -40,9 +40,11 @@ import org.apache.hcatalog.templeton.tool.TempletonUtils;
  */
 public class HcatDelegator extends LauncherDelegator {
     private static final Log LOG = LogFactory.getLog(HcatDelegator.class);
+    private ExecService execService;
 
     public HcatDelegator(AppConfig appConf, ExecService execService) {
-        super(appConf, execService);
+        super(appConf);
+        this.execService = execService;
     }
 
     /**
@@ -423,7 +425,7 @@ public class HcatDelegator extends LauncherDelegator {
 
     // A row format terminated by clause
     private String makeTermBy(String sep, String fieldName) {
-      
+
         if (TempletonUtils.isset(sep))
           return String.format(" %s terminated by '%s'", fieldName, sep);
         else

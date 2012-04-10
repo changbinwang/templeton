@@ -50,8 +50,8 @@ import org.apache.hcatalog.templeton.tool.TempletonUtils;
 public class CompleteDelegator extends TempletonDelegator {
     private static final Log LOG = LogFactory.getLog(CompleteDelegator.class);
 
-    public CompleteDelegator(AppConfig appConf, ExecService execService) {
-        super(appConf, execService);
+    public CompleteDelegator(AppConfig appConf) {
+        super(appConf);
     }
 
     public CompleteBean run(String id)

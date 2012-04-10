@@ -34,8 +34,8 @@ import org.apache.zookeeper.ZooKeeper;
  * List jobs owned by a user.
  */
 public class ListDelegator extends TempletonDelegator {
-    public ListDelegator(AppConfig appConf, ExecService execService) {
-        super(appConf, execService);
+    public ListDelegator(AppConfig appConf) {
+        super(appConf);
     }
 
     public List<String> run(String user)

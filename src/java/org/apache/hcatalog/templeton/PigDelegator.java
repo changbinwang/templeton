@@ -27,15 +27,13 @@ import org.apache.commons.exec.ExecuteException;
 import org.apache.hcatalog.templeton.tool.TempletonUtils;
 
 /**
- * Submit a Pig job.  We do this by running the hadoop executable
- * on the local server using the ExecService.  This allows us to
- * easily verify that the user identity is being securely used.
+ * Submit a Pig job.
  *
  * This is the backend of the pig web service.
  */
 public class PigDelegator extends LauncherDelegator {
-    public PigDelegator(AppConfig appConf, ExecService execService) {
-        super(appConf, execService);
+    public PigDelegator(AppConfig appConf) {
+        super(appConf);
     }
 
     public EnqueueBean run(String user,
@@ -50,7 +48,7 @@ public class PigDelegator extends LauncherDelegator {
                                      srcFile, pigArgs,
                                      otherFiles, statusdir, completedUrl);
 
-        return directlyEnqueueController(user, callback, args);
+        return enqueueController(user, callback, args);
     }
 
     private List<String> makeArgs(String execute, String srcFile,
@@ -70,8 +68,7 @@ public class PigDelegator extends LauncherDelegator {
                 allFiles.addAll(Arrays.asList(ofs));
             }
 
-            args.addAll(makeDirectLauncherArgs
-                        (appConf, statusdir, completedUrl, allFiles));
+            args.addAll(makeLauncherArgs(appConf, statusdir, completedUrl, allFiles));
             args.add("-archives");
             args.add(appConf.pigArchive());
 

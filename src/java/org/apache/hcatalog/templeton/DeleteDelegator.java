@@ -30,8 +30,8 @@ import org.apache.hcatalog.templeton.tool.JobState;
  * Delete a job
  */
 public class DeleteDelegator extends TempletonDelegator {
-    public DeleteDelegator(AppConfig appConf, ExecService execService) {
-        super(appConf, execService);
+    public DeleteDelegator(AppConfig appConf) {
+        super(appConf);
     }
 
     public QueueStatusBean run(String user, String id)
