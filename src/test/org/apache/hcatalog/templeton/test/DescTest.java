@@ -102,10 +102,10 @@ public class DescTest extends TestCase {
 
     public TableDesc.RowFormatDesc buildRowFormat() {
         TableDesc.RowFormatDesc x = new TableDesc.RowFormatDesc();
-        x.fieldsTerminatedBy = '\u0001';
-        x.collectionItemsTerminatedBy = '\u0002';
-        x.mapKeysTerminatedBy = '\u0003';
-        x.linesTerminatedBy = '\u0004';
+        x.fieldsTerminatedBy = "\u0001";
+        x.collectionItemsTerminatedBy = "\u0002";
+        x.mapKeysTerminatedBy = "\u0003";
+        x.linesTerminatedBy = "\u0004";
         x.serde = buildSerde();
         return x;
     }
