@@ -266,7 +266,7 @@ hive.metastore.sasl.enabled=false</code></td>
     <td>None</td>
     <td>The Kerberos principal to used by the server. As stated by the
         Kerberos SPNEGO specification, it should be
-        <code>HTTP/${HOSTNAME}@{REALM}</code>. It does not have a
+        <code>USER/${HOSTNAME}@{REALM}</code>. It does not have a
         default value.</td>
   </tr>
 

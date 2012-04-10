@@ -87,9 +87,20 @@ Server: Jetty(7.6.0.v20120127)
     the ZooKeeper storage class. (Be sure to review
     and update the ZooKeeper related <a href="configuration.html">Templeton
     configuration</a>.)</li>
-   <li><a href="http://incubator.apache.org/hcatalog/">HCatalog</a>.
-    Version 0.4.1 or higher. (Be sure to review and update the related
-    <a href="configuration.html">Templeton configuration</a>.)</li>
+   <li>
+     <a href="http://incubator.apache.org/hcatalog/">HCatalog</a>.
+     Version 0.4.1 or higher.  The hcat executable must be both in the
+     PATH and properly configured in the <a
+     href="configuration.html">Templeton configuration</a>.
+   </li>
+   <li>
+     Permissions must be given to the user running Templeton server.
+     (see below)
+   </li>
+   <li>
+     If running a secure cluster, Kerberos keys and principals must be
+     created.  (see below)
+   </li>
    <li><a href="installation.html#Hadoop+Distributed+Cache">Hadoop Distributed Cache</a>.
     To use the <a href="http://hive.apache.org/">Hive</a>,
     <a href="http://pig.apache.org/">Pig</a>, or
@@ -98,8 +109,6 @@ Server: Jetty(7.6.0.v20120127)
     Hadoop Distributed Cache.</li>
   </ul>
   </section>
-
-
 
   <section>
   <title>Hadoop Distributed Cache</title>
@@ -198,6 +207,58 @@ hadoop fs -put ugi.jar /user/templeton/ugi.jar
         These jars must exist on HDFS.</td>
   </tr>
   </table>
+  </section>
+
+  <section>
+  <title>Permissions</title>
+  <p>
+    Permission must given for the user running the templeton
+    executable to run jobs for other users.  That is, the templeton
+    server will impersonate users on the Hadoop cluster.
+  </p>
+
+  <p>
+    Create (or assign) a Unix user who will run the Templeton server.
+    Call this USER.  See the Secure Cluster section below for choosing
+    a user on a Kerberos cluster.
+  </p>
+
+  <p>
+    Modify the Hadoop core-site.xml file and set these properties:
+  </p>
+
+  <table>
+    <tr><th>Variable</th><th>Value</th></tr>
+    <tr>
+      <td>hadoop.proxyuser.USER.groups</td>
+      <td>
+        A comma separated list of the Unix groups whose users will be
+        impersonated.
+      </td>
+    </tr>
+    <tr>
+      <td>hadoop.proxyuser.USER.hosts</td>
+      <td>
+        A comma separated list of the hosts that will run the hcat and
+        JobTracker servers.
+      </td>
+    </tr>
+  </table>
+  </section>
+
+  <section>
+  <title>Secure Cluster</title>
+  <p>
+    To run Templeton on a secure cluster follow the Permissions
+    instructions above but create a Kerberos principal for the
+    Templeton server with the name <code>USER/host@realm</code>
+  </p>
+
+  <p>
+    Also, set the templeton configuration variables
+    <code>templeton.kerberos.principal</code> and
+    <code>templeton.kerberos.keytab</code>
+  </p>
   </section>
 
   </body>
