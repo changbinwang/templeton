@@ -129,7 +129,7 @@ function start_templeton() {
         local pid=$!
 
         if [[ -z "${pid}" ]] ; then # we failed right off
-                die "failed to start"
+                die "failed to start. Check logs in " `dirname $ERROR_LOG`
         fi
 
         sleep $SLEEP_TIME_AFTER_START
@@ -138,7 +138,7 @@ function start_templeton() {
                 echo $pid > $PID_FILE
                 log "starting ... started."
         else
-                die "failed to start"
+                die "failed to start. Check logs in " `dirname $ERROR_LOG`
         fi
 }
 
