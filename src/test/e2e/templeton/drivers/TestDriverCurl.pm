@@ -502,9 +502,9 @@ sub compare
       print $log "\n\n";
 
       if (defined $json_hash->{'id'}) {
-
+        print STDERR "jobid " . $json_hash->{'id'} . "\n";        
       }
-      print STDERR "jobid " . $json_hash->{'id'} . "\n";
+
 
       foreach my $key (keys %$json_matches) {
         my $json_field_val = $json_info{$key};
