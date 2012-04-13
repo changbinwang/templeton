@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -46,6 +49,8 @@ public class SecureProxySupport {
         isEnabled = UserGroupInformation.isSecurityEnabled();
     }
 
+    private static final Log LOG = LogFactory.getLog(SecureProxySupport.class);
+    
     /**
      * The file where we store the auth token
      */
@@ -111,6 +116,7 @@ public class SecureProxySupport {
                                            final Path tokenPath)
         throws IOException, InterruptedException
     {
+        LOG.info("user: " + user + " loginUser: " + UserGroupInformation.getLoginUser().getUserName());
         final UserGroupInformation ugi
             = UserGroupInformation.createProxyUser(user,
                                                    UserGroupInformation.getLoginUser());
@@ -132,6 +138,7 @@ public class SecureProxySupport {
     {
         HiveConf c = new HiveConf();
         final HiveMetaStoreClient client = new HiveMetaStoreClient(c);
+        LOG.info("user: " + user + " loginUser: " + UserGroupInformation.getLoginUser().getUserName());
         final UserGroupInformation ugi
             = UserGroupInformation.createProxyUser(user,
                                                    UserGroupInformation.getLoginUser());
