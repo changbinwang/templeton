@@ -100,6 +100,21 @@ public class ExecServiceImpl implements ExecService {
                                  Map<String, String> env)
         throws NotAuthorizedException, ExecuteException, IOException
     {
+        try {
+            return auxRun(program, args, env);
+        } catch (IOException e) {
+            File cwd = new java.io.File(".");
+            if (cwd.canRead() && cwd.canWrite())
+                throw e;
+            else
+                throw new IOException("Invalid permissions on Templeton directory: "
+                                      + cwd.getCanonicalPath());
+        }
+    }
+
+    private ExecBean auxRun(String program, List<String> args, Map<String, String> env)
+        throws NotAuthorizedException, ExecuteException, IOException
+    {
         DefaultExecutor executor = new DefaultExecutor();
         executor.setExitValues(null);
 
