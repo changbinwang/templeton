@@ -41,6 +41,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobID;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -286,6 +287,7 @@ public class TempletonControllerJob extends Configured implements Tool {
     {
         Configuration conf = getConf();
         conf.set(JAR_ARGS_NAME, TempletonUtils.encodeArray(args));
+        conf.set("user.name", UserGroupInformation.getCurrentUser().getShortUserName());
         Job job = new Job(conf);
         job.setJarByClass(TempletonControllerJob.class);
         job.setJobName("TempletonControllerJob");
