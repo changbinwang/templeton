@@ -30,12 +30,15 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobID;
@@ -44,6 +47,8 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.hcatalog.templeton.HcatDelegator;
+import org.eclipse.jetty.util.log.Log;
 
 /**
  * A Map Reduce job that will start another job.
@@ -73,7 +78,8 @@ public class TempletonControllerJob extends Configured implements Tool {
     public static final int KEEP_ALIVE_MSEC      = 60 * 1000;
 
     private static TrivialExecService execService = TrivialExecService.getInstance();
-
+    private static final org.apache.commons.logging.Log LOG = LogFactory.getLog(TempletonControllerJob.class);
+    
     public static class LaunchMapper
         extends Mapper<NullWritable, NullWritable, Text, Text>
     {
@@ -289,6 +295,8 @@ public class TempletonControllerJob extends Configured implements Tool {
         conf.set(JAR_ARGS_NAME, TempletonUtils.encodeArray(args));
         conf.set("user.name", UserGroupInformation.getCurrentUser().getShortUserName());
         Job job = new Job(conf);
+        JobConf jc = new JobConf(conf,null);
+        LOG.info("jc user.name" + jc.getUser());
         job.setJarByClass(TempletonControllerJob.class);
         job.setJobName("TempletonControllerJob");
         job.setMapperClass(LaunchMapper.class);
