@@ -31,6 +31,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.HiveMetaStoreClient;
 import org.apache.hadoop.hive.metastore.api.MetaException;
+import org.apache.hadoop.io.Text;
 import org.apache.thrift.TException;
 import org.apache.hadoop.security.Credentials;
 import org.apache.hadoop.security.UserGroupInformation;
@@ -42,7 +43,7 @@ import org.apache.hadoop.security.token.Token;
  */
 public class SecureProxySupport {
     private Path tokenPath;
-    private String hcatTokenStr;
+    private final String HCAT_SERVICE = "hcat";
     private boolean isEnabled;
 
     public SecureProxySupport() {
@@ -59,7 +60,7 @@ public class SecureProxySupport {
     /**
      * The token to pass to hcat.
      */
-    public String getHcatTokenStr() { return( hcatTokenStr ); }
+    public String getHcatServiceStr() { return( HCAT_SERVICE ); }
 
     /**
      * Create the delegation token.
@@ -72,7 +73,7 @@ public class SecureProxySupport {
             File t = File.createTempFile("templeton", null);
             tokenPath = new Path(t.toURI());
             Token fsToken = getFSDelegationToken(user, conf);
-           
+            String hcatTokenStr;
             try {
                 hcatTokenStr = buildHcatDelegationToken(user);
             } catch (Exception e) {
@@ -80,6 +81,7 @@ public class SecureProxySupport {
             }
             Token<?> msToken = new Token();
             msToken.decodeFromUrlString(hcatTokenStr);
+            msToken.setService(new Text(HCAT_SERVICE));
             writeProxyDelegationTokens(fsToken, msToken, conf, user, tokenPath);
             
         }
@@ -112,7 +114,7 @@ public class SecureProxySupport {
     public void addArgs(List<String> args) {
         if (isEnabled) {
             args.add("-D");
-            args.add("hive.metastore.token.signature=" + getHcatTokenStr());
+            args.add("hive.metastore.token.signature=" + getHcatServiceStr());
         }
     }
     
