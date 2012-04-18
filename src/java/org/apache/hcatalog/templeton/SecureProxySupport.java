@@ -145,7 +145,10 @@ public class SecureProxySupport {
             final Token<?> msToken,
             final Configuration conf,
             String user,
-            final Path tokenPath){
+            final Path tokenPath)
+                    throws IOException, InterruptedException{
+        
+        
         LOG.info("user: " + user + " loginUser: " + UserGroupInformation.getLoginUser().getUserName());
         final UserGroupInformation ugi
             = UserGroupInformation.createProxyUser(user,
