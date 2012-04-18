@@ -97,7 +97,7 @@ public class TempletonControllerJob extends Configured implements Tool {
                 jarArgsList.add("-Dmapreduce.job.credentials.binary");
                 jarArgsList.add(tokenFile);
             }
-            return execService.run(Arrays.asList(jarArgs), removeEnv, env);
+            return execService.run(jarArgsList, removeEnv, env);
         }
 
         private void copyLocal(String var, Configuration conf)
