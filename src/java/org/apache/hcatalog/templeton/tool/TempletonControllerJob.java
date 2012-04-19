@@ -26,6 +26,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -91,11 +92,11 @@ public class TempletonControllerJob extends Configured implements Tool {
             removeEnv.add("HADOOP_ROOT_LOGGER");
             Map<String, String> env = TempletonUtils.hadoopUserEnv(user,
                                                                    overrideClasspath);
-            List<String> jarArgsList = new ArrayList<String>(Arrays.asList(jarArgs));
+            List<String> jarArgsList = new LinkedList<String>(Arrays.asList(jarArgs));
             String tokenFile = System.getenv("HADOOP_TOKEN_FILE_LOCATION");
             if(tokenFile != null){
-                jarArgsList.add("-Dmapreduce.job.credentials.binary");
-                jarArgsList.add(tokenFile);
+                jarArgsList.add(1, "-Dmapreduce.job.credentials.binary");
+                jarArgsList.add(2, tokenFile);                
             }
             return execService.run(jarArgsList, removeEnv, env);
         }
