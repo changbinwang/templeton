@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,20 +33,28 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.JobClient;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobID;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.hadoop.security.token.Token;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.hcatalog.templeton.SecureProxySupport;
+import org.apache.hadoop.mapreduce.security.token.delegation.DelegationTokenIdentifier;
 
 /**
  * A Map Reduce job that will start another job.
@@ -76,6 +85,9 @@ public class TempletonControllerJob extends Configured implements Tool {
 
     private static TrivialExecService execService = TrivialExecService.getInstance();
 
+    private static final Log LOG = LogFactory.getLog(TempletonControllerJob.class);
+    
+    
     public static class LaunchMapper
         extends Mapper<NullWritable, NullWritable, Text, Text>
     {
@@ -306,7 +318,11 @@ public class TempletonControllerJob extends Configured implements Tool {
             = new NullOutputFormat<NullWritable, NullWritable>();
         job.setOutputFormatClass(of.getClass());
         job.setNumReduceTasks(0);
-
+        
+        JobClient jc = new JobClient(new JobConf(job.getConfiguration()));
+        
+        Token<DelegationTokenIdentifier> mrdt = jc.getDelegationToken(new Text("mr token"));
+        job.getCredentials().addToken(new Text("mr token"), mrdt);
         job.submit();
 
         submittedJobId = job.getJobID();
@@ -314,6 +330,7 @@ public class TempletonControllerJob extends Configured implements Tool {
         return 0;
     }
 
+    
     public static void main(String[] args) throws Exception {
         int ret = ToolRunner.run(new TempletonControllerJob(), args);
         if (ret != 0)
