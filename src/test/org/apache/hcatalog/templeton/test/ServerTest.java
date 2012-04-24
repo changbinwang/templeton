@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.apache.hcatalog.templeton.Main;
 import org.apache.hcatalog.templeton.test.mock.MockServer;
+import java.util.List;
 
 /*
  * Test that the server code exists, and responds to basic requests.
@@ -47,6 +48,7 @@ public class ServerTest extends TestCase {
     }
     
     public void testFormats() {
-        assertEquals(server.requestFormats().get(0), "application/json");
+        assertEquals(1, server.requestFormats().size());
+        assertEquals( ((List)server.requestFormats().get("responseTypes")).get(0), "application/json");
     }
 }

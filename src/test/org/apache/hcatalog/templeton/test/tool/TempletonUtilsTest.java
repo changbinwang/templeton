@@ -55,12 +55,6 @@ public class TempletonUtilsTest {
         // TODO -- capture System.out?
     }
 
-    @Test
-    public void testExtractJobId() {
-        assertEquals(null, TempletonUtils.extractJobId("fred"));
-        assertEquals("fred", TempletonUtils.extractJobId
-                     (TempletonUtils.JOB_ID_TAG + "fred"));
-    }
 
     @Test
     public void testExtractPercentComplete() {
