@@ -80,6 +80,25 @@
   <property name="test.output" value="no"/>
   <property name="build.coverage.dir" value="${basedir}/report" />
 
+  <property name="clover.db.dir" location="${build.dir}/test/clover/db"/>
+  <property name="clover.report.dir" location="${build.dir}/test/clover/reports"/>
+  <property name="clover.pdf.report.dir" location="${build.dir}/test/clover/pdf/reports"/>
+  <property name="clover.jar" location="${clover.home}/lib/clover.jar"/>
+  <available property="clover.present" file="${clover.jar}" />
+
+  <!-- check if clover reports should be generated -->
+  <condition property="clover.enabled">
+    <and>
+      <isset property="run.clover"/>
+      <isset property="clover.present"/>
+    </and>
+  </condition>
+  <condition property="staging">
+    <equals arg1="${repo}" arg2="staging"/>
+  </condition>
+
+
+
   <!-- ivy properties set here -->
   <property name="ivy.repo.dir" value="${user.home}/ivyrepo" />
   <property name="ivy.dir" location="ivy" />
@@ -121,6 +140,7 @@
     <pathelement location="${test.build.classes}" />
     <pathelement location="${build.classes}" />
     <pathelement location="conf"/>
+    <pathelement path="${clover.jar}"/>
     <pathelement location="${templeton.jar}"/>
     <path refid="classpath"/>
   </path>
@@ -305,13 +325,11 @@
     ================================================================================
   -->
   <!-- Build Templeton test files -->
-
   <path id="cobertura.classpath">
     <fileset dir="${ivy.lib.dir}">
         <include name="*.jar" />
     </fileset>
   </path>
-
   <target name="compile-test" depends="jar">
     <javac encoding="${build.encoding}" srcdir="${test.src.dir}" excludes="${excludes}"
            includes="**/*.java" destdir="${test.build.classes}" debug="${javac.debug}"
@@ -326,25 +344,26 @@
   <target name="test" depends="compile-test">
     <sequential>
       <delete dir="${test.log.dir}"/>
-      <delete file="${basedir}/cobertura.ser"/>
       <mkdir dir="${test.log.dir}"/>
+
+      <delete file="${basedir}/cobertura.ser"/>
       <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
       <cobertura-instrument todir="${build.instrumented}">
         <fileset dir="${build.classes}"/>
       </cobertura-instrument>
-
       <junit showoutput="${test.output}" printsummary="yes" haltonfailure="no"
          fork="yes" maxmemory="512m" dir="${basedir}" timeout="${test.timeout}"
              errorProperty="tests.failed" failureProperty="tests.failed">
         <sysproperty key="net.sourceforge.cobertura.datafile"
             file="${basedir}/cobertura.ser" />
-        <classpath>
+       <classpath>
           <pathelement location="${build.instrumented}" />
           <pathelement location="${test.build.classes}" />
           <pathelement location="." />
           <path refid="test.classpath"/>
         </classpath>
         <classpath refid="cobertura.classpath" />
+
         <formatter type="${test.junit.output.format}" />
         <!-- If the user has not defined a particular test to run, run them all -->
         <batchtest fork="yes" todir="${test.log.dir}" unless="testcase">
@@ -366,10 +385,57 @@
 
       </junit>
       <cobertura-report srcdir="${src.dir}" destdir="${build.coverage.dir}"/>
-      <fail if="tests.failed">Tests failed!</fail>
+  <fail if="tests.failed">Tests failed!</fail>
     </sequential>
   </target>
 
+  <target name="clover" depends="clover.setup, clover.info"
+      description="Instrument the Unit tests using Clover.  To use, specify 
+      -Dclover.home=&lt;base of clover installation&gt; -Drun.clover=true on
+      the command line."/>
+
+  <target name="clover.setup" if="clover.enabled">
+    <taskdef resource="cloverlib.xml" classpath="${clover.jar}"/>
+    <mkdir dir="${clover.db.dir}"/>
+    <clover-setup initString="${clover.db.dir}/templeton_coverage.db">
+      <fileset dir="src/java/" includes="**/*.java"/>
+    </clover-setup>
+  </target>
+
+  <target name="clover.info" unless="clover.present">
+    <echo>
+      Clover not found. Code coverage reports disabled.
+    </echo>
+  </target>
+
+  <target name="clover.check">
+    <fail unless="clover.present">
+      ##################################################################
+        Clover not found.
+        Please specify -Dclover.home=&lt;base of clover installation&gt;
+        on the command line.
+       ##################################################################
+    </fail>
+  </target>
+
+  <target name="generate-clover-reports" depends="clover.check, clover">
+    <mkdir dir="${clover.report.dir}"/>
+      <clover-report>
+      <current outfile="${clover.report.dir}" title="${final.name}">
+        <format type="html"/>
+      </current>
+      </clover-report>
+    <clover-report>
+      <current outfile="${clover.report.dir}/clover.xml" title="${final.name}">
+        <format type="xml"/>
+      </current>
+    </clover-report>
+  </target>
+
+  <target name="generate-pdf-clover-reports" depends="clover.check, clover">
+    <mkdir dir="${clover.pdf.report.dir}"/>
+    <clover-pdf-report outfile="${clover.pdf.report.dir}/clover_coverage.pdf" />
+  </target>
   <!--
     ================================================================================
     Clean Section
