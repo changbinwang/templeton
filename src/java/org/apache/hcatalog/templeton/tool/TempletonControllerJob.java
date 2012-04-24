@@ -107,8 +107,7 @@ public class TempletonControllerJob extends Configured implements Tool {
             List<String> jarArgsList = new LinkedList<String>(Arrays.asList(jarArgs));
             String tokenFile = System.getenv("HADOOP_TOKEN_FILE_LOCATION");
             if(tokenFile != null){
-                jarArgsList.add(1, "-Dmapreduce.job.credentials.binary");
-                jarArgsList.add(2, tokenFile);                
+                jarArgsList.add(1, "-Dmapreduce.job.credentials.binary=" + tokenFile );
             }
             return execService.run(jarArgsList, removeEnv, env);
         }
