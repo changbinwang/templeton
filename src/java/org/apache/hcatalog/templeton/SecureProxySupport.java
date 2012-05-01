@@ -127,9 +127,7 @@ public class SecureProxySupport {
         throws IOException, InterruptedException
     {
         LOG.info("user: " + user + " loginUser: " + UserGroupInformation.getLoginUser().getUserName());
-        final UserGroupInformation ugi
-            = UserGroupInformation.createProxyUser(user,
-                                                   UserGroupInformation.getLoginUser());
+        final UserGroupInformation ugi = UgiFactory.getUgi(user);
 
        final TokenWrapper twrapper = new TokenWrapper();
        ugi.doAs(new PrivilegedExceptionAction<Object>() {
@@ -176,9 +174,7 @@ public class SecureProxySupport {
         final HiveMetaStoreClient client = new HiveMetaStoreClient(c);
         LOG.info("user: " + user + " loginUser: " + UserGroupInformation.getLoginUser().getUserName());
         final TokenWrapper twrapper = new TokenWrapper();
-        final UserGroupInformation ugi
-            = UserGroupInformation.createProxyUser(user,
-                                                   UserGroupInformation.getLoginUser());
+        final UserGroupInformation ugi = UgiFactory.getUgi(user);
         String s = ugi.doAs(new PrivilegedExceptionAction<String>() {
                                 public String run()
                                     throws IOException, MetaException, TException
