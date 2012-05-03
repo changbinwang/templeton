@@ -55,9 +55,12 @@
       <env key="WEBHDFS_URL" value="${harness.webhdfs.url}"/>
       <env key="TEMPLETON_URL" value="${harness.templeton.url}"/>
       <env key="USER_NAME" value="${test.user.name}"/>
+      <env key="GROUP_NAME" value="${test.group.name}"/>
+      <env key="GROUP_USER_NAME" value="${test.group.user.name}"/>
+      <env key="OTHER_USER_NAME" value="${test.other.user.name}"/>
       <env key="HARNESS_CONF" value="${basedir}/conf/default.conf"/>
       <arg line="${tests.to.run}"/>
-      <arg value="${basedir}/tests/curl.conf"/>
+      <arg value="${basedir}/tests/hcatperms.conf"/>
     </exec>
   </target>
 
