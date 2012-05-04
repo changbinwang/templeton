@@ -32,6 +32,7 @@ use HTTP::Status;
 use Data::Compare;
 use strict;
 use English;
+use Storable qw(dclone);
 
 my $passedStr = 'passed';
 my $failedStr = 'failed';
@@ -296,7 +297,6 @@ sub replaceParametersInArg
     if(! defined $arg){
       return $arg;
     }
-    print $log "arg $arg, current_group " . $testCmd->{'current_group'} . "\n";
     my $outdir = $testCmd->{'outpath'} . $testCmd->{'group'} . "_" . $testCmd->{'num'};
     $arg =~ s/:UNAME:/$testCmd->{'current_user'}/g;
     $arg =~ s/:UNAME_GROUP:/$testCmd->{'current_group_user'}/g;
@@ -305,6 +305,7 @@ sub replaceParametersInArg
     $arg =~ s/:OUTDIR:/$outdir/g;
     $arg =~ s/:INPDIR_HDFS:/$testCmd->{'inpdir_hdfs'}/g;
     $arg =~ s/:INPDIR_LOCAL:/$testCmd->{'inpdir_local'}/g;
+    $arg =~ s/:TNUM:/$testCmd->{'num'}/g;
     return $arg;
   }
 
@@ -328,12 +329,35 @@ sub runCurlCmd(){
   if (defined $testCmd->{'upload_file'}) {
     return $self->upload_file($testCmd,$log);
   } else {
-    if (defined $testCmd->{'prepare_url'}) {
-      $self->execCurlCmd($testCmd, 'prepare_', $log);
-      return $self->execCurlCmd($testCmd, "", $log);
+    #if there are setup steps, run them first
+    if (defined $testCmd->{'setup'}) {
+      my $i = 0;
+      foreach my $setupCmd (@{$testCmd->{'setup'}}){
+        $i++;
+        print $log "Running setup command $i\n";
+        my $pfix = "setup_${i}_";
+        my $setupTestCmd = $self->createSetupCmd($testCmd, $setupCmd, $pfix, $log);
+        my $setupResult = $self->execCurlCmd($setupTestCmd, $pfix, $log);
+        
+        #if status code is set in setup, check if it matches results
+        if(defined $setupTestCmd->{"${pfix}status_code"}){
+          $self->checkResStatusCode($setupResult, $setupTestCmd->{"${pfix}status_code"}, $log);
+        }
+      }
     }
+    return $self->execCurlCmd($testCmd, "", $log);
   }
 }
+###############################################################################
+sub createSetupCmd(){
+  my ($self, $testCmd, $setupCmd, $pfix, $log) = @_;
+  my $newTestCmd = dclone ($testCmd);
+  for my $key (keys %$setupCmd){
+    $newTestCmd->{$pfix . $key} = $setupCmd->{$key};
+  }
+  return $newTestCmd;
+}
+
 ###############################################################################
 sub upload_file(){
   my ($self, $testCmd, $log) = @_;
