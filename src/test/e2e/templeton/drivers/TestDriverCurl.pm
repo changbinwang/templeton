@@ -728,6 +728,7 @@ sub  setLocationPermGroup{
     if($filestatus->{'pathSuffix'} eq $file){
       $job_info->{'location_perms'} =  numPermToStringPerm($filestatus->{'permission'});
       $job_info->{'location_group'} = $filestatus->{'group'};
+      $job_info->{'location_owner'} = $filestatus->{'owner'};
       last;
     }
 
