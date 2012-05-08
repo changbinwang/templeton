@@ -150,9 +150,7 @@ public class SecureProxySupport {
         
         
         LOG.info("user: " + user + " loginUser: " + UserGroupInformation.getLoginUser().getUserName());
-        final UserGroupInformation ugi
-            = UserGroupInformation.createProxyUser(user,
-                                                   UserGroupInformation.getLoginUser());
+        final UserGroupInformation ugi  =  UgiFactory.getUgi(user);
 
         
         ugi.doAs(new PrivilegedExceptionAction<Object>() {
