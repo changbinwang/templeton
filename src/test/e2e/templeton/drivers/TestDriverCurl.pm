@@ -496,6 +496,7 @@ sub compare
       %json_info = %$json_hash;
       if (defined $json_info{'info'}) {
         %json_info = %{$json_info{'info'}};
+        
       }
       print $log "\n\n json_hash";
       print $log dump(%$json_hash);
@@ -503,6 +504,7 @@ sub compare
 
       if (defined $json_hash->{'id'}) {
         print STDERR "jobid " . $json_hash->{'id'} . "\n";        
+        $json_info{'id'} = $json_hash->{'id'};
       }
 
 
