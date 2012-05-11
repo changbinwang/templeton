@@ -134,6 +134,13 @@ public class Main {
     public Server runServer(int port)
         throws Exception
     {
+
+        //Authenticate using keytab
+        if(UserGroupInformation.isSecurityEnabled()){
+            UserGroupInformation.loginUserFromKeytab(conf.kerberosPrincipal(),
+                    conf.kerberosKeytab());
+        }
+        
         // Create the Jetty server
         Server server = new Server(port);
         ServletContextHandler root = new ServletContextHandler(server, "/");

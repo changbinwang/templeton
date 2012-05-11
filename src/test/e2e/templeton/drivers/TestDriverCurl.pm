@@ -170,8 +170,11 @@ sub globalSetup
     $globalHash->{'user_name'} = $ENV{'USER_NAME'};
 
 
+
     $globalHash->{'inpdir_local'} = $ENV{'TH_INPDIR_LOCAL'};
     $globalHash->{'inpdir_hdfs'} = $ENV{'TH_INPDIR_HDFS'};
+
+    $globalHash->{'is_secure_mode'} = $ENV{'SECURE_MODE'};
 
     # add libexec location to the path
     if (defined($ENV{'PATH'})) {
@@ -365,6 +368,10 @@ sub execCurlCmd(){
   $self->replaceParameters($testCmd, $log );
   my $url = $testCmd->{'url'};
 
+  if(defined $testCmd->{'is_secure_mode'} &&  $testCmd->{'is_secure_mode'} =~ /y.*/i){
+    push @curl_cmd, ('--negotiate', '-u', ':');
+  }
+
   if (defined $testCmd->{'format_header'}) {
     push @curl_cmd, ('-H', $testCmd->{'format_header'});
   }
@@ -415,8 +422,12 @@ sub execCurlCmd(){
   my @full_header = `cat $res_header`;
   $result{'full_header'} = join '\n', @full_header;
 
-  $full_header[0] =~ /(\S+)\s+(\S+)/;
-  $result{'status_code'}  = $2;
+  #find the final http status code
+  for my $line ( @full_header){
+    if($line =~ /.*(HTTP\/1.1)\s+(\S+)/){
+      $result{'status_code'}  = $2;
+    }
+  }
 
   my %header_field;
   foreach my $line (@full_header) {

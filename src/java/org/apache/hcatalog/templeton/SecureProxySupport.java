@@ -22,12 +22,16 @@ import java.io.IOException;
 import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.HiveMetaStoreClient;
 import org.apache.hadoop.hive.metastore.api.MetaException;
+import org.apache.hadoop.io.Text;
 import org.apache.thrift.TException;
 import org.apache.hadoop.security.Credentials;
 import org.apache.hadoop.security.UserGroupInformation;
@@ -39,13 +43,15 @@ import org.apache.hadoop.security.token.Token;
  */
 public class SecureProxySupport {
     private Path tokenPath;
-    private String hcatToken;
+    private final String HCAT_SERVICE = "hcat";
     private boolean isEnabled;
 
     public SecureProxySupport() {
         isEnabled = UserGroupInformation.isSecurityEnabled();
     }
 
+    private static final Log LOG = LogFactory.getLog(SecureProxySupport.class);
+    
     /**
      * The file where we store the auth token
      */
@@ -54,7 +60,7 @@ public class SecureProxySupport {
     /**
      * The token to pass to hcat.
      */
-    public String getHcatToken() { return( hcatToken ); }
+    public String getHcatServiceStr() { return( HCAT_SERVICE ); }
 
     /**
      * Create the delegation token.
@@ -66,12 +72,18 @@ public class SecureProxySupport {
         if (isEnabled) {
             File t = File.createTempFile("templeton", null);
             tokenPath = new Path(t.toURI());
-            writeProxyDelegationToken(user, conf, tokenPath);
+            Token fsToken = getFSDelegationToken(user, conf);
+            String hcatTokenStr;
             try {
-                hcatToken = buildHcatDelegationToken(user);
+                hcatTokenStr = buildHcatDelegationToken(user);
             } catch (Exception e) {
                 throw new IOException(e);
             }
+            Token<?> msToken = new Token();
+            msToken.decodeFromUrlString(hcatTokenStr);
+            msToken.setService(new Text(HCAT_SERVICE));
+            writeProxyDelegationTokens(fsToken, msToken, conf, user, tokenPath);
+            
         }
         return tokenPath;
     }
@@ -102,39 +114,65 @@ public class SecureProxySupport {
     public void addArgs(List<String> args) {
         if (isEnabled) {
             args.add("-D");
-            args.add("hive.metastore.token.signature=" + getHcatToken());
+            args.add("hive.metastore.token.signature=" + getHcatServiceStr());
         }
     }
+    
+    class TokenWrapper { 
+        Token<?> token;
+    }
 
-    private void writeProxyDelegationToken(String user,
-                                           final Configuration conf,
-                                           final Path tokenPath)
+    private Token<?> getFSDelegationToken(String user,
+                                           final Configuration conf)
         throws IOException, InterruptedException
     {
-        final UserGroupInformation ugi
-            = UserGroupInformation.createProxyUser(user,
-                                                   UserGroupInformation.getLoginUser());
+        LOG.info("user: " + user + " loginUser: " + UserGroupInformation.getLoginUser().getUserName());
+        final UserGroupInformation ugi = UgiFactory.getUgi(user);
+
+       final TokenWrapper twrapper = new TokenWrapper();
+       ugi.doAs(new PrivilegedExceptionAction<Object>() {
+           public Object run() throws IOException {
+               FileSystem fs = FileSystem.get(conf);
+               twrapper.token =  fs.getDelegationToken(ugi.getShortUserName());
+               return null;
+           }
+       });
+       return twrapper.token;
+       
+    }
+
+    private void writeProxyDelegationTokens(final Token<?> fsToken,
+            final Token<?> msToken,
+            final Configuration conf,
+            String user,
+            final Path tokenPath)
+                    throws IOException, InterruptedException{
+        
+        
+        LOG.info("user: " + user + " loginUser: " + UserGroupInformation.getLoginUser().getUserName());
+        final UserGroupInformation ugi  =  UgiFactory.getUgi(user);
+
+        
         ugi.doAs(new PrivilegedExceptionAction<Object>() {
                      public Object run() throws IOException {
-                         FileSystem fs = FileSystem.get(conf);
-                         Token<?> token
-                             = fs.getDelegationToken(ugi.getShortUserName());
                          Credentials cred = new Credentials();
-                         cred.addToken(token.getService(), token);
+                         cred.addToken(fsToken.getService(), fsToken);
+                         cred.addToken(msToken.getService(), msToken);
                          cred.writeTokenStorageFile(tokenPath, conf);
                          return null;
                      }
                  });
+        
     }
-
+    
     private String buildHcatDelegationToken(String user)
         throws IOException, InterruptedException, MetaException, TException
     {
         HiveConf c = new HiveConf();
         final HiveMetaStoreClient client = new HiveMetaStoreClient(c);
-        final UserGroupInformation ugi
-            = UserGroupInformation.createProxyUser(user,
-                                                   UserGroupInformation.getLoginUser());
+        LOG.info("user: " + user + " loginUser: " + UserGroupInformation.getLoginUser().getUserName());
+        final TokenWrapper twrapper = new TokenWrapper();
+        final UserGroupInformation ugi = UgiFactory.getUgi(user);
         String s = ugi.doAs(new PrivilegedExceptionAction<String>() {
                                 public String run()
                                     throws IOException, MetaException, TException

@@ -56,6 +56,7 @@
       <env key="TEMPLETON_URL" value="${harness.templeton.url}"/>
       <env key="USER_NAME" value="${test.user.name}"/>
       <env key="HARNESS_CONF" value="${basedir}/conf/default.conf"/>
+      <env key="SECURE_MODE" value="${secure.mode}"/>
       <arg line="${tests.to.run}"/>
       <arg value="${basedir}/tests/curl.conf"/>
     </exec>
