@@ -43,12 +43,19 @@
 %define debug_package %{nil}
 
 # Disable brp-java-repack-jars
+%if 0%{?suse_version}
+%define __os_install_post \
+    /usr/lib/rpm/brp-compress \
+    %{!?__debug_package:/usr/lib/rpm/brp-strip %{__strip}} \
+    /usr/lib/rpm/brp-python-bytecompile %{nil}    
+%else
 %define __os_install_post    \
     /usr/lib/rpm/redhat/brp-compress \
     %{!?__debug_package:/usr/lib/rpm/redhat/brp-strip %{__strip}} \
     /usr/lib/rpm/redhat/brp-strip-static-archive %{__strip} \
     /usr/lib/rpm/redhat/brp-strip-comment-note %{__strip} %{__objdump} \
     /usr/lib/rpm/brp-python-bytecompile %{nil}
+%endif
 
 Summary: Templeton provides a REST-like web API for HCatalog and related Hadoop components.
 License: Apache License, Version 2.0
@@ -63,6 +70,7 @@ Prefix: %{_prefix}
 Prefix: %{_conf_dir}
 Prefix: %{_log_dir}
 Buildroot: %{_build_dir}
+Buildarch: noarch
 Requires: hadoop, sh-utils, textutils
 AutoReqProv: no
 Provides: templeton
@@ -82,7 +90,8 @@ Templeton provides a REST-like web API for HCatalog and related Hadoop component
 %prep
 %setup -n %{_final_name}
 
-%build
+#%build
+
 if [ -d ${RPM_BUILD_DIR}%{_prefix} ]; then
   rm -rf ${RPM_BUILD_DIR}%{_prefix}
 fi
@@ -102,6 +111,7 @@ fi
 mkdir -p ${RPM_BUILD_DIR}%{_prefix}
 mkdir -p ${RPM_BUILD_DIR}%{_log_dir}
 mkdir -p ${RPM_BUILD_DIR}%{_conf_dir}
+
 
 #########################
 #### INSTALL SECTION ####
