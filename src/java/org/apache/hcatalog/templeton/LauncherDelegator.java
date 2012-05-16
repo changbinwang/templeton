@@ -71,9 +71,7 @@ public class LauncherDelegator extends TempletonDelegator {
         IOException, QueueException
     {
         try {
-            UserGroupInformation loginUser = UserGroupInformation.getLoginUser();
-            UserGroupInformation ugi
-                = UserGroupInformation.createProxyUser(user, loginUser);
+            UserGroupInformation ugi = UgiFactory.getUgi(user); 
 
             final long startTime = System.nanoTime();
 

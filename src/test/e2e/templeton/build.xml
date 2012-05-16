@@ -59,6 +59,7 @@
       <env key="GROUP_USER_NAME" value="${test.group.user.name}"/>
       <env key="OTHER_USER_NAME" value="${test.other.user.name}"/>
       <env key="HARNESS_CONF" value="${basedir}/conf/default.conf"/>
+      <env key="SECURE_MODE" value="${secure.mode}"/>
       <arg line="${tests.to.run}"/>
       <arg value="${basedir}/tests/hcatperms.conf"/>
     </exec>

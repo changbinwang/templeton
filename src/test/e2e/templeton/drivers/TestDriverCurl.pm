@@ -176,8 +176,11 @@ sub globalSetup
     $globalHash->{'current_group'} = $ENV{'GROUP_NAME'};
 
 
+
     $globalHash->{'inpdir_local'} = $ENV{'TH_INPDIR_LOCAL'};
     $globalHash->{'inpdir_hdfs'} = $ENV{'TH_INPDIR_HDFS'};
+
+    $globalHash->{'is_secure_mode'} = $ENV{'SECURE_MODE'};
 
     # add libexec location to the path
     if (defined($ENV{'PATH'})) {
@@ -411,23 +414,36 @@ sub execCurlCmd(){
     @options = @{$testCmd->{$argPrefix . 'post_options'}};
   }
 
-  my $url = $testCmd->{ $argPrefix . 'url'};
-  
-  #if mode is unsecure
-  if (defined $testCmd->{ $argPrefix . 'user_name' }) {
-    my $user_param = 'user.name=' . $testCmd->{ $argPrefix . 'user_name' };
-    if ($method eq 'POST' ) {
-      push @options, $user_param;
-    } else {
-      if ($url =~ /\?/) {
-        #has some parameters in url
-        $url = $url . '&' . $user_param;
+  if (defined $testCmd->{'is_secure_mode'} &&  $testCmd->{'is_secure_mode'} =~ /y.*/i) {
+    push @curl_cmd, ('--negotiate', '-u', ':');
+  } else { 
+    #if mode is unsecure
+    if (defined $testCmd->{ $argPrefix . 'user_name' }) {
+      my $user_param = 'user.name=' . $testCmd->{ $argPrefix . 'user_name' };
+      if ($method eq 'POST' ) {
+        push @options, $user_param;
       } else {
-        $url = $url . '?' . $user_param;
+        if ($url =~ /\?/) {
+          #has some parameters in url
+          $url = $url . '&' . $user_param;
+        } else {
+          $url = $url . '?' . $user_param;
+        }
       }
     }
+
+  }
+  
+  if (defined $testCmd->{'format_header'}) {
+    push @curl_cmd, ('-H', $testCmd->{'format_header'});
   }
 
+  my $url = $testCmd->{ $argPrefix . 'url'};
+
+
+  
+  
+  
   if (defined $testCmd->{$argPrefix . 'format_header'}) {
     push @curl_cmd, ('-H', $testCmd->{$argPrefix . 'format_header'});
   }
@@ -475,8 +491,12 @@ sub execCurlCmd(){
   my @full_header = `cat $res_header`;
   $result{'full_header'} = join '\n', @full_header;
 
-  $full_header[0] =~ /(\S+)\s+(\S+)/;
-  $result{'status_code'}  = $2;
+  #find the final http status code
+  for my $line ( @full_header){
+    if($line =~ /.*(HTTP\/1.1)\s+(\S+)/){
+      $result{'status_code'}  = $2;
+    }
+  }
 
   my %header_field;
   foreach my $line (@full_header) {
@@ -556,6 +576,7 @@ sub compare
       %json_info = %$json_hash;
       if (defined $json_info{'info'}) {
         %json_info = %{$json_info{'info'}};
+        
       }
       print $log "\n\n json_info";
       print $log dump(%json_info);
@@ -563,6 +584,7 @@ sub compare
 
       if (defined $json_hash->{'id'}) {
         print STDERR "jobid " . $json_hash->{'id'} . "\n";        
+        $json_info{'id'} = $json_hash->{'id'};
       }
 
       if(defined $json_matches->{'location_perms'} || defined $json_matches->{'location_group'}){

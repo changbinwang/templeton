@@ -674,7 +674,7 @@
         </replacetokens>
       </filterchain>
     </copy>
-    <rpm specFile="templeton.spec" command="-bb --target ${os.arch}" topDir="${package.buildroot}" cleanBuildDir="true" failOnError="true"/>
+    <rpm specFile="templeton.spec" command="-bb" topDir="${package.buildroot}" cleanBuildDir="true" failOnError="true"/>
     <copy todir="${build.dir}/" flatten="true" failonerror="true">
       <fileset dir="${package.buildroot}/RPMS">
         <include name="**/templeton*.rpm" />
