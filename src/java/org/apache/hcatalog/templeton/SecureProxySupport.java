@@ -45,6 +45,7 @@ public class SecureProxySupport {
     private Path tokenPath;
     private final String HCAT_SERVICE = "hcat";
     private boolean isEnabled;
+    private String user;
 
     public SecureProxySupport() {
         isEnabled = UserGroupInformation.isSecurityEnabled();
@@ -70,6 +71,7 @@ public class SecureProxySupport {
     {
         close();
         if (isEnabled) {
+            this.user = user;
             File t = File.createTempFile("templeton", null);
             tokenPath = new Path(t.toURI());
             Token fsToken = getFSDelegationToken(user, conf);
@@ -115,6 +117,8 @@ public class SecureProxySupport {
         if (isEnabled) {
             args.add("-D");
             args.add("hive.metastore.token.signature=" + getHcatServiceStr());
+            args.add("-D");
+            args.add("proxy.user.name=" + user);            
         }
     }
     
