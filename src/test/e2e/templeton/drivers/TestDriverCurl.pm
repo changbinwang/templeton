@@ -409,6 +409,8 @@ sub execCurlCmd(){
 
   my $method = $testCmd->{ $argPrefix . 'method'};
 
+  my $url = $testCmd->{ $argPrefix . 'url'};
+
   my @options = ();
   if (defined $testCmd->{$argPrefix . 'post_options'}) {
     @options = @{$testCmd->{$argPrefix . 'post_options'}};
@@ -437,9 +439,6 @@ sub execCurlCmd(){
   if (defined $testCmd->{'format_header'}) {
     push @curl_cmd, ('-H', $testCmd->{'format_header'});
   }
-
-  my $url = $testCmd->{ $argPrefix . 'url'};
-
 
   
   
