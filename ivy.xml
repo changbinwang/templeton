@@ -46,6 +46,18 @@
                 rev="1.1"
                 conf="common->master"/>
 
+    <dependency org="org.apache.hcatalog" name="hcatalog" rev="0.4.0"
+                conf="common->default"/>
+    <dependency org="org.apache.hive" name="hive-metastore"
+		rev="${hive.version}" conf="common->master"/>
+    <dependency org="org.apache.hive" name="hive-common"
+		rev="${hive.version}" conf="common->master"/>
+    <dependency org="org.apache.hive" name="hive-exec"
+		rev="${hive.version}" conf="common->master"/>
+    <dependency org="org.apache.hive" name="hive-cli"
+		rev="${hive.version}" conf="common->master"/>
+    <dependency org="org.apache.hive" name="hive-hbase-handler"
+		rev="${hive.version}" conf="common->master"/>
     <dependency org="org.apache.hadoop" name="hadoop-core" rev="1.0.1"
                 conf="common->master"/>
     <dependency org="org.apache.hadoop" name="hadoop-streaming" rev="1.0.1"
