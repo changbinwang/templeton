@@ -64,6 +64,30 @@
     </exec>
   </target>
 
+  <target name="test-hcat-authorization" depends="property-check, init-test" >
+    <property name="tests.to.run" value=""/>
+    <exec executable="${harness.dir}/test_harness.pl" dir="${test.location}" failonerror="true">
+      <env key="HARNESS_ROOT" value="${harness.dir}"/>
+      <env key="DRIVER_ROOT" value="${basedir}/drivers"/>
+      <env key="TH_WORKING_DIR" value="${test.location}"/>
+      <env key="TH_INPDIR_LOCAL" value="${inpdir.local}"/>
+      <env key="TH_INPDIR_HDFS" value="${inpdir.hdfs}"/>
+      <env key="TH_OUT" value="."/>
+      <env key="TH_ROOT" value="."/>
+      <env key="WEBHDFS_URL" value="${harness.webhdfs.url}"/>
+      <env key="TEMPLETON_URL" value="${harness.templeton.url}"/>
+      <env key="USER_NAME" value="${test.user.name}"/>
+      <env key="GROUP_NAME" value="${test.group.name}"/>
+      <env key="GROUP_USER_NAME" value="${test.group.user.name}"/>
+      <env key="OTHER_USER_NAME" value="${test.other.user.name}"/>
+      <env key="HARNESS_CONF" value="${basedir}/conf/default.conf"/>
+      <env key="SECURE_MODE" value="${secure.mode}"/>
+      <arg line="${tests.to.run}"/>
+      <arg value="${basedir}/tests/hcatperms.conf"/>
+    </exec>
+  </target>
+
+
 
 </project>
 

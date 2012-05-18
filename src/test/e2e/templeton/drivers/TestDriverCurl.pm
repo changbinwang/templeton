@@ -30,6 +30,9 @@ use JSON;
 use HTTP::Daemon;
 use HTTP::Status;
 use Data::Compare;
+use strict;
+use English;
+use Storable qw(dclone);
 
 my $passedStr = 'passed';
 my $failedStr = 'failed';
@@ -167,7 +170,10 @@ sub globalSetup
     $globalHash->{'localpath'} = $globalHash->{'localpathbase'} . "/" . $globalHash->{'runid'} . "/";
     $globalHash->{'webhdfs_url'} = $ENV{'WEBHDFS_URL'};
     $globalHash->{'templeton_url'} = $ENV{'TEMPLETON_URL'};
-    $globalHash->{'user_name'} = $ENV{'USER_NAME'};
+    $globalHash->{'current_user'} = $ENV{'USER_NAME'};
+    $globalHash->{'current_group_user'} = $ENV{'GROUP_USER_NAME'};
+    $globalHash->{'current_other_user'} = $ENV{'OTHER_USER_NAME'};
+    $globalHash->{'current_group'} = $ENV{'GROUP_NAME'};
 
 
 
@@ -251,28 +257,31 @@ sub runTest
 
 sub replaceParameters
   {
-    my ($self, $testCmd, $log) = @_;
+    my ($self, $testCmd, $aPfix, $log) = @_;
 
-    my $url =  $testCmd->{'url'};
+    my $url =  $testCmd->{$aPfix . 'url'};
     $url =~ s/:WEBHDFS_URL:/$testCmd->{'webhdfs_url'}/g;
     $url =~ s/:TEMPLETON_URL:/$testCmd->{'templeton_url'}/g;
     $url = $self->replaceParametersInArg($url, $testCmd, $log);
-    $testCmd->{'url'} = $url;
+    $testCmd->{$aPfix . 'url'} = $url;
 
-    $testCmd->{'upload_file'} = 
-      $self->replaceParametersInArg($testCmd->{'upload_file'}, $testCmd, $log);
+    $testCmd->{$aPfix . 'upload_file'} = 
+      $self->replaceParametersInArg($testCmd->{$aPfix . 'upload_file'}, $testCmd, $log);
 
-    if (defined $testCmd->{'post_options'}) {
-      my @options = @{$testCmd->{'post_options'}};
+    $testCmd->{$aPfix . 'user_name'} = 
+      $self->replaceParametersInArg($testCmd->{$aPfix . 'user_name'}, $testCmd, $log);
+
+    if (defined $testCmd->{$aPfix . 'post_options'}) {
+      my @options = @{$testCmd->{$aPfix . 'post_options'}};
       my @new_options = ();
       foreach my $option (@options) {
         $option = $self->replaceParametersInArg($option, $testCmd, $log);
         push @new_options, ($option);
       }
-      $testCmd->{'post_options'} = \@new_options;
+      $testCmd->{$aPfix . 'post_options'} = \@new_options;
     }    
-    if (defined $testCmd->{'json_field_substr_match'}) {
-      my $json_matches = $testCmd->{'json_field_substr_match'};
+    if (defined $testCmd->{$aPfix . 'json_field_substr_match'}) {
+      my $json_matches = $testCmd->{$aPfix . 'json_field_substr_match'};
       my @keys = keys %{$json_matches};
 
       foreach my $key (@keys) {
@@ -288,11 +297,18 @@ sub replaceParameters
 sub replaceParametersInArg
   {
     my ($self, $arg, $testCmd, $log) = @_;
+    if(! defined $arg){
+      return $arg;
+    }
     my $outdir = $testCmd->{'outpath'} . $testCmd->{'group'} . "_" . $testCmd->{'num'};
-    $arg =~ s/:UNAME:/$testCmd->{'user_name'}/g;
+    $arg =~ s/:UNAME:/$testCmd->{'current_user'}/g;
+    $arg =~ s/:UNAME_GROUP:/$testCmd->{'current_group_user'}/g;
+    $arg =~ s/:UNAME_OTHER:/$testCmd->{'current_other_user'}/g;
+    $arg =~ s/:UGROUP:/$testCmd->{'current_group'}/g;
     $arg =~ s/:OUTDIR:/$outdir/g;
     $arg =~ s/:INPDIR_HDFS:/$testCmd->{'inpdir_hdfs'}/g;
     $arg =~ s/:INPDIR_LOCAL:/$testCmd->{'inpdir_local'}/g;
+    $arg =~ s/:TNUM:/$testCmd->{'num'}/g;
     return $arg;
   }
 
@@ -316,16 +332,40 @@ sub runCurlCmd(){
   if (defined $testCmd->{'upload_file'}) {
     return $self->upload_file($testCmd,$log);
   } else {
-    return $self->execCurlCmd($testCmd, $log);
+    #if there are setup steps, run them first
+    if (defined $testCmd->{'setup'}) {
+      my $i = 0;
+      foreach my $setupCmd (@{$testCmd->{'setup'}}){
+        $i++;
+        print $log "Running setup command $i\n";
+        my $pfix = "setup_${i}_";
+        my $setupTestCmd = $self->createSetupCmd($testCmd, $setupCmd, $pfix, $log);
+        my $setupResult = $self->execCurlCmd($setupTestCmd, $pfix, $log);
+        
+        #if status code is set in setup, check if it matches results
+        if(defined $setupTestCmd->{"${pfix}status_code"}){
+          $self->checkResStatusCode($setupResult, $setupTestCmd->{"${pfix}status_code"}, $log);
+        }
+      }
+    }
+    return $self->execCurlCmd($testCmd, "", $log);
   }
-
 }
+###############################################################################
+sub createSetupCmd(){
+  my ($self, $testCmd, $setupCmd, $pfix, $log) = @_;
+  my $newTestCmd = dclone ($testCmd);
+  for my $key (keys %$setupCmd){
+    $newTestCmd->{$pfix . $key} = $setupCmd->{$key};
+  }
+  return $newTestCmd;
+}
+
 ###############################################################################
 sub upload_file(){
   my ($self, $testCmd, $log) = @_;
   $testCmd->{'method'} = 'PUT';
-  my $result = $self->execCurlCmd($testCmd, $log);
-  print $log "First command successful. location " . $header->{'Location'};
+  my $result = $self->execCurlCmd($testCmd, "", $log);
   my $checkRes = $self->checkResStatusCode($result, 100, $log);
   if ($checkRes == 0) {
     #fail
@@ -337,24 +377,25 @@ sub upload_file(){
   my $location = $header->{'Location'};
   $testCmd->{'url'} = $location;
     
-  $result = $self->execCurlCmd($testCmd, $log);
+  $result = $self->execCurlCmd($testCmd, "", $log);
   return $result;
 }
 
 ###############################################################################
 sub execCurlCmd(){
-  my ($self, $testCmd, $log) = @_;
+  my ($self, $testCmd, $argPrefix, $log) = @_;
   my @curl_cmd = $self->getBaseCurlCmd();
   # Set up file locations
   my $subName = (caller(0))[3];
 
-  my $cmd_body = $testCmd->{'localpath'} . $testCmd->{'group'} . "_" . $testCmd->{'num'} . ".cmd_body";
+  my $filePrefix = $testCmd->{'localpath'} . $testCmd->{'group'} . "_" . $argPrefix . $testCmd->{'num'}; 
+  my $cmd_body =  $filePrefix . ".cmd_body";
 
   #results
-  my $res_header = $testCmd->{'localpath'} . $testCmd->{'group'} . "_" . $testCmd->{'num'} . ".res_header";
-  my $res_body = $testCmd->{'localpath'} . $testCmd->{'group'} . "_" . $testCmd->{'num'} . ".res_body";
+  my $res_header = $filePrefix . ".res_header";
+  my $res_body = $filePrefix . ".res_body";
 
-  my $outdir = $testCmd->{'localpath'} . $testCmd->{'group'} . "_" . $testCmd->{'num'} . ".out";
+  my $outdir = $filePrefix .  ".out";
   my $stdoutfile = "$outdir/stdout";
   my $stderrfile = "$outdir/stderr";
 
@@ -364,27 +405,57 @@ sub execCurlCmd(){
     die "$0.$subName FATAL could not mkdir $outdir\n";
   }
 
-  my $method = $testCmd->{'method'};
-  $self->replaceParameters($testCmd, $log );
-  my $url = $testCmd->{'url'};
+  $self->replaceParameters($testCmd, $argPrefix, $log );
 
-  if(defined $testCmd->{'is_secure_mode'} &&  $testCmd->{'is_secure_mode'} =~ /y.*/i){
-    push @curl_cmd, ('--negotiate', '-u', ':');
+  my $method = $testCmd->{ $argPrefix . 'method'};
+
+  my $url = $testCmd->{ $argPrefix . 'url'};
+
+  my @options = ();
+  if (defined $testCmd->{$argPrefix . 'post_options'}) {
+    @options = @{$testCmd->{$argPrefix . 'post_options'}};
   }
 
+  if (defined $testCmd->{'is_secure_mode'} &&  $testCmd->{'is_secure_mode'} =~ /y.*/i) {
+    push @curl_cmd, ('--negotiate', '-u', ':');
+  } else { 
+    #if mode is unsecure
+    if (defined $testCmd->{ $argPrefix . 'user_name' }) {
+      my $user_param = 'user.name=' . $testCmd->{ $argPrefix . 'user_name' };
+      if ($method eq 'POST' ) {
+        push @options, $user_param;
+      } else {
+        if ($url =~ /\?/) {
+          #has some parameters in url
+          $url = $url . '&' . $user_param;
+        } else {
+          $url = $url . '?' . $user_param;
+        }
+      }
+    }
+
+  }
+  
   if (defined $testCmd->{'format_header'}) {
     push @curl_cmd, ('-H', $testCmd->{'format_header'});
   }
 
-  if (defined $testCmd->{'upload_file'}) {
-    push @curl_cmd, ('-T', $testCmd->{'upload_file'});
+  
+  
+  
+  if (defined $testCmd->{$argPrefix . 'format_header'}) {
+    push @curl_cmd, ('-H', $testCmd->{$argPrefix . 'format_header'});
+  }
+
+  if (defined $testCmd->{$argPrefix . 'upload_file'}) {
+    push @curl_cmd, ('-T', $testCmd->{$argPrefix . 'upload_file'});
   }
 
   #    if(!defined $testCmd->{'post_options'}){
   #	$testCmd->{'post_options'} = \();
   #    }
 
-  if (defined $testCmd->{'check_call_back'}) {
+  if (defined $testCmd->{$argPrefix . 'check_call_back'}) {
     my $d = HTTP::Daemon->new || die;
     $testCmd->{'http_daemon'} = $d;
     $testCmd->{'callback_url'} = $d->url . 'templeton/$jobId';
@@ -394,11 +465,8 @@ sub execCurlCmd(){
     #	print $log "post options  @options\n";
   }
 
-  if (defined $testCmd->{'post_options'}) {
-    my @options = @{$testCmd->{'post_options'}};
-    foreach my $option (@options) {
-      push @curl_cmd, ('-d', $option);
-    }
+  foreach my $option (@options) {
+    push @curl_cmd, ('-d', $option);
   }
 
   push @curl_cmd, ("-X", $method, "-o", $res_body, "-D", $res_header);  
@@ -509,8 +577,8 @@ sub compare
         %json_info = %{$json_info{'info'}};
         
       }
-      print $log "\n\n json_hash";
-      print $log dump(%$json_hash);
+      print $log "\n\n json_info";
+      print $log dump(%json_info);
       print $log "\n\n";
 
       if (defined $json_hash->{'id'}) {
@@ -518,6 +586,9 @@ sub compare
         $json_info{'id'} = $json_hash->{'id'};
       }
 
+      if(defined $json_matches->{'location_perms'} || defined $json_matches->{'location_group'}){
+        $self->setLocationPermGroup(\%json_info, $testCmd, $log);
+      }
 
       foreach my $key (keys %$json_matches) {
         my $json_field_val = $json_info{$key};
@@ -655,6 +726,84 @@ sub compare
   }
 
 ###############################################################################
+sub  setLocationPermGroup{
+  my ($self, $job_info, $testCmd, $log) = @_;
+  my $location = $job_info->{'location'};
+  $location =~ /hdfs.*:\d+(\/.*)\/(.*)/;  
+  my $dir = $1;
+  my $file = $2;
+
+  my $testCmdBasics = $self->copyTestBasicConfig($testCmd);
+  $testCmdBasics->{'method'} = 'GET';
+  $testCmdBasics->{'num'} = $testCmdBasics->{'num'} . "_checkFile";
+  $testCmdBasics->{'url'} = ':WEBHDFS_URL:/webhdfs/v1' 
+    . $dir . '?op=LISTSTATUS';
+
+
+  my $result =  $self->execCurlCmd($testCmdBasics, "", $log);
+
+  my $json = new JSON;
+  my $json_hash = $json->utf8->decode($result->{'body'});
+  my @filestatuses = @{$json_hash->{'FileStatuses'}->{'FileStatus'}};
+  foreach my $filestatus (@filestatuses){
+    if($filestatus->{'pathSuffix'} eq $file){
+      $job_info->{'location_perms'} =  numPermToStringPerm($filestatus->{'permission'});
+      $job_info->{'location_group'} = $filestatus->{'group'};
+      $job_info->{'location_owner'} = $filestatus->{'owner'};
+      last;
+    }
+
+  }
+
+}
+
+###############################################################################
+#convert decimal string to binary string
+sub dec2bin {
+    my $decimal = shift;
+    my $binary = unpack("B32", pack("N", $decimal));
+    $binary =~ s/^0+(?=\d)//;   # remove leading zeros                                                                                                                                                                                                                                                   
+    return $binary;
+}
+
+###############################################################################
+#convert single digit of the numeric permission format to string format
+sub digitPermToStringPerm{
+    my $numPerm = shift;
+    my $binaryPerm = dec2bin($numPerm);
+    my $stringPerm = "";
+    if($binaryPerm =~ /1\d\d$/){
+        $stringPerm .= "r";
+      }else{
+        $stringPerm .= "-";
+    }
+
+    if($binaryPerm =~ /\d1\d$/){
+        $stringPerm .= "w";
+      }else{
+        $stringPerm .= "-";
+    }
+
+    if($binaryPerm =~ /\d\d1$/){
+        $stringPerm .= "x";
+      }else{
+        $stringPerm .= "-";
+    }
+
+}
+
+###############################################################################
+# convert numeric permission format to string format
+sub numPermToStringPerm{
+    my $numPerm = shift;
+    $numPerm =~ /(\d)(\d)(\d)$/;
+    return digitPermToStringPerm($1)
+        . digitPermToStringPerm($2)
+        . digitPermToStringPerm($3);
+
+}
+
+###############################################################################
 sub getRunStateNum{
   my ($self, $job_complete_state) = @_;
   if (lc($job_complete_state) eq 'success') {
@@ -676,7 +825,7 @@ sub getJobResult{
   $testCmdBasics->{'num'} = $testCmdBasics->{'num'} . "_jobStatusCheck";
   $testCmdBasics->{'url'} = ':TEMPLETON_URL:/templeton/v1/queue/' 
     . $jobid . '?' . "user.name=:UNAME:" ;
-  return $self->execCurlCmd($testCmdBasics, $log);
+  return $self->execCurlCmd($testCmdBasics, "", $log);
 }
 ###############################################################################
 sub killJob{
@@ -686,7 +835,7 @@ sub killJob{
   $testCmdBasics->{'num'} = $testCmdBasics->{'num'} . "_killJob";
   $testCmdBasics->{'url'} = ':TEMPLETON_URL:/templeton/v1/queue/' 
     . $jobid . '?' . "user.name=:UNAME:" ;
-  return $self->execCurlCmd($testCmdBasics, $log);
+  return $self->execCurlCmd($testCmdBasics, "", $log);
 }
 ###############################################################################
 #Copy test config essential for running a sub command
@@ -1097,9 +1246,9 @@ sub tmpIPCRunSplitStdoe {
   #DIE IF Test Failed, otherwise return stdout and stderr
   if ( $failed ) {
 
-    $msg = "$0::$subName FATAL: Faied from $runningSubName \nSTDOUT:".$result{'stdout'}."\nSTDERR:".$result{'stderr'}."\n" if ( $failed );
+    $msg = "$0::$subName FATAL: Faied from $runningSubName \nSTDOUT:" . $stdout . "\nSTDERR:" . $stderr . "\n" if ( $failed );
     print $log "$msg";
-    die $msg if ( $die != "1" ); #die by default
+    die $msg if ( $die != "1" ); #die by defaultast
     return ( -1, $stdout, $stderr );
 
   }
