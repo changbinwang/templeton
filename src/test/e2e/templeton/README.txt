@@ -64,6 +64,7 @@ Text::Glob
 Data::Compare
 File::Find::Rule
 HTTP::Daemon
+JSON
 
 Enable webhdfs by adding the following to your hadoop hdfs-site.xml :
 
