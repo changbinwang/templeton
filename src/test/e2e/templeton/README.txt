@@ -63,7 +63,7 @@ Number::Compare
 Text::Glob
 Data::Compare
 File::Find::Rule
-Http::Daemon
+HTTP::Daemon
 
 Enable webhdfs by adding the following to your hadoop hdfs-site.xml :
 
