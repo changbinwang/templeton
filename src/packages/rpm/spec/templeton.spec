@@ -67,10 +67,8 @@ Version: %{version}
 Release: %{release} 
 Source0: %{_final_name}.tar.gz
 Prefix: %{_prefix}
-Prefix: %{_conf_dir}
-Prefix: %{_log_dir}
-Buildroot: %{_build_dir}
-Buildarch: noarch
+BuildRoot: %{_build_dir}
+BuildArch: noarch
 Requires: hadoop, sh-utils, textutils
 AutoReqProv: no
 Provides: templeton
@@ -78,70 +76,22 @@ Provides: templeton
 %description
 Templeton provides a REST-like web API for HCatalog and related Hadoop components. As shown in the figure below, developers make HTTP requests to access Hadoop MapReduce, Pig, Hive, and HCatalog DDL from within applications. Data and code used by Templeton is maintained in HDFS. HCatalog DDL commands are executed directly when requested. MapReduce, Pig, and Hive jobs are placed in queue by Templeton and can be monitored for progress or stopped as required. Developers specify a location in HDFS into which Templeton should place Pig, Hive, and MapReduce results.
 
-#%package conf-pseudo
-#Summary: Default Hadoop configuration templates
-#Group: System/Daemons
-#Requires: %{name} == %{version}
-#
-#%description conf-pseudo
-#Installation of this RPM will setup your machine to run in pseudo-distributed mode
-#where each Hadoop daemon runs in a separate Java process.
-
 %prep
 %setup -n %{_final_name}
 
-#%build
-
-if [ -d ${RPM_BUILD_DIR}%{_prefix} ]; then
-  rm -rf ${RPM_BUILD_DIR}%{_prefix}
-fi
-
-if [ -d ${RPM_BUILD_DIR}%{_log_dir} ]; then
-  rm -rf ${RPM_BUILD_DIR}%{_log_dir}
-fi
-
-if [ -d ${RPM_BUILD_DIR}%{_conf_dir} ]; then
-  rm -rf ${RPM_BUILD_DIR}%{_conf_dir}
-fi
-
-if [ -d ${RPM_BUILD_DIR}%{_pid_dir} ]; then
-  rm -rf ${RPM_BUILD_DIR}%{_pid_dir}
-fi
-
-mkdir -p ${RPM_BUILD_DIR}%{_prefix}
-mkdir -p ${RPM_BUILD_DIR}%{_log_dir}
-mkdir -p ${RPM_BUILD_DIR}%{_conf_dir}
-
-
-#########################
-#### INSTALL SECTION ####
-#########################
 %install
-mv ${RPM_BUILD_DIR}/%{_final_name}/etc/templeton/* ${RPM_BUILD_DIR}%{_conf_dir}
+install -d ${RPM_BUILD_ROOT}%{_prefix} 
+install -d ${RPM_BUILD_ROOT}%{_conf_dir} 
+install -d ${RPM_BUILD_ROOT}%{_log_dir} 
+
+mv ${RPM_BUILD_DIR}/%{_final_name}/etc/templeton/* ${RPM_BUILD_ROOT}%{_conf_dir}
 rm -rf ${RPM_BUILD_DIR}/%{_final_name}/etc/templeton
-mv ${RPM_BUILD_DIR}/%{_final_name}/* ${RPM_BUILD_DIR}%{_prefix}
-#cp -f ${RPM_BUILD_DIR}/../SOURCES/%{_final_name}.jar ${RPM_BUILD_DIR}%{_share_dir}/%{_final_name}.jar
+mv ${RPM_BUILD_DIR}/%{_final_name}/* ${RPM_BUILD_ROOT}%{_prefix}
 
 %pre
-
-# %post
-# bash ${RPM_INSTALL_PREFIX0}/sbin/update-templeton-env.sh \
-#        --prefix=${RPM_INSTALL_PREFIX0} \
-#        --bin-dir=${RPM_INSTALL_PREFIX0}/bin \
-#        --conf-dir=${RPM_INSTALL_PREFIX1} \
-#        --log-dir=${RPM_INSTALL_PREFIX2}
-
-# %preun
-# bash ${RPM_INSTALL_PREFIX0}/sbin/update-templeton-env.sh \
-#        --prefix=${RPM_INSTALL_PREFIX0} \
-#        --bin-dir=${RPM_INSTALL_PREFIX0}/bin \
-#        --conf-dir=${RPM_INSTALL_PREFIX1} \
-#        --log-dir=${RPM_INSTALL_PREFIX2} \
-#        --uninstall
 
 %files 
 %defattr(-,root,root)
 %attr(0755,root,hadoop) %{_log_dir}
 %config %{_conf_dir}
 %{_prefix}
-
