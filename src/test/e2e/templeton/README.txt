@@ -24,7 +24,7 @@ It runs hcat, mapreduce, streaming, hive and pig tests.
 
 Test cases
 ----------
-The tests are defined in src/test/e2e/templeton/tests/curl.conf
+The tests are defined in src/test/e2e/templeton/tests/*.conf
 
 Test framework
 --------------
@@ -40,6 +40,17 @@ Setup
 * IPC::Run
 * JSON
 * Data::Dump
+* Number::Compare
+* Text::Glob
+* Data::Compare
+* File::Find::Rule
+* HTTP::Daemon
+
+Tips:
+* Using perlbrew (http://perlbrew.pl) should make installing perl modules easier. 
+* Use 'yes | cpan -i <MODULE_NAME>' to avoid answering the 100's of questions cpan asks.
+
+
 
 3. Copy contents of src/test/e2e/templeton/inpdir to hdfs
 
@@ -57,14 +68,8 @@ If you want to run specific test in a group group you can specify the test, for 
 
 Notes
 -----
-You may also need to install:
 
-Number::Compare
-Text::Glob
-Data::Compare
-File::Find::Rule
-HTTP::Daemon
-JSON
+
 
 Enable webhdfs by adding the following to your hadoop hdfs-site.xml :
 
