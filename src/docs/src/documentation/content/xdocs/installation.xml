@@ -251,14 +251,39 @@ hadoop fs -put ugi.jar /user/templeton/ugi.jar
   <p>
     To run Templeton on a secure cluster follow the Permissions
     instructions above but create a Kerberos principal for the
-    Templeton server with the name <code>USER/host@realm</code>
+    Templeton server with the name <code>HTTP/host@realm</code>. 
+    Add the hadoop.proxyuser.* config parameters to hive/hcat
+    metastore's hive-site.xml as well.
   </p>
 
   <p>
     Also, set the templeton configuration variables
-    <code>templeton.kerberos.principal</code> and
-    <code>templeton.kerberos.keytab</code>
   </p>
+    <table>
+    <tr><th>Variable</th><th>Value</th></tr>
+    <tr>
+      <td>templeton.kerberos.principal</td>
+      <td>
+	The kerberos principal used by templeton server. It should
+	be of the form HTTP/host@realm.
+      </td>
+    </tr>
+    <tr>
+      <td>templeton.kerberos.keytab</td>
+      <td>
+	keytab file for templeton kerberos principal. 
+      </td>
+    </tr>
+    <tr>
+      <td>templeton.kerberos.secret</td>
+      <td>
+	any random string.
+      </td>
+    </tr>
+
+
+  </table>
+
   </section>
 
   </body>
