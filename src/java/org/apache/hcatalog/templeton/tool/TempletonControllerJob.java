@@ -305,6 +305,7 @@ public class TempletonControllerJob extends Configured implements Tool {
         throws IOException, InterruptedException, ClassNotFoundException
     {
         Configuration conf = getConf();
+        conf.set("mapred.map.max.attempts", "1");
         conf.set(JAR_ARGS_NAME, TempletonUtils.encodeArray(args));
         conf.set("user.name", UserGroupInformation.getCurrentUser().getShortUserName());
         Job job = new Job(conf);
