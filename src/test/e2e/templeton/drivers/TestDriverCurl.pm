@@ -33,6 +33,7 @@ use Data::Compare;
 use strict;
 use English;
 use Storable qw(dclone);
+use File::Glob ':glob';
 
 my $passedStr = 'passed';
 my $failedStr = 'failed';
@@ -174,6 +175,7 @@ sub globalSetup
     $globalHash->{'current_group_user'} = $ENV{'GROUP_USER_NAME'};
     $globalHash->{'current_other_user'} = $ENV{'OTHER_USER_NAME'};
     $globalHash->{'current_group'} = $ENV{'GROUP_NAME'};
+    $globalHash->{'keytab_dir'} = $ENV{'KEYTAB_DIR'};
 
 
 
@@ -337,7 +339,7 @@ sub runCurlCmd(){
       my $i = 0;
       foreach my $setupCmd (@{$testCmd->{'setup'}}){
         $i++;
-        print $log "Running setup command $i\n";
+        print $log "\nRUNNING SETUP COMMAND: $i\n";
         my $pfix = "setup_${i}_";
         my $setupTestCmd = $self->createSetupCmd($testCmd, $setupCmd, $pfix, $log);
         my $setupResult = $self->execCurlCmd($setupTestCmd, $pfix, $log);
@@ -416,12 +418,33 @@ sub execCurlCmd(){
     @options = @{$testCmd->{$argPrefix . 'post_options'}};
   }
 
+  #handle authentication based on secure mode
+  my $user_name = $testCmd->{ $argPrefix . 'user_name' }; 
   if (defined $testCmd->{'is_secure_mode'} &&  $testCmd->{'is_secure_mode'} =~ /y.*/i) {
     push @curl_cmd, ('--negotiate', '-u', ':');
+
+    #if keytab dir is defined, look for a keytab file for user and do a kinit
+    if(defined  $testCmd->{'keytab_dir'} && defined $user_name){
+      $user_name =~ /(.*?)(\/|$)/;
+      my $just_uname = $1; #uname without principal
+      my $keytab_dir = $testCmd->{'keytab_dir'};
+      print $log "regex " .  "${keytab_dir}/*${just_uname}\.*keytab";
+      my @files = bsd_glob(  "${keytab_dir}/*${just_uname}\.*keytab" );
+      if(scalar @files == 0){
+        die "Could not find keytab file for user $user_name in $keytab_dir";
+      } elsif(scalar @files > 1){
+        die "More than one keytab file found for user $user_name in $keytab_dir";
+      }
+      my @cmd = ('kinit', '-k', '-t', $files[0], $user_name);
+      print $log "Command  @cmd";
+      IPC::Run::run(\@cmd, \undef, $log, $log) or 
+          die "Could not kinit as $user_name using " .  $files[0] . " $ERRNO";
+    }
+
   } else { 
     #if mode is unsecure
-    if (defined $testCmd->{ $argPrefix . 'user_name' }) {
-      my $user_param = 'user.name=' . $testCmd->{ $argPrefix . 'user_name' };
+    if (defined $user_name) {
+      my $user_param = "user.name=${user_name}";
       if ($method eq 'POST' ) {
         push @options, $user_param;
       } else {

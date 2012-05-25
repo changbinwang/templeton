@@ -82,6 +82,7 @@
       <env key="OTHER_USER_NAME" value="${test.other.user.name}"/>
       <env key="HARNESS_CONF" value="${basedir}/conf/default.conf"/>
       <env key="SECURE_MODE" value="${secure.mode}"/>
+      <env key="KEYTAB_DIR" value="${keytab.dir}"/>
       <arg line="${tests.to.run}"/>
       <arg value="${basedir}/tests/hcatperms.conf"/>
     </exec>

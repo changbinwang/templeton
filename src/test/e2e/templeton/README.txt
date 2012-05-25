@@ -60,11 +60,25 @@ Running the tests
 Use the following command to run tests -
 
 ant test -Dinpdir.hdfs=<location of inpdir on hdfs>  -Dtest.user.name=<user the tests should run as> \
-     -Dharness.webhdfs.url=<webhdfs url>  -Dharness.templeton.url=<templeton url> 
+ -Dsecure.mode=<yes/no>   -Dharness.webhdfs.url=<webhdfs url upto port num>  -Dharness.templeton.url=<templeton url upto port num> 
 
 If you want to run specific test group you can specify the group, for example:  -Dtests.to.run='-t TestHive'
 
 If you want to run specific test in a group group you can specify the test, for example:  -Dtests.to.run='-t TestHive_1'
+
+
+Running the hcat authorization tests
+------------------------------------
+Hcat authorization tests run commands as different users to test if authorization is done right.
+
+ant test-hcat-authorization -Dkeytab.dir=<keytab files dir> 
+  -Dsecure.mode=<yes/no>  -Dtest.group.name=<common group> -Dinpdir.hdfs=<location of inpdir on hdfs>  
+  -Dtest.user.name=<user 1 belonging to common group> -Dtest.group.user.name=<user 2 belonging to common group>  
+  -Dtest.other.user.name=<user 3 who does not belong to common group> 
+  -Dharness.webhdfs.url=<webhdfs url upto port num>  -Dharness.templeton.url=<templeton url upto port num> 
+
+The <keytab files dir> is expected to have keytab filenames of the form - user_name.*keytab .
+
 
 Notes
 -----
